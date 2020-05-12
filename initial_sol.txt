@@ -1,0 +1,357 @@
+Problem:    Model Predictive Control
+Rows:       180
+Columns:    25
+Non-zeros:  660
+Status:     OPTIMAL
+Objective:  Min weighted L_infty norm of states X(1) to X(H) = 0 (MINimum)
+
+   No.   Row name   St   Activity     Lower bound   Upper bound    Marginal
+------ ------------ -- ------------- ------------- ------------- -------------
+     1 X0(01) LE norm
+                    B              0                          -0 
+     2 X0(01) GE norm
+                    B              0            -0               
+     3 X1(01) LE norm
+                    B              0                          -0 
+     4 X1(01) GE norm
+                    B              0            -0               
+     5 X2(01) LE norm
+                    B              0                          -0 
+     6 X2(01) GE norm
+                    B              0            -0               
+     7 X3(01) LE norm
+                    B              0                          -0 
+     8 X3(01) GE norm
+                    B              0            -0               
+     9 X4(01) LE norm
+                    B              0                          -0 
+    10 X4(01) GE norm
+                    B              0            -0               
+    11 X5(01) LE norm
+                    B              0                          -0 
+    12 X5(01) GE norm
+                    B              0            -0               
+    13 X6(01) LE norm
+                    B              0                          -0 
+    14 X6(01) GE norm
+                    B              0            -0               
+    15 X7(01) LE norm
+                    B              0                          -0 
+    16 X7(01) GE norm
+                    B              0            -0               
+    17 X8(01) LE norm
+                    NU             0                          -0         < eps
+    18 X8(01) GE norm
+                    B              0            -0               
+    19 X9(01) LE norm
+                    NU             0                          -0     -0.175993 
+    20 X9(01) GE norm
+                    NL             0            -0                    0.175993 
+    21 X10(01) LE norm
+                    NU             0                          -0     -0.648014 
+    22 X10(01) GE norm
+                    B              0            -0               
+    23 X11(01) LE norm
+                    NU             0                          -0         < eps
+    24 X11(01) GE norm
+                    B              0            -0               
+    25 X0(02) LE norm
+                    B              0                          -0 
+    26 X0(02) GE norm
+                    B              0            -0               
+    27 X1(02) LE norm
+                    B              0                          -0 
+    28 X1(02) GE norm
+                    B              0            -0               
+    29 X2(02) LE norm
+                    B              0                          -0 
+    30 X2(02) GE norm
+                    B              0            -0               
+    31 X3(02) LE norm
+                    B              0                          -0 
+    32 X3(02) GE norm
+                    B              0            -0               
+    33 X4(02) LE norm
+                    B              0                          -0 
+    34 X4(02) GE norm
+                    B              0            -0               
+    35 X5(02) LE norm
+                    B              0                          -0 
+    36 X5(02) GE norm
+                    B              0            -0               
+    37 X6(02) LE norm
+                    B              0                          -0 
+    38 X6(02) GE norm
+                    B              0            -0               
+    39 X7(02) LE norm
+                    B              0                          -0 
+    40 X7(02) GE norm
+                    B              0            -0               
+    41 X8(02) LE norm
+                    NU             0                          -0         < eps
+    42 X8(02) GE norm
+                    B              0            -0               
+    43 X9(02) LE norm
+                    NU             0                          -0     -0.267936 
+    44 X9(02) GE norm
+                    NL             0            -0                    0.267936 
+    45 X10(02) LE norm
+                    NU             0                          -0     -0.464227 
+    46 X10(02) GE norm
+                    B              0            -0               
+    47 X11(02) LE norm
+                    NU             0                          -0         < eps
+    48 X11(02) GE norm
+                    B              0            -0               
+    49 X0(03) LE norm
+                    B              0                          -0 
+    50 X0(03) GE norm
+                    B              0            -0               
+    51 X1(03) LE norm
+                    B              0                          -0 
+    52 X1(03) GE norm
+                    B              0            -0               
+    53 X2(03) LE norm
+                    B              0                          -0 
+    54 X2(03) GE norm
+                    B              0            -0               
+    55 X3(03) LE norm
+                    B              0                          -0 
+    56 X3(03) GE norm
+                    B              0            -0               
+    57 X4(03) LE norm
+                    B              0                          -0 
+    58 X4(03) GE norm
+                    B              0            -0               
+    59 X5(03) LE norm
+                    B              0                          -0 
+    60 X5(03) GE norm
+                    B              0            -0               
+    61 X6(03) LE norm
+                    B              0                          -0 
+    62 X6(03) GE norm
+                    B              0            -0               
+    63 X7(03) LE norm
+                    B              0                          -0 
+    64 X7(03) GE norm
+                    B              0            -0               
+    65 X8(03) LE norm
+                    NU             0                          -0         < eps
+    66 X8(03) GE norm
+                    B              0            -0               
+    67 X9(03) LE norm
+                    NU             0                          -0      -0.35988 
+    68 X9(03) GE norm
+                    NL             0            -0                     0.35988 
+    69 X10(03) LE norm
+                    NU             0                          -0     -0.280441 
+    70 X10(03) GE norm
+                    B              0            -0               
+    71 X11(03) LE norm
+                    NU             0                          -0         < eps
+    72 X11(03) GE norm
+                    B              0            -0               
+    73 X0(04) LE norm
+                    B              0                          -0 
+    74 X0(04) GE norm
+                    B              0            -0               
+    75 X1(04) LE norm
+                    B              0                          -0 
+    76 X1(04) GE norm
+                    B              0            -0               
+    77 X2(04) LE norm
+                    B              0                          -0 
+    78 X2(04) GE norm
+                    B              0            -0               
+    79 X3(04) LE norm
+                    B              0                          -0 
+    80 X3(04) GE norm
+                    B              0            -0               
+    81 X4(04) LE norm
+                    B              0                          -0 
+    82 X4(04) GE norm
+                    B              0            -0               
+    83 X5(04) LE norm
+                    B              0                          -0 
+    84 X5(04) GE norm
+                    B              0            -0               
+    85 X6(04) LE norm
+                    B              0                          -0 
+    86 X6(04) GE norm
+                    NL             0            -0                    0.889152 
+    87 X7(04) LE norm
+                    B              0                          -0 
+    88 X7(04) GE norm
+                    B              0            -0               
+    89 X8(04) LE norm
+                    NU             0                          -0         < eps
+    90 X8(04) GE norm
+                    B              0            -0               
+    91 X9(04) LE norm
+                    NU             0                          -0         < eps
+    92 X9(04) GE norm
+                    B              0            -0               
+    93 X10(04) LE norm
+                    NU             0                          -0     -0.111148 
+    94 X10(04) GE norm
+                    B              0            -0               
+    95 X11(04) LE norm
+                    NU             0                          -0         < eps
+    96 X11(04) GE norm
+                    B              0            -0               
+    97 X0(05) LE norm
+                    B              0                          -0 
+    98 X0(05) GE norm
+                    B              0            -0               
+    99 X1(05) LE norm
+                    B              0                          -0 
+   100 X1(05) GE norm
+                    B              0            -0               
+   101 X2(05) LE norm
+                    B              0                          -0 
+   102 X2(05) GE norm
+                    B              0            -0               
+   103 X3(05) LE norm
+                    B              0                          -0 
+   104 X3(05) GE norm
+                    B              0            -0               
+   105 X4(05) LE norm
+                    B              0                          -0 
+   106 X4(05) GE norm
+                    B              0            -0               
+   107 X5(05) LE norm
+                    B              0                          -0 
+   108 X5(05) GE norm
+                    B              0            -0               
+   109 X6(05) LE norm
+                    B              0                          -0 
+   110 X6(05) GE norm
+                    NL             0            -0                    0.984307 
+   111 X7(05) LE norm
+                    B              0                          -0 
+   112 X7(05) GE norm
+                    B              0            -0               
+   113 X8(05) LE norm
+                    B              0                          -0 
+   114 X8(05) GE norm
+                    NL             0            -0                       < eps
+   115 X9(05) LE norm
+                    B              0                          -0 
+   116 X9(05) GE norm
+                    NL             0            -0                       < eps
+   117 X10(05) LE norm
+                    NU             0                          -0    -0.0160935 
+   118 X10(05) GE norm
+                    B              0            -0               
+   119 X11(05) LE norm
+                    B              0                          -0 
+   120 X11(05) GE norm
+                    NL             0            -0                       < eps
+   121 X0(01)_B     B              0                             
+   122 X1(01)_B     B              0                             
+   123 X2(01)_B     B              0                             
+   124 X3(01)_B     B              0       -0.5236        0.5236 
+   125 X4(01)_B     B              0       -0.5236        0.5236 
+   126 X5(01)_B     B              0                             
+   127 X6(01)_B     B              0                             
+   128 X7(01)_B     B              0                             
+   129 X8(01)_B     B              0                             
+   130 X9(01)_B     B              0                             
+   131 X10(01)_B    B              0                             
+   132 X11(01)_B    B              0                             
+   133 X0(02)_B     B              0                             
+   134 X1(02)_B     B              0                             
+   135 X2(02)_B     B              0                             
+   136 X3(02)_B     B              0       -0.5236        0.5236 
+   137 X4(02)_B     B              0       -0.5236        0.5236 
+   138 X5(02)_B     B              0                             
+   139 X6(02)_B     B              0                             
+   140 X7(02)_B     B              0                             
+   141 X8(02)_B     B              0                             
+   142 X9(02)_B     B              0                             
+   143 X10(02)_B    B              0                             
+   144 X11(02)_B    B              0                             
+   145 X0(03)_B     B              0                             
+   146 X1(03)_B     B              0                             
+   147 X2(03)_B     B              0                             
+   148 X3(03)_B     B              0       -0.5236        0.5236 
+   149 X4(03)_B     B              0       -0.5236        0.5236 
+   150 X5(03)_B     B              0                             
+   151 X6(03)_B     B              0                             
+   152 X7(03)_B     B              0                             
+   153 X8(03)_B     B              0                             
+   154 X9(03)_B     B              0                             
+   155 X10(03)_B    B              0                             
+   156 X11(03)_B    B              0                             
+   157 X0(04)_B     B              0                             
+   158 X1(04)_B     B              0                             
+   159 X2(04)_B     B              0                             
+   160 X3(04)_B     B              0       -0.5236        0.5236 
+   161 X4(04)_B     B              0       -0.5236        0.5236 
+   162 X5(04)_B     B              0                             
+   163 X6(04)_B     B              0                             
+   164 X7(04)_B     B              0                             
+   165 X8(04)_B     B              0                             
+   166 X9(04)_B     B              0                             
+   167 X10(04)_B    B              0                             
+   168 X11(04)_B    B              0                             
+   169 X0(05)_B     B              0                             
+   170 X1(05)_B     B              0                             
+   171 X2(05)_B     B              0                             
+   172 X3(05)_B     B              0       -0.5236        0.5236 
+   173 X4(05)_B     B              0       -0.5236        0.5236 
+   174 X5(05)_B     B              0                             
+   175 X6(05)_B     B              0                             
+   176 X7(05)_B     B              0                             
+   177 X8(05)_B     B              0                             
+   178 X9(05)_B     B              0                             
+   179 X10(05)_B    B              0                             
+   180 X11(05)_B    B              0                             
+
+   No. Column name  St   Activity     Lower bound   Upper bound    Marginal
+------ ------------ -- ------------- ------------- ------------- -------------
+     1 U0[00]       B              0          -200           200 
+     2 U1[00]       B              0                             
+     3 U2[00]       B              0                             
+     4 U3[00]       B              0                             
+     5 U0[01]       B              0          -200           200 
+     6 U1[01]       B              0                             
+     7 U2[01]       B              0                             
+     8 U3[01]       B              0                             
+     9 U0[02]       B              0          -200           200 
+    10 U1[02]       B              0                             
+    11 U2[02]       B              0                             
+    12 U3[02]       B              0                             
+    13 U0[03]       B              0          -200           200 
+    14 U1[03]       B              0                             
+    15 U2[03]       B              0                             
+    16 U3[03]       B              0                             
+    17 U0[XX]       B              0          -200           200 
+    18 U1[XX]       B              0                             
+    19 U2[XX]       B              0                             
+    20 U3[XX]       B              0                             
+    21 |X(01)|_inf  B              0                             
+    22 |X(02)|_inf  B              0                             
+    23 |X(03)|_inf  B              0                             
+    24 |X(04)|_inf  B              0                             
+    25 |X(05)|_inf  B              0                             
+
+Karush-Kuhn-Tucker optimality conditions:
+
+KKT.PE: max.abs.err = 1.78e-15 on row 77
+        max.rel.err = 1.78e-15 on row 77
+        High quality
+
+KKT.PB: max.abs.err = 1.78e-15 on row 78
+        max.rel.err = 1.78e-15 on row 78
+        High quality
+
+KKT.DE: max.abs.err = 1.42e-14 on column 19
+        max.rel.err = 7.40e-17 on column 22
+        High quality
+
+KKT.DB: max.abs.err = 0.00e+00 on row 0
+        max.rel.err = 0.00e+00 on row 0
+        High quality
+
+End of output

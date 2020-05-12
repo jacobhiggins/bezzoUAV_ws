@@ -1,0 +1,6 @@
+set(joystick_pk_SETUP_PY_VERSION "0.0.0")
+set(joystick_pk_SETUP_PY_SCRIPTS "")
+set(joystick_pk_SETUP_PY_PACKAGES "keyboard")
+set(joystick_pk_SETUP_PY_PACKAGE_DIRS "src/keyboard")
+set(joystick_pk_SETUP_PY_MODULES "")
+set(joystick_pk_SETUP_PY_MODULE_DIRS "")

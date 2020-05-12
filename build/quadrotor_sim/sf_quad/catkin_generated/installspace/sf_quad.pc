@@ -1,0 +1,8 @@
+prefix=/home/bezzo/bezzoUAV_ws/install
+
+Name: sf_quad
+Description: Description of sf_quad
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

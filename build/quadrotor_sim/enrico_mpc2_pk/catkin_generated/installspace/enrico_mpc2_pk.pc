@@ -1,0 +1,8 @@
+prefix=/home/bezzo/bezzoUAV_ws/install
+
+Name: enrico_mpc2_pk
+Description: Description of enrico_mpc2_pk
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

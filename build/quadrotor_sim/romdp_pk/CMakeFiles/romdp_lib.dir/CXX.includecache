@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/PolicyIteration.cpp
+eigen3/Eigen/Dense
+-
+PolicyIteration.h
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/PolicyIteration.h
+model.h
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/model.h
+iostream
+-
+header/newType.h
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/header/newType.h
+
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/PolicyIteration.h
+eigen3/Eigen/Dense
+-
+header/newType.h
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/header/newType.h
+model.h
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/model.h
+
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/header/newType.h
+eigen3/Eigen/Dense
+-
+
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/model.cpp
+model.h
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/model.h
+eigen3/Eigen/Dense
+-
+
+/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/romdp_pk/MDPlib/model.h
+eigen3/Eigen/Dense
+-
+

@@ -1,0 +1,8 @@
+prefix=/home/bezzo/bezzoUAV_ws/install
+
+Name: enrico_mpc_pk
+Description: Description of enrico_mpc_pk
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lenrico_mpc_pk
+Requires: roscpp rospy std_msgs
