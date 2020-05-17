@@ -1,0 +1,10 @@
+precise@precise-ThinkPad-T440s:~/duyanwei/galois-kf/smaccmpilot-stm32f4/src/smaccm-ins$ make create-sandbox
+
+
+
+make
+
+put the code in gen folder
+
+example driver is in tests/psas.c
+

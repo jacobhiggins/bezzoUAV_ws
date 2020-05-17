@@ -1,0 +1,293 @@
+#include "model.h"
+#include "PolicyIteration.h"
+#include <ros/ros.h>
+#include <ros/package.h>
+#include <iostream>
+#include <fstream>
+#include <string.h>
+
+using namespace ARMDP;
+
+// read package path
+//static std::string pk_path("/home/precise/duyanwei/catkin_ws/src/test_mdp_pk/");
+static std::string pk_path = ros::package::getPath("test_mdp_pk");
+
+/*
+void create_p_and_r_matrix(const int N, const int M, Eigen::MatrixXd *trans_3d)
+{
+	// reward
+	Eigen::MatrixXd reward = 
+	//reward.row(4) = Eigen::MatrixXd::Constant(N, M, 1e-18);   // row 5 
+	//reward.row(9) = Eigen::MatrixXd::Constant(N, M, 1e-18);   // row 10
+	//reward.row(14) = Eigen::MatrixXd::Constant(N, M, 100);  // row 15
+	//reward.row(19) = Eigen::MatrixXd::Constant(N, M, 100);  // row 20
+	//reward.row(24) = Eigen::MatrixXd::Constant(N, M, 100);  // row 25
+
+
+	// transition matrix
+
+	Eigen::MatrixXd mat1, mat2, mat3, mat4;
+	mat4 = mat3 = mat2 = mat1 = Eigen::MatrixXd::Zero(N, N);
+				//std::cout<<mat1<<std::endl;
+	trans_3d[0] = mat1;
+	trans_3d[1] = mat2;
+	trans_3d[2] = mat3;
+	trans_3d[3] = mat4;
+}
+*/
+
+void create_transition_matrix(const int dim_, const int N_, const int M_, double *p_vec_, Eigen::MatrixXd *trans_3d_)
+{
+	double pl, pf, pr, pb;
+	pl = p_vec_[0]; pf = p_vec_[1];  pr = p_vec_[2]; pb = p_vec_[3];
+	//std::cout<<p_vec[3]<<std::endl;
+
+
+	//trans_3d_[0](0,0) = pf;
+
+	int i;
+
+    /* 
+    action index:  
+        1 --> North
+        2 --> South
+        3 --> West
+        4 --> East
+    */
+     // loop over action
+	for (int act_ = 0; act_ < 1; act_++)
+	{
+		// loop over state
+		for (int index_i = 1; index_i <= N_ - dim_; index_i++)
+		{
+			i = index_i - 1;
+
+			// right boundary
+			if (index_i%dim_ == 0 )
+			{
+				trans_3d_[act_](i, i + dim_    ) = pf + pr;
+				trans_3d_[act_](i, i + dim_ - 1) = pl;
+			}
+			// left boundary
+			else if (index_i%dim_ == 1 )
+			{
+				trans_3d_[act_](i, i + dim_    ) = pf + pl;
+				trans_3d_[act_](i, i + dim_ + 1) = pr;
+			}
+			// center part
+			else
+			{
+				trans_3d_[act_](i, i + dim_ - 1) = pl;
+				trans_3d_[act_](i, i + dim_    ) = pf;
+				trans_3d_[act_](i, i + dim_ + 1) = pr;
+			}
+		}
+		// last row
+		for (int index_i = N_ - dim_ + 1; index_i <= N_; index_i++)
+		{
+			i = index_i - 1;
+			// left corner
+			if (index_i == N_ - dim_ + 1)
+			{
+				trans_3d_[act_](i, i    ) = pf + pl;
+				trans_3d_[act_](i, i + 1) = pr;
+			}
+			// right corner
+			else if (index_i == N_)
+			{
+				trans_3d_[act_](i, i - 1) = pl;
+				trans_3d_[act_](i, i    ) = pf + pr;
+			}
+			// other
+			else
+			{
+				trans_3d_[act_](i, i - 1) = pl;
+				trans_3d_[act_](i, i    ) = pf;
+				trans_3d_[act_](i, i + 1) = pr;
+			}
+		}
+	}
+
+	// south
+	trans_3d_[1] = (trans_3d_[0].rowwise().reverse()).colwise().reverse();
+
+	// west
+	int count = 0;
+	Eigen::MatrixXd ind_mat1(dim_, dim_);
+	//Eigen::MatrixXd ind_mat2(dim_);
+	for (int i = 0; i < dim_; i++)
+		for (int j = 0; j < dim_; j++)
+		{
+			ind_mat1(i, j) = count++;
+		}
+	
+	Eigen::MatrixXd ind_mat2 = (ind_mat1.rowwise().reverse()).transpose();
+	ind_mat2.resize(N_, 1);
+	ind_mat1.resize(N_, 1);
+	for (int i = 0; i < N_; i++)
+		for (int j = 0; j < N_; j++)
+		{
+			trans_3d_[3](ind_mat1(i), ind_mat1(j)) = trans_3d_[0](ind_mat2(i), ind_mat2(j));
+		}
+	//trans_3d_[2] = (trans_3d_[0].rowwise().reverse()).transpose();
+	
+
+
+	// east
+    trans_3d_[2] = (trans_3d_[3].rowwise().reverse()).colwise().reverse();
+
+    //std::cout<<trans_3d_[0]<<std::endl;std::cout<<"\n"<<std::endl;
+	//std::cout<<trans_3d_[1]<<std::endl;std::cout<<"\n"<<std::endl;
+	//std::cout<<temp<<std::endl;std::cout<<"\n"<<std::endl;
+	//std::cout<<trans_3d_[2]<<std::endl;std::cout<<"\n"<<std::endl;
+	//std::cout<<trans_3d_[3]<<std::endl;std::cout<<"\n"<<std::endl;
+
+
+
+}
+
+void read_transition_matrix(const int N_, const int M_, Eigen::MatrixXd *trans_3d_)
+{
+
+	std::ifstream myFile;
+	myFile.open((pk_path + "/matrix/transition.txt").c_str());
+	int count = 0;
+	double mat_buffer[M_*N_*N_];
+
+	if (myFile.is_open())
+	{
+		while(!myFile.eof())
+			myFile >> mat_buffer[count++];
+	}
+	else
+	{
+		std::cout<<"Error Open transition matrix file!"<<std::endl;
+		exit(-1);
+	} 
+	myFile.close();
+
+	for (int act = 0; act < M_; act++)
+		for (int i = 0; i < N_; i++)
+			for (int j = 0; j < N_; j++)
+				trans_3d_[act](i, j) = mat_buffer[act * N_ * N_ + i * N_ + j];
+
+}
+
+void read_reward_matrix(const int N_, const int M_, Eigen::MatrixXd &reward_)
+{
+	std::ifstream myFile;
+	myFile.open((pk_path + "/matrix/reward.txt").c_str());
+	int count = 0;
+	double mat_buffer[M_*N_];
+
+	if (myFile.is_open())
+	{
+		while(!myFile.eof())
+			myFile >> mat_buffer[count++];
+	}
+	else
+	{
+		std::cout<<"Error Open reward matrix file!"<<std::endl;
+		exit(-1);
+	} 
+	myFile.close();
+
+	for (int i = 0; i < N_; i++)
+		for (int act = 0; act < M_; act ++)
+			reward_(i, act) = mat_buffer[i*M_ + act];
+
+}
+
+int main(int argc, char **argv)
+{
+
+	ros::init(argc, argv, "test_mdp_node");
+	ros::NodeHandle nh_;
+
+
+        // initialize parameters
+        int dim_1 = 5;  // row
+        int dim_2 = 5;  // col
+	int N = dim_1 * dim_2;
+	int M = 4;
+	double discount = 0.9;
+	int eval_type = 0;
+	int max_iter = 1000;
+	//std::string path = ros::package::getPath("test_mdp_pk");
+	//std::cout<< path << std::endl;
+
+	// Model
+	Model model;
+	model.setNumOfState(N);
+	model.setNumOfAction(M);
+	model.setDiscount(discount);
+	//std::cout<<model.getDiscount()<<std::endl;
+
+
+
+	// create transition matrix and reward matrix
+	// reward function
+	Eigen::MatrixXd reward(N, M);
+	/*rew(4) = rew(9) = -1.0e18;
+	rew(14) = rew(19) = rew(24) = 100.0;
+	Eigen::MatrixXd reward(N, M);
+	reward << rew, rew, rew, rew; 
+     */
+	// transition matrix
+	Eigen::MatrixXd *trans_3d = new Eigen::MatrixXd[M];
+	for (int i = 0; i < M; i++)
+	{
+		trans_3d[i] = Eigen::MatrixXd::Zero(N, N);
+	}
+
+	read_transition_matrix(N, M, trans_3d);
+	read_reward_matrix(N, M, reward);
+
+	//std::cout<<reward<<std::endl;
+	//std::cout<<trans_3d[0]<<std::endl;
+	//std::cout<<trans_3d[1]<<std::endl;
+	//std::cout<<trans_3d[2]<<std::endl;
+	//std::cout<<trans_3d[3]<<std::endl;
+
+	/*
+
+    //std::cout<<trans_3d[0](0,0)<<std::endl;
+	double p_vec[] = {0.1, 0.8, 0.1, 0}; // pl, pf, pr, pb
+	create_transition_matrix(dim_1, N, M, p_vec, trans_3d);
+*/
+	// Policy Iteration
+	MDP::PolicyIteration policy_iteration(model);
+    //policy_iteration.set_eval_type(eval_type);  // default
+	//policy_iteration.set_max_iter(max_iter); // default
+	policy_iteration.set_transition_matrix(trans_3d);  // transition matrix
+	policy_iteration.set_reward_matrix(reward);  // reward matrix
+
+	ros::Time tic = ros::Time::now();
+	std::cout<<"Loop begins..."<<std::endl;
+
+	Policy_and_Value pv;
+	pv.value = Eigen::MatrixXd::Zero(N, 1);
+	pv.policy = Eigen::MatrixXd::Zero(N, 1);
+
+	// calculate policy
+	pv = policy_iteration.loop();
+	int iter_loop = policy_iteration.get_iter();
+	// add one to make sense
+	pv.policy.array() += 1;
+
+	std::cout<<"Loop ends..."<<std::endl;
+
+	// delete transition matrix to free memory
+	delete [] trans_3d;
+	double toc = (ros::Time::now() - tic).toSec();
+	std::cout<<toc<<" seconds passed!"<<std::endl;
+	// print out policy and value
+	std::cout<<"iter: \n"<<iter_loop<<std::endl;
+	std::cout<<"value: \n"<<pv.value<<std::endl;
+	std::cout<<"policy: \n"<<pv.policy<<std::endl;
+
+	ros::spin();
+
+	return 0;
+}
+

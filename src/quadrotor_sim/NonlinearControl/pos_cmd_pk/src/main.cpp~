@@ -1,0 +1,14 @@
+#include "ros/ros.h"
+#include "drone_pos_pub.h"
+
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "drone_pos_pub");
+  
+  PosCommand pos_command;
+ 
+  pos_command.Loop();
+
+  return 0;
+}

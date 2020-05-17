@@ -1,0 +1,128 @@
+#include <eigen3/Eigen/Dense>
+#include "PolicyIteration.h"
+#include "model.h"
+//#include "header/newType.h"
+
+namespace ARMDP
+{
+	namespace MDP
+	{
+		PolicyIteration::PolicyIteration(const Model model_)
+		{
+			eval_type = 0; // default
+			max_iter = 1000; // default
+			discount = model_.getDiscount();
+			N = model_.getNumOfState();
+			M = model_.getNumOfAction();
+		}
+		PolicyIteration::~PolicyIteration()
+		{
+
+		}
+
+		Policy_and_Value PolicyIteration::loop()
+		{
+			computePR();
+
+			// initialize policy
+			bellman_operator();
+			policy_next = policy;
+
+			// loop
+			int iter = 0;
+			bool is_done = false;
+
+			while (!is_done)
+			{
+				iter += 1;
+
+				if (eval_type == 0)
+				{
+					eval_policy_matrix();
+				}
+				else
+				{
+					eval_policy_iterative();
+				}
+
+				// new policy
+				bellman_operator();
+
+				// termination check
+				if (( (policy_next - policy).sum() == 0) || iter == max_iter) is_done = true; // end loop
+
+				else  policy = policy_next; // continue
+			}
+
+			Policy_and_Value pv;  // short for policy and value
+			pv.policy = policy;
+			pv.value = value;
+			return pv;
+		}
+
+		void PolicyIteration::set_eval_type(const int eval_type_ )  
+		{
+			eval_type = type_;
+		}
+		const int PolicyIteration::get_eval_type()
+		{
+			return eval_type;
+		}
+
+		void PolicyIteration::set_max_iter(const int max_iter_)
+		{
+			max_iter = max_iter_;
+		}
+		const int PolicyIteration::get_max_iter()
+		{
+			return max_iter;
+		}
+
+
+		// private functions
+		void computePR()
+		{
+			for (int j = 0; j < M; j++)
+			{
+				PR.col(j).array() = ((p_3d[j].array() * r_3d[j].array()).matrix()).rowwise().sum();
+			}
+		} 
+
+		void bellman_operator()
+		{
+			Eigen::Matrix<double, , M> Q;
+			for (int j = 0; j < M; j++)
+			{
+				Q.col(j).array = PR.col(j).array + discount * p_sd[j] * Vprev;
+			}
+			igl::mat_max(Q, value, policy);
+		}
+
+		void eval_policy_matrix()
+		{
+			Eigen::Matrix<double, N, N> Ppolicy, PRpolicy;
+			//computePpolicyPRpolicy();
+			for (int j = 0; j < M; j++)
+			{
+				for (int i = 0; i < N; i++)
+				{
+					if (policy(i) == j)
+					{
+						Ppolicy.row(i) = p_3d[j].row(i);
+						PRpolicy(i,0) = PR(i,j);
+					}
+				}
+			}
+			
+			V = (Eigen::Matrix<double, N, N>::Identity() - discount * Ppolicy).inverse() * PRpolicy;
+		}
+
+		void eval_policy_iterative()
+		{
+			
+		}
+
+	}
+}
+
+#endif

@@ -1,0 +1,198 @@
+#include <ros/ros.h>
+#include <nav_msgs/Odometry.h>
+#include <quadrotor_msgs/SO3Command.h>
+#include <quadrotor_msgs/PositionCommand.h>
+#include <quadrotor_msgs/Corrections.h>
+#include <std_msgs/Bool.h>
+#include <Eigen/Geometry>
+#include <so3_control/SO3Control.h>
+#include <tf/transform_datatypes.h>
+
+static SO3Control controller;
+static ros::Publisher so3_command_pub;
+static quadrotor_msgs::SO3Command so3_command;
+static bool position_cmd_updated = false, position_cmd_init = false;
+static Eigen::Vector3d des_pos, des_vel, des_acc, kx, kv;
+static double des_yaw = 0, des_yaw_dot = 0;
+static double current_yaw = 0;
+static bool enable_motors = false;
+static bool use_external_yaw = true;
+static bool use_angle_corrections = false;
+static double kf_correction, angle_corrections[2];
+
+static void publishSO3Command(void)
+{
+  controller.calculateControl(des_pos, des_vel, des_acc, des_yaw, des_yaw_dot,
+                              kx, kv);
+
+  const Eigen::Vector3d &force = controller.getComputedForce();
+  const Eigen::Quaterniond &orientation = controller.getComputedOrientation();
+  const Eigen::Vector3d &omg_ = controller.getDesiredAngularVelocity();
+  so3_command.header.stamp = ros::Time::now();
+  so3_command.force.x = force(0);
+  so3_command.force.y = force(1);
+  so3_command.force.z = force(2);
+  so3_command.orientation.x = orientation.x();
+  so3_command.orientation.y = orientation.y();
+  so3_command.orientation.z = orientation.z();
+  so3_command.orientation.w = orientation.w();
+  so3_command.angular.x = omg_(0);
+  so3_command.angular.y = omg_(1);
+  so3_command.angular.z = omg_(2);  
+  so3_command.aux.current_yaw = current_yaw;
+  so3_command.aux.kf_correction = kf_correction;
+  so3_command.aux.angle_corrections[0] = angle_corrections[0];
+  so3_command.aux.angle_corrections[1] = angle_corrections[1];
+  so3_command.aux.enable_motors = enable_motors;
+  so3_command.aux.use_external_yaw = use_external_yaw;
+  so3_command_pub.publish(so3_command);
+}
+
+static void position_cmd_callback(const quadrotor_msgs::PositionCommand::ConstPtr &cmd)
+{
+  des_pos = Eigen::Vector3d(cmd->position.x, cmd->position.y, cmd->position.z);
+  des_vel = Eigen::Vector3d(cmd->velocity.x, cmd->velocity.y, cmd->velocity.z);
+  des_acc = Eigen::Vector3d(cmd->acceleration.x, cmd->acceleration.y,
+                            cmd->acceleration.z);
+  //kx = Eigen::Vector3d(cmd->kx[0], cmd->kx[1], cmd->kx[2]);
+  //kv = Eigen::Vector3d(cmd->kv[0], cmd->kv[1], cmd->kv[2]);
+
+  des_yaw = cmd->yaw;
+  des_yaw_dot = cmd->yaw_dot;
+  position_cmd_updated = true;
+  //position_cmd_init = true;
+
+  publishSO3Command();
+}
+
+static void odom_callback(const nav_msgs::Odometry::ConstPtr &odom)
+{
+  const Eigen::Vector3d position(odom->pose.pose.position.x,
+                                 odom->pose.pose.position.y,
+                                 odom->pose.pose.position.z);
+  const Eigen::Vector3d velocity(odom->twist.twist.linear.x,
+                                 odom->twist.twist.linear.y,
+                                 odom->twist.twist.linear.z);
+
+  current_yaw = tf::getYaw(odom->pose.pose.orientation);
+
+  controller.setPosition(position);
+  controller.setVelocity(velocity);
+
+  if(position_cmd_init)
+  {
+    // We set position_cmd_updated = false and expect that the
+    // position_cmd_callback would set it to true since typically a position_cmd
+    // message would follow an odom message. If not, the position_cmd_callback
+    // hasn't been called and we publish the so3 command ourselves
+    if(!position_cmd_updated)
+      publishSO3Command();
+    position_cmd_updated = false;
+  }
+}
+
+static void enable_motors_callback(const std_msgs::Bool::ConstPtr &msg)
+{
+  if(msg->data)
+    ROS_INFO("Enabling motors");
+  else
+    ROS_INFO("Disabling motors");
+
+  enable_motors = msg->data;
+}
+
+static void corrections_callback(const quadrotor_msgs::Corrections::ConstPtr &msg)
+{
+  kf_correction = msg->kf_correction;
+  angle_corrections[0] = msg->angle_corrections[0];
+  angle_corrections[1] = msg->angle_corrections[1];
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "so3_control");
+
+  ros::NodeHandle n("~");
+
+  std::string quadrotor_name;
+  n.param("quadrotor_name", quadrotor_name, std::string("quadrotor"));
+  so3_command.header.frame_id = "/" + quadrotor_name;
+
+  double mass;
+  n.param("mass", mass, 1.282);
+  controller.setMass(mass);
+
+  n.param("use_external_yaw", use_external_yaw, true);
+  n.param("use_angle_corrections", use_angle_corrections, false);
+
+  std::vector<double> kR_list, kOm_list, kx_list, kv_list;
+  n.getParam("gains/rot", kR_list);
+  n.getParam("gains/ang", kOm_list);
+  n.getParam("gains/pos", kx_list);
+  n.getParam("gains/vel", kv_list);
+
+  // low-level controller gains
+  so3_command.kR[0] = kR_list[0];
+  so3_command.kR[1] = kR_list[0];
+  so3_command.kR[2] = kR_list[0];
+  so3_command.kOm[0] = kOm_list[0];
+  so3_command.kOm[1] = kOm_list[0];
+  so3_command.kOm[2] = kOm_list[0];
+
+  // high level controller gains
+
+  kx(0) = kx_list[0];  
+  kx(1) = kx_list[1];  
+  kx(2) = kx_list[2];  
+  kv(0) = kv_list[0];  
+  kv(1) = kv_list[1];  
+  kv(2) = kv_list[2];  
+
+ 
+/*
+
+  // low-level controller gains
+  n.param("gains/rot/x", so3_command.kR[0], 0.5);
+  n.param("gains/rot/y", so3_command.kR[1], 0.5);
+  n.param("gains/rot/z", so3_command.kR[2], 0.5);
+  n.param("gains/ang/x", so3_command.kOm[0], 0.1);
+  n.param("gains/ang/y", so3_command.kOm[1], 0.1);
+  n.param("gains/ang/z", so3_command.kOm[2], 0.1);
+
+
+
+  n.param("gains/pos/x", kx(0), 3.0);
+  n.param("gains/pos/y", kx(1), 3.0);
+  n.param("gains/pos/z", kx(2), 6.0);
+  n.param("gains/vel/x", kv(0), 3.0);
+  n.param("gains/vel/y", kv(1), 3.0);
+  n.param("gains/vel/z", kv(2), 5.0);
+
+*/
+/*
+  n.param("gains/rot/x", so3_command.kR[0], 0.0000009);
+  n.param("gains/rot/y", so3_command.kR[1], 0.0005);
+  n.param("gains/rot/z", so3_command.kR[2], 0.00001);
+  n.param("gains/ang/x", so3_command.kOm[0], 0.00001);
+  n.param("gains/ang/y", so3_command.kOm[1], 0.00001);
+  n.param("gains/ang/z", so3_command.kOm[2], 0.000005);
+*/
+  n.param("corrections/z", kf_correction, 0.0);
+  n.param("corrections/r", angle_corrections[0], 0.0);
+  n.param("corrections/p", angle_corrections[1], 0.0);
+
+  ros::Subscriber odom_sub = n.subscribe("odom", 10, &odom_callback,
+                                         ros::TransportHints().tcpNoDelay());
+  ros::Subscriber position_cmd_sub = n.subscribe("position_cmd", 10, &position_cmd_callback,
+                                                 ros::TransportHints().tcpNoDelay());
+
+  ros::Subscriber enable_motors_sub = n.subscribe("motors", 2, &enable_motors_callback,
+                                                  ros::TransportHints().tcpNoDelay());
+  ros::Subscriber corrections_sub = n.subscribe("corrections", 10, &corrections_callback,
+                                                ros::TransportHints().tcpNoDelay());
+
+  so3_command_pub = n.advertise<quadrotor_msgs::SO3Command>("so3_cmd", 10);
+  ros::spin();
+
+  return 0;
+}

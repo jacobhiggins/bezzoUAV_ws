@@ -1,0 +1,9 @@
+package name: romdp_pk
+node name: romdp_node
+
+subscribed topics:  odom, odom_sensor1, odom_sensor2, odom_sensor3, run_romdp_flag
+
+published topics: romdp_node/action
+
+parameters: romdp_node/row, romdp_node/col, romdp_node/matrix_path
+

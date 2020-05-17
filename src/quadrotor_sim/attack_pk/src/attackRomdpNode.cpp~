@@ -1,0 +1,185 @@
+#include <nav_msgs/Odometry.h>
+#include "ros/ros.h"
+#include "sensor_msgs/Imu.h"
+#include <eigen3/Eigen/Dense>
+#include "attackRomdpNode.h"
+
+#include "boost/random.hpp"
+#include "boost/random/normal_distribution.hpp"
+
+
+// odom callback function
+void odomCb(const nav_msgs::Odometry odomPtr)
+{
+	ground_truth = odomPtr;
+
+	// private parameters
+	ros::param::get("~AttackFlag", AttackFlag);
+	ros::param::get("~NoiseFlag", NoiseFlag);
+
+	// create sensor measurements
+	if (NoiseFlag)
+	{
+		add_noise();
+	}
+
+	s1 = s2 = s3 = ground_truth;
+}
+
+// imu callback function
+void imuCb(const sensor_msgs::ImuConstPtr &imuPtr)
+{
+}
+
+void attack_sensor1_Cb(const geometry_msgs::PointConstPtr attack_cmd_msgs_)
+{
+	attack_sensor1 = *attack_cmd_msgs_;
+}
+
+void attack_sensor2_Cb(const geometry_msgs::PointConstPtr attack_cmd_msgs_)
+{
+	attack_sensor2 = *attack_cmd_msgs_;
+}
+
+void attack_sensor3_Cb(const geometry_msgs::PointConstPtr attack_cmd_msgs_)
+{
+	attack_sensor3 = *attack_cmd_msgs_;
+}
+
+
+
+int main(int argc, char **argv)
+{
+
+	ros::init(argc, argv, "attack_romdp_node");
+	ROS_INFO("Started Attack Node!");
+
+	ros::NodeHandle nh_;
+
+	ros::Subscriber odom_sub = nh_.subscribe("odom_raw", 100, &odomCb);
+	ros::Subscriber imu_sub = nh_.subscribe("imu", 100, &imuCb);
+
+
+	ros::Subscriber attack_cmd_sub1 = nh_.subscribe("cmd_romdp_node/sensor1", 1, &attack_sensor1_Cb);
+	ros::Subscriber attack_cmd_sub2 = nh_.subscribe("cmd_romdp_node/sensor2", 1, &attack_sensor2_Cb);
+	ros::Subscriber attack_cmd_sub3 = nh_.subscribe("cmd_romdp_node/sensor3", 1, &attack_sensor3_Cb);
+
+
+
+	ros::Publisher state_pub = nh_.advertise<nav_msgs::Odometry>("odom", 100);
+	ros::Publisher sensor1_pub = nh_.advertise<nav_msgs::Odometry>("attack_romdp_node/odom_sensor1", 100);
+	ros::Publisher sensor2_pub = nh_.advertise<nav_msgs::Odometry>("attack_romdp_node/odom_sensor2", 100);
+	ros::Publisher sensor3_pub = nh_.advertise<nav_msgs::Odometry>("attack_romdp_node/odom_sensor3", 100);
+
+	// attack object 
+	//AttackNode attack_node;
+	AttackFlag = NoiseFlag = false;
+
+	ros::Rate pub_rate(100);
+
+  	ros::Time next_pub_time = ros::Time::now();
+
+	timeElapsed = 0;
+
+	while(nh_.ok())
+	{
+		ros::Time tnow = ros::Time::now();
+		/*
+		if (AF && AT == 2)
+		{
+		timeElapsed = timeElapsed + 0.01;
+		}
+		else timeElapsed = 0;
+		*/
+
+		s1.header.stamp = 
+		s2.header.stamp = 
+		s3.header.stamp = 
+		ground_truth.header.stamp = tnow;
+
+
+		if (attack_sensor1.x)
+		{
+			s1 = add_attack(attack_sensor1.y, attack_sensor1.z);
+		}
+		if (attack_sensor2.x)
+		{
+			s2 = add_attack(attack_sensor2.y, attack_sensor2.z);
+		}
+		if (attack_sensor3.x)
+		{
+			s3 = add_attack(attack_sensor3.y, attack_sensor3.z);
+		}
+
+		// publish
+		state_pub.publish(ground_truth);
+		sensor1_pub.publish(s1);
+		sensor2_pub.publish(s2);
+		sensor3_pub.publish(s3);
+
+		// sleep
+		pub_rate.sleep();
+		ros::spinOnce();	
+	}	
+
+	return 0;
+}
+
+// add noise function
+void add_noise()
+{
+  //srand(time(NULL));
+
+  //ROS_INFO("Adding Noise");
+  // generate gaussian noise
+  std::time_t now = std::time(0);
+  boost::mt19937 rng(now); 
+  boost::normal_distribution<> nd(0.0, 0.3);
+
+  boost::variate_generator<boost::mt19937&, 
+                           boost::normal_distribution<> > var_nor(rng, nd);
+ 
+  // position
+  ground_truth.pose.pose.position.x = ground_truth.pose.pose.position.x + ((double) var_nor())* 1e-2;
+  ground_truth.pose.pose.position.y = ground_truth.pose.pose.position.y + ((double) var_nor()) * 1e-2;
+  ground_truth.pose.pose.position.z = ground_truth.pose.pose.position.z + ((double) var_nor()) * 1e-2;
+
+  // orientation
+  //ground_truth.pose.pose.orientation = odomPtr->pose.pose.orientation;
+
+  // linear velocity
+  ground_truth.twist.twist.linear.x = ground_truth.twist.twist.linear.x + ((double) var_nor()) * 1e-1;
+  ground_truth.twist.twist.linear.y = ground_truth.twist.twist.linear.y + ((double) var_nor()) * 1e-1;
+  ground_truth.twist.twist.linear.z = ground_truth.twist.twist.linear.z + ((double) var_nor()) * 1e-1;
+
+  // angular velocity
+  ground_truth.twist.twist.angular.x = ground_truth.twist.twist.angular.x + ((double) var_nor()) * 1e-1;
+  ground_truth.twist.twist.angular.y = ground_truth.twist.twist.angular.y + ((double) var_nor()) * 1e-1;
+  ground_truth.twist.twist.angular.z = ground_truth.twist.twist.angular.z + ((double) var_nor()) * 1e-1;
+}
+
+// add attack function
+nav_msgs::Odometry add_attack(const int AttackAxes, const int AttackType)
+{
+	nav_msgs::Odometry attack_odom = ground_truth;
+	// position
+	switch (AttackAxes)
+	{
+		case 1: // x axes
+		{
+			attack_odom.pose.pose.position.x = ground_truth.pose.pose.position.x + AttackType;
+			break;
+		}
+		case 2: // y axes
+		{
+			attack_odom.pose.pose.position.y = ground_truth.pose.pose.position.y + AttackType;
+			break;
+		}
+		case 3: // z axes
+		{
+			break;
+		}
+	}
+
+	return attack_odom;
+}

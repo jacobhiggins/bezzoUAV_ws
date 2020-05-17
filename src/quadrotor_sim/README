@@ -1,0 +1,32 @@
+Quadrotor Simulator
+
+Date: 01-09-2015
+
+
+cd duyanwei/quadrotor_ws
+
+source ./devel/setup.bash
+
+
+# IRIS Quadrotor Simulator
+
+roslaunch iris_simulator_pk iris_so3.launch 
+
+roslaunch iris_simulator_pk iris_linear.launch
+
+roslaunch iris_simulator_pk trpySO3Control.launch
+
+roslaunch iris_simulator_pk velSO3Control.launch
+
+
+# ARDrone Simulator
+
+roslaunch ardrone_simulator_pk ardrone_so3.launch
+ 
+
+
+# ROMDP Package
+
+roslaunch cmd_romdp_pk iris.launch
+
+roslaunch cmd_romdp_pk ardrone.launch

@@ -1,0 +1,166 @@
+#include <ros/ros.h>
+#include <nav_msgs/Odometry.h>
+#include <nav_msgs/Path.h>
+#include <tf/transform_broadcaster.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/Point.h>
+#include <quadrotor_msgs/PositionCommand.h>
+#include "mesh_vis.h"
+
+static std::string mesh_resource;
+static ros::Publisher pub_vis;
+static visualization_msgs::Marker marker_quad_1, marker_quad_2, marker_quad_3;
+static visualization_msgs::Marker obst_1, obst_2;
+static visualization_msgs::Marker marker_tg, marker_path, marker_trail;
+static MeshVis vis_quad_1, vis_tg, vis_path, vis_trail;
+static ros::Time current_time, last_time;
+static geometry_msgs::Point old_pos;
+void marker_init();
+double color_r, color_g, color_b, color_a;
+
+
+// odometry callback function
+void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
+{
+  // tf 
+  static tf::TransformBroadcaster br;
+  tf::Transform transform;
+  transform.setOrigin( tf::Vector3(msg->pose.pose.position.x,
+                                   msg->pose.pose.position.y, 
+                                   msg->pose.pose.position.z));
+  tf::Quaternion q =
+  tf::Quaternion(msg->pose.pose.orientation.x, 
+               msg->pose.pose.orientation.y,
+               msg->pose.pose.orientation.z,
+               msg->pose.pose.orientation.w);
+  transform.setRotation(q);
+  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "Body"));
+
+  // quad
+  vis_quad_1.setHeader(msg->header);
+  vis_quad_1.setPos(msg->pose.pose.position);
+  vis_quad_1.setOrientation(msg->pose.pose.orientation);
+//ROS_INFO("odom x: %f", msg->pose.pose.orientation.x); 
+//ROS_INFO("odom y: %f", msg->pose.pose.orientation.y);
+//ROS_INFO("odom z: %f", msg->pose.pose.orientation.z);
+//ROS_INFO("odom w: %f", msg->pose.pose.orientation.w);  
+ 
+  // target
+  marker_tg.header.frame_id = msg->header.frame_id;
+  marker_tg.header.stamp = ros::Time::now();
+
+  // trail
+  marker_trail.header.frame_id = msg->header.frame_id;
+  marker_trail.header.stamp = ros::Time::now();
+
+  // path
+  marker_path.header.frame_id = msg->header.frame_id;
+  marker_path.header.stamp = ros::Time::now();
+  current_time = ros::Time::now();
+  if ((current_time - last_time).toSec() > 0.1)
+  {
+    last_time = current_time;
+    marker_path.points.push_back(msg->pose.pose.position);
+  }
+
+
+  // publish  markers
+  pub_vis.publish(vis_quad_1.getMarker());  // odometry
+  pub_vis.publish(marker_path);             // path
+  pub_vis.publish(marker_tg);               // target
+  pub_vis.publish(marker_trail);            // trail
+
+}
+
+void target_callback(const geometry_msgs::PointConstPtr &msg)
+{
+  geometry_msgs::Point tg;
+  tg.x = msg->x; tg.y = msg->y; tg.z = msg->z;
+  bool flag = (old_pos.x == tg.x) && (old_pos.y == tg.y) && (old_pos.z == tg.z);
+  if (!flag)
+  {
+    marker_tg.points.push_back(tg);
+    marker_trail.points.push_back(tg);
+    old_pos = tg;
+  }
+
+  if (tg.z - 0.0 < 0.3)
+  {
+    marker_init();
+  }
+}
+
+// Initialize Marker
+void marker_init()
+{
+  current_time = ros::Time::now();
+  last_time = ros::Time::now();
+
+  //Quadrotor
+  vis_quad_1.setAction();
+  vis_quad_1.setColor(color_a, color_r, color_g, color_b);
+  vis_quad_1.setScale(1, 1, 1);
+  vis_quad_1.setID(0);
+  vis_quad_1.setType(mesh_resource);
+
+  // target points
+  vis_tg.setAction();
+  vis_tg.setColor(1.0, 0.0, 0.7, 0.0);
+  vis_tg.setScale(0.1, 0.1, 0.0);
+  vis_tg.setID(1);
+  vis_tg.setType(std::string("points"));
+  marker_tg = vis_tg.getMarker();
+
+
+  // path
+  vis_path.setAction();
+  //vis_path.setColor(1.0, 0.6, 0.0, 0.5);
+  vis_path.setColor(1.0, 0.33, 1.0, 1.0);
+  vis_path.setScale(0.02, 0.0, 0.0);
+  vis_path.setID(2);
+  vis_path.setType(std::string("path"));
+  marker_path = vis_path.getMarker();
+
+  // trail
+  vis_trail.setAction();
+  vis_trail.setColor(1.0, 0.0, 0.0, 0.7);
+  vis_trail.setScale(0.02, 0.0, 0.0);
+  vis_trail.setID(3);
+  vis_trail.setType(std::string("line"));
+  marker_trail = vis_trail.getMarker();
+
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "mesh_visualization");
+
+  ros::NodeHandle nh("~");
+
+  nh.param("mesh_resource", mesh_resource, std::string("package://mesh_visualization/meshes/hummingbird.mesh"));
+//std::cout<<mesh_resource<<std::endl;
+  ros::Subscriber odom_sub = nh.subscribe("odom_raw", 10, &odom_callback, ros::TransportHints().tcpNoDelay());
+  ros::Subscriber targetCmd_sub = nh.subscribe("target", 10, &target_callback, ros::TransportHints().tcpNoDelay());
+  pub_vis = nh.advertise<visualization_msgs::Marker>("robot", 10);
+
+
+  color_r = 0.6;
+  color_g = 0.0;
+  color_b = 0.9;
+  color_a = 0.7;
+
+  // get the color value of quadrotor
+  nh.param("color/r", color_r, 0.6);
+  nh.param("color/g", color_g, 0.0);
+  nh.param("color/b", color_b, 0.9);
+  nh.param("color/a", color_a, 0.7);
+
+  // Initialize Marker
+  marker_init();
+
+
+  ros::spin();
+
+  return 0;
+}

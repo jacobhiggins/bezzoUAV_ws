@@ -1,0 +1,34 @@
+#ifndef __MESH_VIS_H
+#define __MESH_VIS_H
+
+
+#include "ros/ros.h"
+#include "nav_msgs/Odometry.h"
+#include "visualization_msgs/Marker.h"
+#include "geometry_msgs/Point.h"
+
+class MeshVis
+{
+  private: 
+    visualization_msgs::Marker marker;
+
+
+  public:
+    MeshVis();
+    ~MeshVis();
+    void setAction(); 
+    void setID(const int ID_);
+    void setType(const std::string &mesh_resource_);
+    void setHeader(const std_msgs::Header &header_);
+    void setPos(const geometry_msgs::Point &point_);
+    void setOrientation(const geometry_msgs::Quaternion &quat_);
+    void setColor(const double a_, const double r_, const double g_, const double b_);
+    void setScale(const double x_, const double y_, const double z_);
+
+    visualization_msgs::Marker getMarker();
+
+
+};
+
+
+#endif

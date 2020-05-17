@@ -1,0 +1,42 @@
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include "quadrotor_msgs/PositionCommand.h"
+#include "geometry_msgs/Twist.h"
+#include "nav_msgs/Odometry.h"
+#include "std_msgs/Empty.h"
+#include <string>
+
+
+ros::Publisher cmd_pub;
+ros::Publisher tg_pub;
+
+
+// position command 
+quadrotor_msgs::PositionCommand pos_cmd;
+
+// odom variable
+nav_msgs::Odometry odom_msg;
+
+
+// parameters
+float threshold;
+int count;
+int max_size;
+bool is_posCb_flag;
+bool isGoalReached;
+bool isTookoff;
+double waypts[10][3];
+
+void setNewTarget();
+void resetEverything();
+		
+
+
+// define waypts variable
+// rectangle
+const double waypts_1[4][3] = {{2, 0, 1}, {2, 2, 1}, {0, 2, 1}, {0, 0, 1}};
+// house
+const double waypts_2[10][3] = {{-1, 0, 1}, {1, 0, 1}, {-1, 2, 1}, {1, 2, 1},
+                                {0, 3, 1}, {-1,2,1}, {-1,  0, 1}, {1, 2, 1},
+                                {1, 0,  1}, {0, 0, 1}};
+

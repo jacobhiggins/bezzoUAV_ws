@@ -1,0 +1,267 @@
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include "geometry_msgs/Point.h"
+#include "geometry_msgs/Vector3.h"
+#include "geometry_msgs/Pose.h"
+#include "geometry_msgs/Twist.h"
+#include "geometry_msgs/Quaternion.h"
+#include "sensor_msgs/Imu.h"
+#include "nav_msgs/Odometry.h"
+#include <eigen3/Eigen/Dense>
+#include "attackNode.h"
+
+#include "boost/random.hpp"
+#include "boost/random/normal_distribution.hpp"
+
+AttackNode::AttackNode()
+{
+  odom_sub = nh_.subscribe("odom_raw", 100, &AttackNode::odomCb, this);
+  imu_sub = nh_.subscribe("imu", 100, &AttackNode::imuCb, this);
+
+  state_pub = nh_.advertise<nav_msgs::Odometry>("odom", 100);
+  sensor1_pub = nh_.advertise<nav_msgs::Odometry>("sensor1", 100);
+  sensor2_pub = nh_.advertise<nav_msgs::Odometry>("sensor2", 100);
+  sensor3_pub = nh_.advertise<nav_msgs::Odometry>("sensor3", 100);
+
+  // *******************************************************************************
+  // EKF Initialize
+  /*X_t << 0,0,0,0,0,0,0,0,0,0,0,0;
+  X_t_1 = X_t;
+  Z_t << 0,0,0,0,0,0,0,0,0,0,0,0;
+  Eigen::VectorXd vec_q(12), vec_r(12), vec_p(12);
+  vec_q << 0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01;
+  vec_r << 0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01;
+  vec_p << 0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005;
+  Q = vec_q.asDiagonal();
+  R = vec_r.asDiagonal();
+  P = vec_p.asDiagonal();
+
+  //A = 
+  C = Eigen::MatrixXd::Identity(12, 12);
+  // END
+  // ******************************************************************************
+  */
+
+}
+
+
+AttackNode::~AttackNode()
+{
+}
+
+// odom callback function
+void AttackNode::odomCb(const nav_msgs::Odometry odomPtr)
+{
+  state_final = odomPtr;
+  s1 = odomPtr;
+  s2 = odomPtr;
+  s3 = odomPtr;
+
+  // create sensor measurements
+  if (NF)
+  //if (false)
+  {
+    add_noise(odomPtr);
+    //s1 = add_noise(odomPtr);
+    //s2 = add_noise(odomPtr);
+    //s3 = add_noise(odomPtr);
+    // attack
+    if (AF)
+    {  
+      //add_attack(odomPtr);
+    }
+    
+    // calculate odom
+    calculate_odom();
+  }
+
+  //if (odomPtr.pose.pose.position.z >= 1.0) ROS_INFO("Goal Reached!");
+  // publish odom
+ // publish_odom();
+  
+
+}
+
+// imu callback function
+void AttackNode::imuCb(const sensor_msgs::ImuConstPtr &imuPtr)
+{
+}
+
+// add noise function
+void AttackNode::add_noise(const nav_msgs::Odometry odomPtr)
+{
+  //srand(time(NULL));
+
+  // define variable 
+  geometry_msgs::Point point_msg = pos(odomPtr.pose.pose);
+  geometry_msgs::Quaternion quat_msg = quat(odomPtr.pose.pose);
+  geometry_msgs::Vector3 vel_msg = vel(odomPtr.twist.twist);
+  geometry_msgs::Vector3 ang_msg = ang(odomPtr.twist.twist);
+  //nav_msgs::Odometry state = odomPtr;
+
+
+  // generate gaussian noise
+  srand(time(0));
+  std::time_t now = std::time(0);
+  boost::mt19937 rng(now); 
+  boost::normal_distribution<> nd(0.0, 0.3);
+
+  boost::variate_generator<boost::mt19937&, 
+                           boost::normal_distribution<> > var_nor(rng, nd);
+ // std::cout<<var_nor()<<std::endl;
+  // position
+  s1.pose.pose.position.x = point_msg.x + ((double) var_nor())* 1e-1;
+  s1.pose.pose.position.y = point_msg.y + ((double) var_nor()) * 1e-1;
+  s1.pose.pose.position.z = point_msg.z + ((double) var_nor()) * 1e-1;
+  s2.pose.pose.position.x = point_msg.x + ((double) var_nor())* 1e-1;
+  s2.pose.pose.position.y = point_msg.y + ((double) var_nor()) * 1e-1;
+  s2.pose.pose.position.z = point_msg.z + ((double) var_nor()) * 1e-1;
+  s3.pose.pose.position.x = point_msg.x + ((double) var_nor())* 1e-1;
+  s3.pose.pose.position.y = point_msg.y + ((double) var_nor()) * 1e-1;
+  s3.pose.pose.position.z = point_msg.z + ((double) var_nor()) * 1e-1;
+
+  // linear velocity
+  s1.twist.twist.linear.x = vel_msg.x + ((double) var_nor()) * 1e-1;
+  s1.twist.twist.linear.y = vel_msg.y + ((double) var_nor()) * 1e-1;
+  s1.twist.twist.linear.z = vel_msg.z + ((double) var_nor()) * 1e-1;
+  s2.twist.twist.linear.x = vel_msg.x + ((double) var_nor()) * 1e-1;
+  s2.twist.twist.linear.y = vel_msg.y + ((double) var_nor()) * 1e-1;
+  s2.twist.twist.linear.z = vel_msg.z + ((double) var_nor()) * 1e-1;
+  s3.twist.twist.linear.x = vel_msg.x + ((double) var_nor()) * 1e-1;
+  s3.twist.twist.linear.y = vel_msg.y + ((double) var_nor()) * 1e-1;
+  s3.twist.twist.linear.z = vel_msg.z + ((double) var_nor()) * 1e-1;
+
+  // angular velocity
+  s1.twist.twist.angular.x = ang_msg.x + ((double) var_nor()) * 1e-1;
+  s1.twist.twist.angular.y = ang_msg.y + ((double) var_nor()) * 1e-1;
+  s1.twist.twist.angular.z = ang_msg.z + ((double) var_nor()) * 1e-1;
+  s2.twist.twist.angular.x = ang_msg.x + ((double) var_nor()) * 1e-1;
+  s2.twist.twist.angular.y = ang_msg.y + ((double) var_nor()) * 1e-1;
+  s2.twist.twist.angular.z = ang_msg.z + ((double) var_nor()) * 1e-1;
+  s3.twist.twist.angular.x = ang_msg.x + ((double) var_nor()) * 1e-1;
+  s3.twist.twist.angular.y = ang_msg.y + ((double) var_nor()) * 1e-1;
+  s3.twist.twist.angular.z = ang_msg.z + ((double) var_nor()) * 1e-1;
+
+}
+
+
+// add attack function
+void AttackNode::add_attack(const nav_msgs::Odometry odomPtr)
+{
+  // add attack signal
+  // position
+  switch (AT)
+  {
+    case 1:
+      {
+        s1.pose.pose.position.x = s1.pose.pose.position.x + 3;
+        s1.pose.pose.position.y = s1.pose.pose.position.y + 3;
+      }
+      break;
+    case 2:
+      {
+        s1.pose.pose.position.x = s1.pose.pose.position.x - 6e-1*timeElapsed;
+        s1.pose.pose.position.y = s1.pose.pose.position.y - 6e-1*timeElapsed;
+      }
+      break;
+
+  }
+}
+
+void AttackNode::calculate_odom()
+{
+  // calculate odom
+  geometry_msgs::Point pos_s1, pos_s2, pos_s3;
+  geometry_msgs::Vector3 vel_s1, vel_s2, vel_s3;
+  geometry_msgs::Vector3 ang_s1, ang_s2, ang_s3;
+
+  pos_s1 = pos(s1.pose.pose);
+  pos_s2 = pos(s2.pose.pose);
+  pos_s3 = pos(s3.pose.pose);
+  vel_s1 = vel(s1.twist.twist);
+  vel_s2 = vel(s2.twist.twist);
+  vel_s3 = vel(s3.twist.twist);
+  ang_s1 = ang(s1.twist.twist);
+  ang_s2 = ang(s2.twist.twist);
+  ang_s3 = ang(s3.twist.twist);
+
+  state_final.pose.pose.position.x  = (pos_s1.x + pos_s2.x + pos_s3.x) / 3.0;
+  state_final.pose.pose.position.y  = (pos_s1.y + pos_s2.y + pos_s3.y) / 3.0;
+  state_final.pose.pose.position.z  = (pos_s1.z + pos_s2.z + pos_s3.z) / 3.0;
+  state_final.twist.twist.linear.x  = (vel_s1.x + vel_s2.x + vel_s3.x) / 3.0;
+  state_final.twist.twist.linear.y  = (vel_s1.y + vel_s2.y + vel_s3.y) / 3.0;
+  state_final.twist.twist.linear.z  = (vel_s1.z + vel_s2.z + vel_s3.z) / 3.0;
+  state_final.twist.twist.angular.x = (ang_s1.x + ang_s2.x + ang_s3.x) / 3.0;
+  state_final.twist.twist.angular.y = (ang_s1.y + ang_s2.y + ang_s3.y) / 3.0;
+  state_final.twist.twist.angular.z = (ang_s1.z + ang_s2.z + ang_s3.z) / 3.0;
+}
+
+geometry_msgs::Point pos(const geometry_msgs::Pose pose_msg)
+{
+  return pose_msg.position;
+}
+
+geometry_msgs::Quaternion quat(const geometry_msgs::Pose quat_msg)
+{
+  return quat_msg.orientation;
+}
+
+geometry_msgs::Vector3 vel(const geometry_msgs::Twist vel_msg)
+{
+  return vel_msg.linear;
+}
+
+geometry_msgs::Vector3 ang(const geometry_msgs::Twist ang_msg)
+{
+  return ang_msg.angular;
+}
+
+// publish odom function
+void AttackNode::publish_odom()
+{
+   state_pub.publish(state_final); 
+}
+
+// main loop
+void AttackNode::Loop()
+{
+  ros::Rate pub_rate(100);
+
+  ros::Time next_pub_time = ros::Time::now();
+
+ // nh_.param("AF", AF, true);
+  //nh_.param("AT", AT, 1);
+  timeElapsed = 0;
+  
+  while(nh_.ok())
+  {
+    ros::spinOnce();
+
+    ros::Time tnow = ros::Time::now();
+    
+    // private parameters
+    ros::param::get("~AttackFlag", AF);
+    ros::param::get("~AttackType", AT);
+    ros::param::get("~NoiseFlag", NF);
+
+    if (AF && AT == 2)
+    {
+      timeElapsed = timeElapsed + 0.01;
+    }
+    else timeElapsed = 0;
+
+    s1.header.stamp = tnow;
+    s2.header.stamp = tnow;
+    s3.header.stamp = tnow;
+    state_final.header.stamp = tnow;
+    // publish
+    sensor1_pub.publish(s1);
+    sensor2_pub.publish(s2);
+    sensor3_pub.publish(s3);
+    state_pub.publish(state_final); 
+
+    // sleep
+    pub_rate.sleep();
+  }
+}
+

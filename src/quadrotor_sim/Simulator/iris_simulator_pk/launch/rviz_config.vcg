@@ -1,0 +1,49 @@
+Axes.Enabled=1
+Axes.Length=1
+Axes.Radius=0.05
+Axes.Reference\ Frame=<Fixed Frame>
+Background\ ColorB=0
+Background\ ColorG=0
+Background\ ColorR=0
+Camera\ Config=0.340399 4.8804 7.8095 -0.363911 0.590583 0.222937
+Camera\ Type=rviz::OrbitViewController
+Fixed\ Frame=/simulator
+Grid.Alpha=0.5
+Grid.Cell\ Size=1
+Grid.ColorB=0.5
+Grid.ColorG=0.5
+Grid.ColorR=0.5
+Grid.Enabled=1
+Grid.Line\ Style=0
+Grid.Line\ Width=0.03
+Grid.Normal\ Cell\ Count=0
+Grid.OffsetX=0
+Grid.OffsetY=0
+Grid.OffsetZ=0
+Grid.Plane=0
+Grid.Plane\ Cell\ Count=10
+Grid.Reference\ Frame=<Fixed Frame>
+Marker.Enabled=1
+Marker.Marker\ Topic=/mesh_visualization/robot
+Marker.Queue\ Size=3
+Marker.mesh_visualization=1
+Property\ Grid\ Splitter=641,181
+Property\ Grid\ State=expanded=.Global Options;splitterratio=0.5
+QMainWindow=000000ff00000000fd00000003000000000000011d0000038cfc0200000002fb000000100044006900730070006c006100790073010000003c0000038c000000ec00fffffffb0000000a0049006d00610067006500000002fc000000cc000000000000000000000001000001330000038cfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730000000038000000cd0000006400fffffffb0000000a00560069006500770073000000003c0000038c000000c000fffffffb0000001200530065006c0065006300740069006f006e0000000261000000e80000006400ffffff00000003000005000000003ffc0100000001fb0000000800540069006d00650000000000000006400000022a00ffffff000003dd0000038c00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+Target\ Frame=<Fixed Frame>
+Tool\ 2D\ Nav\ GoalTopic=/goal
+Tool\ 2D\ Pose\ EstimateTopic=/trigger
+[Display0]
+ClassName=rviz::AxesDisplay
+Name=Axes
+[Display1]
+ClassName=rviz::GridDisplay
+Name=Grid
+[Display2]
+ClassName=rviz::MarkerDisplay
+Name=Marker
+[Window]
+Height=997
+Width=1280
+X=30
+Y=-160

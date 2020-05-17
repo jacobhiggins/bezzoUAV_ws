@@ -1,0 +1,45 @@
+#include "model.h"
+#include <eigen3/Eigen/Dense>
+
+namespace ARMDP
+{
+	Model::Model
+	{
+
+	}
+
+	Model::~Model
+	{
+
+	}
+
+	void Model::setNumOfState(const int M_)
+	{
+		M = M_;
+	}
+	const int Model::getNumOfState()
+	{
+		return M;
+	}
+
+	void Model::setNumOfAction(const int N_)
+	{
+		N = N_;
+	}
+	const int Model::getNumOfAction()
+	{
+		return N;
+	}
+	
+	void Model::setDiscount(const double e_)
+	{
+		gamma = e_;
+	}
+	const double Model::getDiscount()
+	{
+		return gamma;
+	}
+
+
+
+}

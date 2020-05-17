@@ -1,0 +1,309 @@
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include "geometry_msgs/Twist.h"
+#include "nav_msgs/Odometry.h"
+#include "visualization_msgs/Marker.h"
+#include <math.h> 
+
+using namespace std;
+
+class Rec{ 
+
+public:
+    double t, b, l, r;
+
+    Rec(double top, double bottom, double right, double left){
+        t = top;
+	b = bottom;
+	l = left;
+	r = right;
+    }
+
+};
+
+
+class SFNode{
+
+private:
+    ros::Subscriber s1_sub;
+    ros::Subscriber s2_sub;
+    ros::Subscriber s3_sub;
+
+    ros::Publisher pub;
+
+    ros::NodeHandle nh_;
+
+    nav_msgs::Odometry s1, s2, s3, out;
+    bool s1rec, s2rec, s3rec;
+
+    double s1Lim, s2Lim, s3Lim;
+
+    int numSensors;
+
+    // modified by Yanwei 
+    // For visualization
+    ros::Publisher vis_pub;
+    visualization_msgs::Marker bound_marker;
+    ros::Subscriber odomRaw_sub;
+    geometry_msgs::Point odom_raw;
+
+
+public:
+
+    void s1Cb(const nav_msgs::Odometry odomPtr){
+
+        s1 = odomPtr;
+	s1rec = true;
+	
+	if(s1rec && s2rec && s3rec){
+	    publish_sensor_fusion();
+	}
+    }
+
+    void s2Cb(const nav_msgs::Odometry odomPtr){
+        s2 = odomPtr;
+	s2rec = true;
+	
+	if(s1rec && s2rec && s3rec){
+	    publish_sensor_fusion();
+	}
+    }
+
+    void s3Cb(const nav_msgs::Odometry odomPtr){
+        s3 = odomPtr;
+	s3rec = true;
+
+	if(s1rec && s2rec && s3rec){
+	    publish_sensor_fusion();
+	}
+    }
+
+    void odomRawCb(const nav_msgs::Odometry odomPtr)
+    {
+       odom_raw.z = odomPtr.pose.pose.position.z;
+    }
+
+    void publish_sensor_fusion(){
+        bool next[numSensors];
+
+	for(int i = 0; i < ceil((double) numSensors/2); i++){
+   	    next[i] = true;
+	}
+
+	for(int i = ceil((double) numSensors/2); i < numSensors; i++){
+  	    next[i] = false;
+	}
+
+	//cout << s1.pose.pose.position.x << ", " << s1.pose.pose.position.y << endl;
+	//cout << s2.pose.pose.position.x << ", " << s2.pose.pose.position.y << endl;
+	//cout << s3.pose.pose.position.x << ", " << s3.pose.pose.position.y << endl << endl;
+
+	vector<Rec> recs;
+	recs.push_back(Rec(s1.pose.pose.position.y + s1Lim, s1.pose.pose.position.y - s1Lim, s1.pose.pose.position.x + s1Lim, s1.pose.pose.position.x - s1Lim));
+	recs.push_back(Rec(s2.pose.pose.position.y + s2Lim, s2.pose.pose.position.y - s2Lim, s2.pose.pose.position.x + s2Lim, s2.pose.pose.position.x - s2Lim));
+	recs.push_back(Rec(s3.pose.pose.position.y + s3Lim, s3.pose.pose.position.y - s3Lim, s3.pose.pose.position.x + s3Lim, s3.pose.pose.position.x - s3Lim));
+
+	Rec curRec = Rec(0,0,0,0);
+
+	bool first = true;
+	
+	bool last = false;
+	while(true){
+
+	    vector<Rec> cur;
+	    for(int i = 0; i < numSensors; i++){
+	        if(next[i])  cur.push_back(recs[i]);
+	    }
+
+	    double intT = cur[0].t;
+	    double intB = cur[0].b;
+	    double intR = cur[0].r;
+	    double intL = cur[0].l;
+		
+	    for(int i = 0; i < ceil((double) numSensors/2); i++){
+	        if(cur[i].t < intT) intT = cur[i].t;
+		if(cur[i].b > intB) intB = cur[i].b;
+		if(cur[i].r < intR) intR = cur[i].r;
+		if(cur[i].l > intL) intL = cur[i].l;
+	    }
+	    
+	    //Non-empty intersection, take enclosing rectangle with previous
+	    //intersection
+	    if(intT >= intB && intR >= intL){
+	        if(first){
+		    curRec = Rec(intT, intB, intR, intL);
+		    first = false;
+		}
+
+	        else{
+		    curRec = Rec(max(curRec.t, intT), min(curRec.b, intB), max(curRec.r, intR), min(curRec.l, intL));
+		}
+	    }
+	    
+
+	    if(last) break;
+
+	    nextCombination(next, numSensors);
+
+	    if(isLast(next, numSensors)) last = true; 
+
+	}
+	
+	if(!first){
+	    out.pose.pose.orientation.w = curRec.t;
+	    out.pose.pose.orientation.x = curRec.b;
+	    out.pose.pose.orientation.y = curRec.r;
+	    out.pose.pose.orientation.z = curRec.l;
+
+            //**************** modified by Yanwei *********************//
+	    // fused odometry
+	    out.pose.pose.position.x = (curRec.r + curRec.l) / 2.0;
+	    out.pose.pose.position.y = (curRec.t + curRec.b) / 2.0;
+	    out.pose.pose.position.z = (s1.pose.pose.position.z + s2.pose.pose.position.z + s3.pose.pose.position.z) /3.0;
+	    out.pose.pose.orientation = s1.pose.pose.orientation;
+	    out.twist.twist = s1.twist.twist;
+
+	    // visualization
+	    geometry_msgs::Point pt1, pt2, pt3, pt4;
+	    pt1.z = pt2.z = pt3.z = pt4.z = odom_raw.z;
+            pt1.x = curRec.r;pt1.y = curRec.b;
+            pt2.x = curRec.r;pt2.y = curRec.t;
+            pt3.x = curRec.l;pt3.y = curRec.t;
+            pt4.x = curRec.l;pt4.y = curRec.b; 
+	    bound_marker.points.push_back(pt1);
+	    bound_marker.points.push_back(pt2);
+	    bound_marker.points.push_back(pt3);
+	    bound_marker.points.push_back(pt4);
+	    bound_marker.points.push_back(pt1);
+	    vis_pub.publish(bound_marker);
+	    bound_marker.points.clear();
+	    //********************* end *******************************//
+	    pub.publish(out);
+	}
+	
+
+        s1rec = false;
+	s2rec = false;
+	s3rec = false;
+    }
+
+    void nextCombination(bool indices[], int numSensors){
+
+        int lastTrue = -1;
+		
+	for(int i = 0; i < numSensors; i++){			
+	    
+	    if(!indices[i] && lastTrue == -1){				
+	        continue;
+	    }
+	    
+	    if(!indices[i] && lastTrue >= 0){
+	      int isLast = isOnlyTrue(indices, i + 1, numSensors);
+				
+		if(isLast == -1 && i < numSensors - 1){
+		    continue;
+		}
+				
+		indices[lastTrue] = false;
+		indices[lastTrue + 1] = true;
+				
+		for(int j = lastTrue + 2; j < numSensors && j < lastTrue + 2 + isLast; j++){
+		    indices[j] = true;
+		}
+				
+		for(int j = lastTrue + 2 + isLast; isLast > 0 && j < numSensors; j++){
+		    indices[j] = false;
+		}
+				
+		break;
+				
+	    }
+				
+	    lastTrue = i;
+			
+	}
+    }
+		
+    int isOnlyTrue(bool indices[], int index, int numSensors){
+        int count = 0;
+			
+	for(int i = index; i < numSensors; i++){
+	    if(!indices[i]) return -1;
+				
+	    count ++;
+	}
+	
+	return count;
+    }
+
+    bool isLast(bool indices[], int numSensors){
+        for(int i = numSensors - 1; i >= numSensors - ceil((double) numSensors/2); i--){
+  	    if(!indices[i]) return false;
+	}
+
+	return true;
+    }
+
+    SFNode()
+    {
+        s1_sub = nh_.subscribe("sensor1", 100, &SFNode::s1Cb, this);
+        s2_sub = nh_.subscribe("sensor2", 100, &SFNode::s2Cb, this);
+        s3_sub = nh_.subscribe("sensor3", 100, &SFNode::s3Cb, this);
+
+
+	s1rec = false;
+	s2rec = false;
+	s3rec = false;
+
+	s1Lim = 0.2;
+	s2Lim = 0.2;
+	s3Lim = 0.2;
+
+	numSensors = 3;
+
+	pub = nh_.advertise<nav_msgs::Odometry>("sf", 100);
+
+
+        //******************* modified by Yanwei *******************//
+        // for visualization
+        odomRaw_sub = nh_.subscribe("odom_raw", 100, &SFNode::odomRawCb, this);
+	vis_pub = nh_.advertise<visualization_msgs::Marker>("sf_bound", 1);
+    	bound_marker.header.frame_id = "simulator";
+    	bound_marker.header.stamp = ros::Time();
+    	bound_marker.ns = "boundary";
+        bound_marker.id = 100;
+    	bound_marker.type = visualization_msgs::Marker::LINE_STRIP;
+    	bound_marker.action = visualization_msgs::Marker::ADD;
+    	bound_marker.scale.x = 0.02;
+    	bound_marker.color.a = 1.0;
+    	bound_marker.color.r = 1.0;
+    	bound_marker.color.g = 1.0;
+    	bound_marker.color.b = 1.0;
+
+        //******************** end *********************************//
+	
+    }
+
+    void loop(){ 
+        ros::Rate pub_rate(100);
+  
+	while(nh_.ok()){
+	    ros::spinOnce();
+	    
+	    // sleep
+	    pub_rate.sleep();
+	}
+    }
+};
+
+
+int main(int argc, char **argv){
+    ros::init(argc, argv, "sf_node");
+
+    SFNode sf_node;
+
+    sf_node.loop();
+
+    return 0;
+
+}

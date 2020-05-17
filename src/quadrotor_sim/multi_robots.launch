@@ -1,0 +1,16 @@
+<launch>
+
+  <rosparam param="iris_start_position">[0.0, -3.0, 0.5]</rosparam>
+  <rosparam param="ardrone_start_position">[0.0, 3.0, 0.5]</rosparam>
+
+  <include file="$(find iris_simulator_pk)/launch/SO3/iris_so3.launch"/>
+  <include file="$(find ardrone_simulator_pk)/launch/ardrone.launch"/>
+  <include file="$(find jackal_gazebo)/launch/jackal_world.launch"/>
+
+  <node pkg="rviz"
+        type="rviz"
+        name="rviz"
+  args="-d $(find cmd_romdp_pk)/../multi_robots.rviz">
+  </node>
+
+</launch>

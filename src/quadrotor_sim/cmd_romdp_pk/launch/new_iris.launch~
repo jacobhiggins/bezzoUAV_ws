@@ -1,0 +1,51 @@
+<launch>
+ 
+  <!-- start position -->
+  <rosparam param="start_position">[0.0, 1.0, 0.0]</rosparam>
+
+  <include file="$(find iris_simulator_pk)/launch/iris.launch">
+  </include>
+
+  <node pkg="cmd_romdp_pk"
+    type="cmd_romdp_node"
+    name="cmd_romdp_node"
+    output="screen">
+    <param name="~time"   value="5.0"/>
+    <remap from="odom" to="iris_odom"/>
+    <remap from="position_cmd" to="iris_position_cmd"/>
+    <remap from="target" to="iris_target"/>
+    <remap from="quad_cell" to="quad_cell"/>
+    <remap from="attack_cell" to="attack_cell"/>
+  </node>
+
+  <node pkg="attack_pk"
+    type="attack_romdp_node"
+    name="attack_romdp_node"
+    output="screen">
+    <param name="AttackFlag" value="false"/>
+    <param name="NoiseFlag" value="false"/>
+    <remap from="odom_raw" to="iris_odom_raw"/>
+    <remap from="odom" to="iris_odom"/>
+    <remap from="imu" to="iris_imu"/>
+  </node>
+
+  <node pkg="romdp_pk"
+    type="romdp_node"
+    name="romdp_node"
+    output="screen">
+    <param name="~row"   value="5"/>
+    <param name="~col"   value="5"/>
+    <param name="~matrix_path" value="5cells"/>
+    <remap from="odom" to="iris_odom"/>
+  </node>
+
+  <node pkg="joy"
+    type="joy_node"
+    name="joy_node">
+  </node>
+
+  <node pkg="rviz"
+    type="rviz"
+    name="rviz"
+    args="-d $(find cmd_romdp_pk)/launch/iris_rviz_config.rviz"/>
+</launch>

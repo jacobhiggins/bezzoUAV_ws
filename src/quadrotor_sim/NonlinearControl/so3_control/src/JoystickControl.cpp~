@@ -1,0 +1,102 @@
+#include "ros/ros.h"
+#include "quadrotor_msgs/SO3Command.h"
+#include "sensor_msgs/Joy.h"
+#include "eigen3/Eigen/Geometry"
+
+static ros::Publisher so3_command_pub;
+static quadrotor_msgs::SO3Command so3_command;
+static double scale_f = 20.0;  // thrust scale
+static double scale_rpy = 0.5; // rpy scale
+static double deadband = 0.1;  // deadband
+static bool alt_flag = false;
+static double mass_ = 1.282;
+static double g_ = 9.81;
+void setControlCommand(const double thrust, const double roll, const double pitch, const double yaw);
+
+void JoyMsgCb(const sensor_msgs::JoyConstPtr &joy_msg)
+{
+  double thrust, roll, pitch, yaw;
+  roll   = -joy_msg->axes[3];
+  pitch  = joy_msg->axes[4];
+  thrust = joy_msg->axes[1];
+  yaw    = joy_msg->axes[0];
+
+  // deadband check
+  if (thrust < deadband) thrust = 0.0;
+  if (-deadband < roll && deadband > roll)   roll = 0.0;
+  if (-deadband < pitch && deadband > pitch) pitch = 0.0; 
+  if (-deadband < yaw && deadband > yaw)     yaw = 0.0;
+  
+  // scale joystick input
+  roll = roll * scale_rpy;
+  pitch = pitch * scale_rpy;
+  //yaw = yaw * scale_rpy;
+  yaw = 0;
+  thrust = thrust * scale_f;
+
+  // Altitude hold flag check
+  if (joy_msg->buttons[0] == 1 && thrust > deadband) alt_flag = true;
+  else if (joy_msg->buttons[0] == 1 && thrust < deadband) alt_flag = false;
+
+  setControlCommand(thrust, roll, pitch, yaw);
+}
+
+void setControlCommand(const double thrust, const double roll, const double pitch, const double yaw)
+{
+  // Header time
+  so3_command.header.stamp = ros::Time::now();
+
+  // roll pitch yaw
+  Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
+  Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
+  Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
+  Eigen::Quaterniond orientation = yawAngle * rollAngle * pitchAngle;
+  so3_command.orientation.x = orientation.x();
+  so3_command.orientation.y = orientation.y();
+  so3_command.orientation.z = orientation.z();
+  so3_command.orientation.w = orientation.w(); 
+  
+  // thrust
+  if (alt_flag) so3_command.force.z = mass_ * g_;
+
+  else so3_command.force.z = mass_ * g_;
+  // publish
+  so3_command_pub.publish(so3_command);
+}
+
+
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "JoystickControlNode");
+  ros::NodeHandle nh_;
+  
+  ros::Subscriber joy_sub = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &JoyMsgCb);
+  so3_command_pub = nh_.advertise<quadrotor_msgs::SO3Command>("so3_cmd", 10);
+
+  // SO3_Command Initialization
+  so3_command.header.frame_id = "/quadrotor";  
+  so3_command.kR[0] = 0.5;
+  so3_command.kR[1] = 0.5;
+  so3_command.kR[2] = 0.5;
+  so3_command.kOm[0] = 0.1;
+  so3_command.kOm[1] = 0.1;
+  so3_command.kOm[2] = 0.1;
+/*
+  so3_command.angular.x = roll;
+  so3_command.angular.y = pitch;
+  so3_command.angular.z = yaw;
+  so3_command.aux.current_yaw = 0;
+  so3_command.aux.kf_correction = 0;
+  so3_command.aux.angle_corrections[0] = 0;
+  so3_command.aux.angle_corrections[1] = 0;
+  so3_command.aux.enable_motors = true;
+  so3_command.aux.use_external_yaw = true;
+*/
+
+  ros::spin();
+
+  return 0;
+}
+
+

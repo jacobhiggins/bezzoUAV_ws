@@ -1,0 +1,37 @@
+#ifndef _MODEL_HEADER__
+#define _MODEL_HEADER__
+
+#include <eigen3/Eigen/Dense>
+namespace ARMDP
+{
+	class Model
+	{
+		public:
+			Model();
+			~Model();
+			void setDiscount(const double e_);
+			const double getDiscount();
+			void setNumOfState(const int M_);
+			void setNumOfAction(const int N_);
+			const int getNumOfState();
+			const int getNumOfAction();
+
+		private:
+			int N;  // dimension of states
+			int M;  // dimension of actions
+			double gamma; // discount
+	};
+
+
+	typedef Eigen::Matrix<double, N, 1>  PolicyVec;
+	typedef Eigen::Matrix<int, N, 1> ValueVec;
+
+	struct Policy_and_Value
+	{
+		ValueVec Value;
+		PolicyVec Policy;
+	};
+}
+
+
+#endif

@@ -1,0 +1,53 @@
+<launch>
+  <arg name="mpc"/>
+
+  <node pkg="iris_simulator_pk"
+    type="iris_simulator_so3"
+    name="iris_simulator_so3"
+    output="screen">
+    <param name="rate/odom" value="100.0"/>
+    <remap from="~odom_raw" to="iris_odom_raw"/>
+    <remap from="~imu" to="iris_imu"/>
+    <remap from="~cmd" to="iris_so3_cmd"/>
+  </node>
+
+  <!--node pkg="iris_simulator_pk"
+    type="iris_simulator_mpc"
+    name="iris_simulator_mpc"
+    output="screen"
+    if="$(eval mpc == 'true')">
+    <param name="rate/odom" value="100.0"/>
+    <remap from="~odom_raw" to="iris_odom_raw"/>
+    <remap from="~imu" to="iris_imu"/>
+    <remap from="~cmd" to="iris_so3_cmd"/>
+  </node-->
+
+  <node pkg="so3_control"
+    type="so3_control"
+    name="iris_so3_control"
+    required="true"
+    output="screen">
+    <remap from="~odom" to="iris_odom"/>
+    <remap from="~position_cmd" to="iris_position_cmd"/>
+    <remap from="~motors" to="iris_motors"/>
+    <remap from="~corrections" to="iris_corrections"/>
+    <remap from="~so3_cmd" to="iris_so3_cmd"/>
+    <param name="mass" value="1.282"/>
+    <rosparam param="gains/rot">[0.5, 0.5, 0.5]</rosparam>
+    <rosparam param="gains/ang">[0.1, 0.1, 0.1]</rosparam>
+    <rosparam param="gains/pos">[3, 3, 6]</rosparam>
+    <rosparam param="gains/vel">[3, 3, 5]</rosparam>
+  </node>
+
+  <node pkg="mesh_visualization"
+    type="mesh_visualization"
+    name="iris_mesh_visualization"
+    output="screen">
+    <param name="mesh_resource" value="package://mesh_visualization/meshes/IRIS.STL"/>
+    <remap from="~odom_raw" to="iris_odom_raw"/>
+    <remap from="~target" to="iris_target"/>
+    <remap from="~robot" to="iris_robot"/>
+    <remap from="Body" to="iris_body"/>
+  </node>
+
+</launch>

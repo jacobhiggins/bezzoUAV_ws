@@ -1,0 +1,31 @@
+#ifndef __POSCOMMAND_H
+#define __POSCOMMAND_H
+
+#include "ros/ros.h"
+#include <quadrotor_msgs/PositionCommand.h>
+#include <eigen3/Eigen/Geometry>
+
+class PosCommand
+{
+  private:
+    double maxVel;
+    double threshold;
+    double flytime;
+    Eigen::Vector3d tg_pt;
+    Eigen::Matrix<double, 6, 3> coeff_;
+    Eigen::Matrix<double, 6, 6> t_mat;
+    Eigen::Matrix<double, 6, 1> pos_vec;
+
+  public:
+    PosCommand();
+    ~PosCommand();
+    void set_t_mat(const double t);
+    void set_pos_vec(const double s1, const double s2);
+    void calPath(const Eigen::Vector3d &start_pt, const Eigen::Vector3d &stop_pt);
+    Eigen::Matrix3d getPath(const double current_t);
+
+};
+
+
+
+#endif

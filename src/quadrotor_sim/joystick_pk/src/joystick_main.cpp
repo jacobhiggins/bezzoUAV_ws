@@ -1,0 +1,86 @@
+#include "ros/ros.h"
+#include "std_msgs/Empty.h"
+#include "std_msgs/String.h"
+#include "geometry_msgs/Twist.h"
+#include "sensor_msgs/Joy.h"
+#include "quadrotor_msgs/PositionCommand.h"
+
+
+static ros::Publisher takeoff_pub, land_pub, pos_pub;
+static std_msgs::String traj_1, traj_2;
+static bool AF = false;
+static int AT = 1;
+static double scale = 2.0;
+static double deadband = 0.1;  // deadband
+
+void joystickCb(const sensor_msgs::JoyConstPtr &msg)
+{
+  if (msg->buttons[2] == 1) takeoff_pub.publish(std_msgs::Empty());
+  if (msg->buttons[1] == 1) land_pub.publish(std_msgs::Empty());
+  if (msg->buttons[0] == 1) pos_pub.publish(traj_1);
+  if (msg->buttons[3] == 1) pos_pub.publish(traj_2);
+  if (msg->buttons[5] == 1) 
+  {
+    AF = !AF;
+    if (AF) ROS_INFO("Begin Attack!");
+    else ROS_INFO("Remove Attack!");
+    ros::param::set("/attack_node/AttackFlag", AF);
+  }
+
+  if (msg->buttons[4] == 1) 
+  {
+    if (AT == 2 ) 
+    {
+      AT = 1;
+      ROS_INFO("Constant Attack Singal!");
+    }
+    else
+    {
+      AT = 2;
+      ROS_INFO("Ramp Attack Singal!");
+    }
+    ros::param::set("/attack_node/AttackType", AT);
+  }
+
+  /*// Velocity Command
+  geometry_msgs::Twist vel_msg;
+  double v1, v2, v3, v4;
+
+  v1 = msg->axes[4];
+  v2 = msg->axes[3];
+  v3 = msg->axes[1];
+  v4 = msg->axes[0];
+
+  if (-deadband < v1 && deadband > v1) v1 = 0.0;
+  if (-deadband < v2 && deadband > v2) v2 = 0.0;
+  if (-deadband < v3 && deadband > v3) v3 = 0.0; 
+  if (-deadband < v4 && deadband > v4) v4 = 0.0;
+
+  vel_msg.linear.x = v1 * scale;
+  vel_msg.linear.y = v2 * scale;
+  vel_msg.linear.z = v3 * scale;
+  vel_msg.angular.z = v4 * scale;
+  
+  vel_pub.publish(vel_msg);
+*/
+}
+
+
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "joystick_node");
+  ros::NodeHandle nh_;
+  takeoff_pub = nh_.advertise<std_msgs::Empty>("takeoff", 10);
+  land_pub    = nh_.advertise<std_msgs::Empty>("land", 10);
+  pos_pub     = nh_.advertise<std_msgs::String>("pos", 10);
+
+  ros::Subscriber joy_msgs   = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &joystickCb);
+
+  std::string s1, s2;
+  s1 = "house";s2 = "rectangle";
+  traj_1.data = s1.c_str();
+  traj_2.data = s2.c_str();
+
+  ros::spin();
+}

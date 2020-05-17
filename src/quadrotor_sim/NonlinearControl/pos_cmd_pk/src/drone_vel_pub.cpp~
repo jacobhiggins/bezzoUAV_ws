@@ -1,0 +1,44 @@
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include "quadrotor_msgs/PositionCommand.h"
+#include "geometry_msgs/Twist.h"
+#include "nav_msgs/Odometry.h"
+#include "drone_pos_pub.h"
+#include "std_msgs/Empty.h"
+#include <string>
+
+PosCommand::PosCommand()
+{
+  cmd_pub     = nh_.advertise<quadrotor_msgs::PositionCommand>("position_cmd", 10); 
+  tg_pub      = nh_.advertise<geometry_msgs::Point>("target", 10); 
+  odom_sub    = nh_.subscribe("odom", 10, &PosCommand::odomCb, this);
+  takeoff_sub = nh_.subscribe("takeoff", 10, &PosCommand::takeoffCb, this);
+  land_sub    = nh_.subscribe("land", 10, &PosCommand::landCb, this);
+  pos_sub     = nh_.subscribe("pos", 10, &PosCommand::posCb, this);
+  //vel_sub     = nh_.subscribe("cmd_vel", 10, &PosCommand::velCb, this);
+
+  resetEverything();
+  // define control gains
+  pos_cmd.kx[0] = 3;
+  pos_cmd.kx[1] = 3;
+  pos_cmd.kx[2] = 6;
+  pos_cmd.kv[0] = 3;
+  pos_cmd.kv[1] = 3;
+  pos_cmd.kv[2] = 5;
+
+
+int main(int argc, char **argv)
+{
+
+  ros::Rate pub_rate(10);
+
+  while (nh_.ok())
+  {
+    cmd_pub.publish(pos_cmd);
+    tg_pub.publish(pos_cmd.position);
+    ros::spinOnce();
+    pub_rate.sleep();
+  }
+
+}
+

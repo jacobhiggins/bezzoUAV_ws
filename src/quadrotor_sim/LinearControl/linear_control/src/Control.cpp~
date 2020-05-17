@@ -1,0 +1,110 @@
+#include "Linear_Control.h"
+#include <iostream>
+#include <eigen3/Eigen/Geometry>
+
+LinearControl::LinearControl()
+{
+  mass_ = 1.282;
+  g = 9.81; 
+
+  // Inertia Matrix
+/*double Ixx = 8.7952e-3,   Ixy = 6.39935e-4,     Ixz = 2.5927e-5;
+  double Iyx = 6.39935e-4,   Iyy = 5.14714e-3,     Iyz = 7.203e-6;
+  double Izx = 2.5927e-5, Izy = 7.203e-6,     Izz = 1.3624726e-2;
+*/
+  Ixx = 8.7952e-3;      Ixy = 6.39935e-4;    Ixz = 0;
+  Iyx = 6.39935e-4;     Iyy = 5.14714e-3;    Iyz = 0;
+  Izx = 0;              Izy = 0;             Izz = 1.3624726e-2;
+
+  // set Matrix A
+  A = Eigen::Matrix<double, 12, 12>::Zero();
+  A(0,6) = A(1,7) = A(2,8) = A(3,9) = A(4,10) = A(5,11) = 1;
+
+  // set Matrix B
+  B = Eigen::Matrix<double, 12, 4>::Zero();
+  B(8,0) = 1.0 / mass_;
+  B(11,3) = 1.0 / Ixx;
+  B(9,1) = - Iyy / (Ixy * Ixy - Ixx * Iyy);
+  B(9,2) =  Ixy / (Ixy * Ixy - Ixx * Iyy);
+  B(10,1) = Ixy / (Ixy * Ixy - Ixx * Iyy);
+  B(10,2) = - Ixx / (Ixy * Ixy - Ixx * Iyy);
+
+  // set Matrix Q
+  Q = 10 * Eigen::Matrix<double, 12, 12>::Identity();
+
+  // set Matrix R
+  R = Eigen::Matrix<double, 4, 4>::Identity();
+}
+
+LinearControl::~LQRControl()
+{
+
+}
+
+void LinearControl::setMass(const double mass)
+{
+  mass_ = mass;
+}
+
+void LinearControl::setGravity(const double g)
+{
+  g_ = g;
+}
+
+void LinearControl::setPosition(const Eigen::Vector3d &position)
+{
+  pos_ = position;
+}
+
+void LinearControl::setVelocity(const Eigen::Vector3d &velocity)
+{
+  vel_ = velocity;
+}
+
+void LinearControl::calculateControl(const Eigen::Vector3d &des_pos,
+                                  const Eigen::Vector3d &des_vel,
+                                  const Eigen::Vector3d &des_acc,
+                                  const double des_yaw,
+                                  const double des_yaw_dot,
+                                  const Eigen::Vector3d &kx,
+                                  const Eigen::Vector3d &kv)
+{
+  // set state vector
+  X_vec << des_pos, Eigen::Vector3d(0,0,0), des_vel, Eigen::Vector3d(0,0,0);
+
+  // set Matrix A
+  A(6,3) = g_ * sin(des_yaw);
+  A(6,4) = g_ * cos(des_yaw);
+  A(7,3) = -g_ * cos(des_yaw);
+  A(7,4) = g_ * sin(des_yaw);
+  force_.noalias() = kx.asDiagonal() * (des_pos - pos_) +
+                     kv.asDiagonal() * (des_vel - vel_) +
+                     mass_ * g_ * Eigen::Vector3d(0, 0, 1) +
+                     mass_ * des_acc;
+
+  Eigen::Vector3d b1c, b2c, b3c;
+  Eigen::Vector3d b1d(cos(des_yaw), sin(des_yaw), 0);
+
+  if(force_.norm() > 1e-6)
+    b3c.noalias() = force_.normalized();
+  else
+    b3c.noalias() = Eigen::Vector3d(0, 0, 1);
+
+  b2c.noalias() = b3c.cross(b1d).normalized();
+  b1c.noalias() = b2c.cross(b3c).normalized();
+
+  Eigen::Matrix3d R;
+  R << b1c, b2c, b3c;
+
+  orientation_ = Eigen::Quaterniond(R);
+}
+
+const float LinearControl::getComputedForce(void)
+{
+  return force_;
+}
+
+const Eigen::Quaterniond &LinearControl::getComputedOrientation(void)
+{
+  return orientation_;
+}

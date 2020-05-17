@@ -1,0 +1,69 @@
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include "iris_msgs/PositionCommand.h"
+#include "nav_msgs/Odometry.h"
+#include "drone_path_pub.h"
+#include "std_msgs/Empty.h"
+#include <string>
+#include <math.h>
+#include <eigen3/Eigen/Geometry>
+
+
+PosCommand::PosCommand()
+{
+  maxVel = 0.8;
+  flytime = 4.0;
+  pos_vec = Eigen::Matrix<double, 6, 1>::Zero();
+}
+
+PosCommand::~PosCommand()
+{
+}
+
+void PosCommand::calPath(const Eigen::Vector3d &start_pt, const Eigen::Vector3d &stop_pt)
+{
+  tg_pt = stop_pt;
+  Eigen::Vector3d t_xyz = (stop_pt - start_pt) / maxVel;
+  //flytime = t_xyz.norm();
+  set_t_mat(flytime);
+  for (int i = 0; i < 3; i++)
+  {
+    set_pos_vec(start_pt(i), stop_pt(i));
+    coeff_.col(i) = t_mat.inverse() * pos_vec;
+  }
+}
+
+
+void PosCommand::set_t_mat(const double t)
+{
+  t_mat << 1, 0, 0,          0,                   0,                   0,
+           0, 1, 0,          0,                   0,                   0,
+           0, 0, 2,          0,                   0,                   0, 
+           1, t, pow(t, 2),  pow(t, 3),          pow(t, 4),          pow(t, 5),
+           0, 1, 2*t,        3 * pow(t, 2),      4 * pow(t, 3),      5 * pow(t, 4),
+           0, 0, 2,          6 * t,              12 * pow(t, 2),     20 * pow(t, 3);
+}
+
+void PosCommand::set_pos_vec(const double s1, const double s2)
+{
+  pos_vec(0) = s1;
+  pos_vec(3) = s2;
+}
+
+Eigen::Matrix3d PosCommand::getPath(double current_t)
+{
+  Eigen::Matrix3d pos_mat = Eigen::Matrix3d::Zero(); 
+  if (current_t >= flytime)
+  {
+    pos_mat.row(0) = tg_pt.transpose();
+  }
+  else
+  {
+    set_t_mat(current_t);
+    pos_mat = t_mat.block(3, 0, 3, 6) * coeff_;
+  }
+  return pos_mat;
+}
+
+
+
