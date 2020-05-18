@@ -102,12 +102,12 @@ static void odom_cb(const nav_msgs::Odometry::ConstPtr &odom)
   msg_sent.state[11] = pqr[2] - ref[11];
 
   geometry_msgs::Twist state_msg;
-  state_msg.linear.x = position[0];
-  state_msg.linear.y = position[1];
-  state_msg.linear.z = position[2];
-  state_msg.angular.x = r;
-  state_msg.angular.y = p;
-  state_msg.angular.z = y;
+  state_msg.linear.x = position[0] - ref[0];
+  state_msg.linear.y = position[1] - ref[1];
+  state_msg.linear.z = position[2] - ref[2];
+  state_msg.angular.x = r - ref[3];
+  state_msg.angular.y = p - ref[4];
+  state_msg.angular.z = y - ref[5];
 
 //   ROS_INFO("RPY: (%f,%f,%f)",r,p,y);
   state_pub.publish(state_msg);

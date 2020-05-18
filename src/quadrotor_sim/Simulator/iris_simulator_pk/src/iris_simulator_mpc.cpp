@@ -11,18 +11,7 @@ typedef struct _ControlInput
   double rpm[4];
 } ControlInput;
 
-typedef struct _Command
-{
-  float force[3];
-  float qx, qy, qz, qw;
-  float omg[3];
-  float kR[3];
-  float kOm[3];
-  float kf_correction;
-  float angle_corrections[2];
-} Command;
 
-static Command command;
 geometry_msgs::Twist mpc_cmd;
 static Eigen::Vector3d ext_force, ext_moment;
 void stateToOdomMsg(const IRISSimulator::Quadrotor::State &state, nav_msgs::Odometry &odom);
@@ -73,126 +62,6 @@ static void mpc_cmd_cb(const geometry_msgs::Twist &msg)
 }
 
 
-static ControlInput getControl(const IRISSimulator::Quadrotor &quad, const Command &cmd)
-{
-  const double _kf = quad.getPropellerThrustCoefficient();
-  const double _km = quad.getPropellerMomentCoefficient();
-  const double kf = _kf - cmd.kf_correction;
-  const double km = _km/_kf*kf;
-
-  const double d = quad.getArmLength();
-  const Eigen::Matrix<double, 4, 4> coeff = quad.getTorqueArmLength();
-  /*double l1x, l1y, l2x, l2y, l3x, l3y, l4x, l4y;
-  l1x = coeff(1,0);l1y = -coeff(2,0);
-  l2x = coeff(1,1);l2y = coeff(2,1);
-  l3x = -coeff(1,2);l3y = coeff(2,2);
-  l4x = -coeff(1,3);l4y = -coeff(2,3);
-  */
-  const Eigen::Matrix3f J = quad.getInertia().cast<float>();
-  const float I[3][3] = {{J(0,0), J(0,1), J(0,2)},
-                         {J(1,0), J(1,1), J(1,2)},
-                         {J(2,0), J(2,1), J(2,2)}};
-  const IRISSimulator::Quadrotor::State state = quad.getState();
-
-  // Set External Force and Moment
-  ext_force = state.v.asDiagonal() * state.v * (0.04);
-  ext_moment = state.omega.asDiagonal() * state.omega * (-0.004);
-
-
-  float R11 = state.R(0,0);
-  float R12 = state.R(0,1);
-  float R13 = state.R(0,2);
-  float R21 = state.R(1,0);
-  float R22 = state.R(1,1);
-  float R23 = state.R(1,2);
-  float R31 = state.R(2,0);
-  float R32 = state.R(2,1);
-  float R33 = state.R(2,2);
-
-  float Om1 = state.omega(0);
-  float Om2 = state.omega(1);
-  float Om3 = state.omega(2);
-
-  float Rd11 = cmd.qw*cmd.qw + cmd.qx*cmd.qx - cmd.qy*cmd.qy - cmd.qz*cmd.qz;
-  float Rd12 = 2*(cmd.qx*cmd.qy - cmd.qw*cmd.qz);
-  float Rd13 = 2*(cmd.qx*cmd.qz + cmd.qw*cmd.qy);
-  float Rd21 = 2*(cmd.qx*cmd.qy + cmd.qw*cmd.qz);
-  float Rd22 = cmd.qw*cmd.qw - cmd.qx*cmd.qx + cmd.qy*cmd.qy - cmd.qz*cmd.qz;
-  float Rd23 = 2*(cmd.qy*cmd.qz - cmd.qw*cmd.qx);
-  float Rd31 = 2*(cmd.qx*cmd.qz - cmd.qw*cmd.qy);
-  float Rd32 = 2*(cmd.qy*cmd.qz + cmd.qw*cmd.qx);
-  float Rd33 = cmd.qw*cmd.qw - cmd.qx*cmd.qx - cmd.qy*cmd.qy + cmd.qz*cmd.qz;
-
-  float Psi = 0.5f*(3.0f - (Rd11*R11 + Rd21*R21 + Rd31*R31 +
-                            Rd12*R12 + Rd22*R22 + Rd32*R32 +
-                            Rd13*R13 + Rd23*R23 + Rd33*R33));
-
-  float force = 0;
-  if(Psi < 1.0f) // Position control stability guaranteed only when Psi < 1
-    force = cmd.force[0]*R13 + cmd.force[1]*R23 + cmd.force[2]*R33;
-
-  float eR1 = 0.5f*(R12*Rd13 - R13*Rd12 + R22*Rd23 - R23*Rd22 + R32*Rd33 - R33*Rd32);
-  float eR2 = 0.5f*(R13*Rd11 - R11*Rd13 - R21*Rd23 + R23*Rd21 - R31*Rd33 + R33*Rd31);
-  float eR3 = 0.5f*(R11*Rd12 - R12*Rd11 + R21*Rd22 - R22*Rd21 + R31*Rd32 - R32*Rd31);
-
-  float eOm1 = Om1 - cmd.omg[0];
-  float eOm2 = Om2 - cmd.omg[1];
-  float eOm3 = Om3 - cmd.omg[2];
-
-  float in1 = Om2*(I[2][0]*Om1 + I[2][1]*Om2 + I[2][2]*Om3) - Om3*(I[1][0]*Om1 + I[1][1]*Om2 + I[1][2]*Om3);
-  float in2 = Om3*(I[0][0]*Om1 + I[0][1]*Om2 + I[0][2]*Om3) - Om1*(I[2][0]*Om1 + I[2][1]*Om2 + I[2][2]*Om3);
-  float in3 = Om1*(I[1][0]*Om1 + I[1][1]*Om2 + I[1][2]*Om3) - Om2*(I[0][0]*Om1 + I[0][1]*Om2 + I[0][2]*Om3);
-
-  float M1 = -cmd.kR[0]*eR1 - cmd.kOm[0]*eOm1 + in1;
-  float M2 = -cmd.kR[1]*eR2 - cmd.kOm[1]*eOm2 + in2;
-  float M3 = -cmd.kR[2]*eR3 - cmd.kOm[2]*eOm3 + in3;
-
-
-  Eigen::Matrix<double, 4, 1> B_vec, w_sq_vec;
-  B_vec << force/kf, M1/kf, M2/kf, M3/km;
-  w_sq_vec = coeff.inverse() *  B_vec;
-  float w_sq[4];
-  w_sq[0] = w_sq_vec(0);
-  w_sq[1] = w_sq_vec(1);
-  w_sq[2] = w_sq_vec(2);
-  w_sq[3] = w_sq_vec(3);
-
-  //std::cout<<w_sq<<std::endl;
-
-  ControlInput control;
-  for(int i = 0; i < 4; i++)
-  {
-    if(w_sq[i] < 0)
-      w_sq[i] = 0;
-
-    control.rpm[i] = sqrtf(w_sq[i]);
-  }
-  return control;
-}
-
-static void cmd_callback(const quadrotor_msgs::SO3Command::ConstPtr &cmd)
-{
-  command.force[0] = cmd->force.x;
-  command.force[1] = cmd->force.y;
-  command.force[2] = cmd->force.z;
-  command.qx = cmd->orientation.x;
-  command.qy = cmd->orientation.y;
-  command.qz = cmd->orientation.z;
-  command.qw = cmd->orientation.w;
-  command.omg[0] = cmd->angular.x;
-  command.omg[1] = cmd->angular.y;
-  command.omg[2] = cmd->angular.z;
-  command.kR[0] = cmd->kR[0];
-  command.kR[1] = cmd->kR[1];
-  command.kR[2] = cmd->kR[2];
-  command.kOm[0] = cmd->kOm[0];
-  command.kOm[1] = cmd->kOm[1];
-  command.kOm[2] = cmd->kOm[2];
-  command.kf_correction = cmd->aux.kf_correction;
-  command.angle_corrections[0] = cmd->aux.angle_corrections[0]; // Not used yet
-  command.angle_corrections[1] = cmd->aux.angle_corrections[1]; // Not used yet
-}
-
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "iris_simulator_so3");
@@ -201,7 +70,6 @@ int main(int argc, char **argv)
 
   ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom_raw", 100);
   ros::Publisher imu_pub = n.advertise<sensor_msgs::Imu>("imu", 100);
-  ros::Subscriber cmd_sub = n.subscribe("cmd", 100, &cmd_callback, ros::TransportHints().tcpNoDelay());
   ros::Subscriber mpc_cmd_sub = n.subscribe("/mpc_control/mpc_cmd",100,&mpc_cmd_cb,ros::TransportHints().tcpNoDelay());
 
   double simulation_rate;

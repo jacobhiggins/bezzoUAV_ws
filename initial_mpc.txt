@@ -34008,207 +34008,207 @@ Bounds
  0 <= ~r_3592 <= 0.5
  0 <= ~r_3593 <= 0.5
  0 <= ~r_3594 <= 0.0002
- U0(00) free
+ -200 <= U0(00) <= 200
  U1(00) free
  U2(00) free
  U3(00) free
- U0(01) free
+ -200 <= U0(01) <= 200
  U1(01) free
  U2(01) free
  U3(01) free
- U0(02) free
+ -200 <= U0(02) <= 200
  U1(02) free
  U2(02) free
  U3(02) free
- U0(03) free
+ -200 <= U0(03) <= 200
  U1(03) free
  U2(03) free
  U3(03) free
- U0(04) free
+ -200 <= U0(04) <= 200
  U1(04) free
  U2(04) free
  U3(04) free
- U0(05) free
+ -200 <= U0(05) <= 200
  U1(05) free
  U2(05) free
  U3(05) free
- U0(06) free
+ -200 <= U0(06) <= 200
  U1(06) free
  U2(06) free
  U3(06) free
- U0(07) free
+ -200 <= U0(07) <= 200
  U1(07) free
  U2(07) free
  U3(07) free
- U0(08) free
+ -200 <= U0(08) <= 200
  U1(08) free
  U2(08) free
  U3(08) free
- U0(09) free
+ -200 <= U0(09) <= 200
  U1(09) free
  U2(09) free
  U3(09) free
- U0(10) free
+ -200 <= U0(10) <= 200
  U1(10) free
  U2(10) free
  U3(10) free
- U0(11) free
+ -200 <= U0(11) <= 200
  U1(11) free
  U2(11) free
  U3(11) free
- U0(12) free
+ -200 <= U0(12) <= 200
  U1(12) free
  U2(12) free
  U3(12) free
- U0(13) free
+ -200 <= U0(13) <= 200
  U1(13) free
  U2(13) free
  U3(13) free
- U0(14) free
+ -200 <= U0(14) <= 200
  U1(14) free
  U2(14) free
  U3(14) free
- U0(15) free
+ -200 <= U0(15) <= 200
  U1(15) free
  U2(15) free
  U3(15) free
- U0(16) free
+ -200 <= U0(16) <= 200
  U1(16) free
  U2(16) free
  U3(16) free
- U0(17) free
+ -200 <= U0(17) <= 200
  U1(17) free
  U2(17) free
  U3(17) free
- U0(18) free
+ -200 <= U0(18) <= 200
  U1(18) free
  U2(18) free
  U3(18) free
- U0(19) free
+ -200 <= U0(19) <= 200
  U1(19) free
  U2(19) free
  U3(19) free
- U0(20) free
+ -200 <= U0(20) <= 200
  U1(20) free
  U2(20) free
  U3(20) free
- U0(21) free
+ -200 <= U0(21) <= 200
  U1(21) free
  U2(21) free
  U3(21) free
- U0(22) free
+ -200 <= U0(22) <= 200
  U1(22) free
  U2(22) free
  U3(22) free
- U0(23) free
+ -200 <= U0(23) <= 200
  U1(23) free
  U2(23) free
  U3(23) free
- U0(24) free
+ -200 <= U0(24) <= 200
  U1(24) free
  U2(24) free
  U3(24) free
- U0(25) free
+ -200 <= U0(25) <= 200
  U1(25) free
  U2(25) free
  U3(25) free
- U0(26) free
+ -200 <= U0(26) <= 200
  U1(26) free
  U2(26) free
  U3(26) free
- U0(27) free
+ -200 <= U0(27) <= 200
  U1(27) free
  U2(27) free
  U3(27) free
- U0(28) free
+ -200 <= U0(28) <= 200
  U1(28) free
  U2(28) free
  U3(28) free
- U0(29) free
+ -200 <= U0(29) <= 200
  U1(29) free
  U2(29) free
  U3(29) free
- U0(30) free
+ -200 <= U0(30) <= 200
  U1(30) free
  U2(30) free
  U3(30) free
- U0(31) free
+ -200 <= U0(31) <= 200
  U1(31) free
  U2(31) free
  U3(31) free
- U0(32) free
+ -200 <= U0(32) <= 200
  U1(32) free
  U2(32) free
  U3(32) free
- U0(33) free
+ -200 <= U0(33) <= 200
  U1(33) free
  U2(33) free
  U3(33) free
- U0(34) free
+ -200 <= U0(34) <= 200
  U1(34) free
  U2(34) free
  U3(34) free
- U0(35) free
+ -200 <= U0(35) <= 200
  U1(35) free
  U2(35) free
  U3(35) free
- U0(36) free
+ -200 <= U0(36) <= 200
  U1(36) free
  U2(36) free
  U3(36) free
- U0(37) free
+ -200 <= U0(37) <= 200
  U1(37) free
  U2(37) free
  U3(37) free
- U0(38) free
+ -200 <= U0(38) <= 200
  U1(38) free
  U2(38) free
  U3(38) free
- U0(39) free
+ -200 <= U0(39) <= 200
  U1(39) free
  U2(39) free
  U3(39) free
- U0(40) free
+ -200 <= U0(40) <= 200
  U1(40) free
  U2(40) free
  U3(40) free
- U0(41) free
+ -200 <= U0(41) <= 200
  U1(41) free
  U2(41) free
  U3(41) free
- U0(42) free
+ -200 <= U0(42) <= 200
  U1(42) free
  U2(42) free
  U3(42) free
- U0(43) free
+ -200 <= U0(43) <= 200
  U1(43) free
  U2(43) free
  U3(43) free
- U0(44) free
+ -200 <= U0(44) <= 200
  U1(44) free
  U2(44) free
  U3(44) free
- U0(45) free
+ -200 <= U0(45) <= 200
  U1(45) free
  U2(45) free
  U3(45) free
- U0(46) free
+ -200 <= U0(46) <= 200
  U1(46) free
  U2(46) free
  U3(46) free
- U0(47) free
+ -200 <= U0(47) <= 200
  U1(47) free
  U2(47) free
  U3(47) free
- U0(48) free
+ -200 <= U0(48) <= 200
  U1(48) free
  U2(48) free
  U3(48) free
- U0(49) free
+ -200 <= U0(49) <= 200
  U1(49) free
  U2(49) free
  U3(49) free
- U0(XX) free
+ -200 <= U0(XX) <= 200
  U1(XX) free
  U2(XX) free
  U3(XX) free
