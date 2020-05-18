@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/devel
+prefix=/home/bini/versioned/uav_ros/devel
 
 Name: cmd_romdp_pk
 Description: Description of cmd_romdp_pk

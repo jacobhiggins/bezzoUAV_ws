@@ -6,19 +6,19 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.cpp
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/ros/ros.h
 std_msgs/String.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/String.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/String.h
 quadrotor_msgs/PositionCommand.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/quadrotor_msgs/PositionCommand.h
 nav_msgs/Odometry.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/nav_msgs/Odometry.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/nav_msgs/Odometry.h
 path_cmd.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.h
 std_msgs/Empty.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/Empty.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/Empty.h
 string
 -
 math.h
@@ -26,31 +26,31 @@ math.h
 eigen3/Eigen/Geometry
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.h
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/ros/ros.h
 quadrotor_msgs/PositionCommand.h
 -
 eigen3/Eigen/Geometry
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd_main.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd_main.cpp
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/ros/ros.h
 quadrotor_msgs/PositionCommand.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/quadrotor_msgs/PositionCommand.h
 nav_msgs/Odometry.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/nav_msgs/Odometry.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/nav_msgs/Odometry.h
 path_cmd.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/path_cmd.h
 std_msgs/Empty.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/Empty.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/Empty.h
 std_msgs/String.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/String.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/std_msgs/String.h
 geometry_msgs/Point.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/path_cmd_pk/src/geometry_msgs/Point.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/path_cmd_pk/src/geometry_msgs/Point.h
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
 string
 -
 vector

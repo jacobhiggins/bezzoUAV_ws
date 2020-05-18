@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/iris_dynamics.dir/src/dynamics/iris_simulator.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/libiris_dynamics.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/libiris_dynamics.so"
+  "/home/bini/versioned/uav_ros/devel/lib/libiris_dynamics.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/libiris_dynamics.so"
 )
 
 # Per-language clean rules from dependency scanning.

@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/JoystickTRPYControlNode.dir/src/JoystickTRPYControl.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/so3_control/JoystickTRPYControlNode.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/so3_control/JoystickTRPYControlNode"
+  "/home/bini/versioned/uav_ros/devel/lib/so3_control/JoystickTRPYControlNode.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/so3_control/JoystickTRPYControlNode"
 )
 
 # Per-language clean rules from dependency scanning.

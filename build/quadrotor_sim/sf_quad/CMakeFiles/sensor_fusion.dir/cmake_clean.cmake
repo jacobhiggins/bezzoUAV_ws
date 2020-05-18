@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/sensor_fusion.dir/src/sensor_fusion.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/sf_quad/sensor_fusion.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/sf_quad/sensor_fusion"
+  "/home/bini/versioned/uav_ros/devel/lib/sf_quad/sensor_fusion.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/sf_quad/sensor_fusion"
 )
 
 # Per-language clean rules from dependency scanning.

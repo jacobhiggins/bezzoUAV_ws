@@ -6,13 +6,39 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/Simulator/ardrone_simulator_pk/include/ardrone_simulator_pk/ardrone_simulator.h
+/home/bini/versioned/uav_ros/devel/include/quadrotor_msgs/SO3Command.h
+string
+-
+vector
+-
+map
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
+-
+std_msgs/Header.h
+-
+geometry_msgs/Vector3.h
+-
+geometry_msgs/Quaternion.h
+-
+geometry_msgs/Vector3.h
+-
+quadrotor_msgs/AuxCommand.h
+-
+
+/home/bini/versioned/uav_ros/src/quadrotor_sim/Simulator/ardrone_simulator_pk/include/ardrone_simulator_pk/ardrone_simulator.h
 boost/array.hpp
 -
 eigen3/Eigen/Dense
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/Simulator/ardrone_simulator_pk/src/ardrone_simulator_so3.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/Simulator/ardrone_simulator_pk/src/ardrone_simulator_so3.cpp
 ros/ros.h
 -
 eigen3/Eigen/Geometry
@@ -26,6 +52,22 @@ sensor_msgs/Imu.h
 quadrotor_msgs/SO3Command.h
 -
 ardrone_simulator_pk/ardrone_simulator.h
+-
+
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/AuxCommand.h
+string
+-
+vector
+-
+map
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
 -
 
 /opt/ros/melodic/include/geometry_msgs/Point.h

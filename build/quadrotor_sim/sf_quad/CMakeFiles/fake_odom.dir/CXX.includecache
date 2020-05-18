@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/fake_odom.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/fake_odom.cpp
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/ros/ros.h
 nav_msgs/Odometry.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/nav_msgs/Odometry.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/nav_msgs/Odometry.h
 
 /opt/ros/melodic/include/geometry_msgs/Point.h
 string

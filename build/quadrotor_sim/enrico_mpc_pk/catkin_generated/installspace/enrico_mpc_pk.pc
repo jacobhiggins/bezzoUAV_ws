@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/install
+prefix=/home/bini/versioned/uav_ros/install
 
 Name: enrico_mpc_pk
 Description: Description of enrico_mpc_pk

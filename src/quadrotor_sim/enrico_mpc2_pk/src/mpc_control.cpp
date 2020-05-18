@@ -15,8 +15,7 @@
 #include <time.h>
 #include <error.h>
 #include <iostream>
-// #include "common.h"
-#include "/home/bezzo/ExplicitMPC/glpk-uav/common.h" /* Message structure defined here*/
+#include "common.h"
 
 // #define MPC_CTRL "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define MPC_CTRL "/home/bezzo/ExplicitMPC/glpk-uav/mpc_ctrl"

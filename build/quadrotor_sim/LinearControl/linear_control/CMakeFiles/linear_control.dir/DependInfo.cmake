@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/linear_control/src/Linear_Control.cpp" "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/LinearControl/linear_control/CMakeFiles/linear_control.dir/src/Linear_Control.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/LinearControl/linear_control/src/Linear_Control_main.cpp" "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/LinearControl/linear_control/CMakeFiles/linear_control.dir/src/Linear_Control_main.cpp.o"
+  "/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/linear_control/src/Linear_Control.cpp" "/home/bini/versioned/uav_ros/build/quadrotor_sim/LinearControl/linear_control/CMakeFiles/linear_control.dir/src/Linear_Control.cpp.o"
+  "/home/bini/versioned/uav_ros/src/quadrotor_sim/LinearControl/linear_control/src/Linear_Control_main.cpp" "/home/bini/versioned/uav_ros/build/quadrotor_sim/LinearControl/linear_control/CMakeFiles/linear_control.dir/src/Linear_Control_main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -18,8 +18,8 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/home/bezzo/bezzoUAV_ws/devel/include"
-  "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include"
+  "/home/bini/versioned/uav_ros/devel/include"
+  "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include"
   "/opt/ros/melodic/include"
   "/opt/ros/melodic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"
   )

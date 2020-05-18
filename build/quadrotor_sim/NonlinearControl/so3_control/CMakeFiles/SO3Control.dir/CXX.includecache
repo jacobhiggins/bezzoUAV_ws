@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/so3_control/include/so3_control/SO3Control.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/so3_control/include/so3_control/SO3Control.h
 Eigen/Geometry
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/so3_control/src/SO3Control.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/so3_control/src/SO3Control.cpp
 so3_control/SO3Control.h
 -
 iostream

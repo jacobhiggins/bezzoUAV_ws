@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ardrone_simulator_so3.dir/src/ardrone_simulator_so3.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/ardrone_simulator_pk/ardrone_simulator_so3.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/ardrone_simulator_pk/ardrone_simulator_so3"
+  "/home/bini/versioned/uav_ros/devel/lib/ardrone_simulator_pk/ardrone_simulator_so3.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/ardrone_simulator_pk/ardrone_simulator_so3"
 )
 
 # Per-language clean rules from dependency scanning.

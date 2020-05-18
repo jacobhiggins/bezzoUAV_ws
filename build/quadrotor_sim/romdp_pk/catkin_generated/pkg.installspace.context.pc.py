@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "${prefix}/include".split(';') if "${prefix}/i
 PROJECT_CATKIN_DEPENDS = "geometry_msgs;nav_msgs;roscpp;rospy;sensor_msgs;std_msgs".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "romdp_pk"
-PROJECT_SPACE_DIR = "/home/bezzo/bezzoUAV_ws/install"
+PROJECT_SPACE_DIR = "/home/bini/versioned/uav_ros/install"
 PROJECT_VERSION = "0.0.0"

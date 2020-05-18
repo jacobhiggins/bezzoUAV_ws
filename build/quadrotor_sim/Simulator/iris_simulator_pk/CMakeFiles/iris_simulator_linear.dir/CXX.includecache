@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/Simulator/iris_simulator_pk/include/iris_simulator_pk/iris_simulator.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/Simulator/iris_simulator_pk/include/iris_simulator_pk/iris_simulator.h
 boost/array.hpp
 -
 eigen3/Eigen/Core
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/Simulator/iris_simulator_pk/src/iris_simulator_linear.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/Simulator/iris_simulator_pk/src/iris_simulator_linear.cpp
 ros/ros.h
 -
 eigen3/Eigen/Geometry
@@ -26,7 +26,7 @@ quadrotor_msgs/LinearCommand.h
 iris_simulator_pk/iris_simulator.h
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/LinearCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/LinearCommand.h
 string
 -
 vector

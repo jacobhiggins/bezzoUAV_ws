@@ -1,1 +1,1 @@
-/usr/bin/c++ -fPIC   -shared -Wl,-soname,libiris_dynamics.so -o /home/bezzo/bezzoUAV_ws/devel/lib/libiris_dynamics.so CMakeFiles/iris_dynamics.dir/src/dynamics/iris_simulator.cpp.o 
+/usr/bin/c++ -fPIC   -shared -Wl,-soname,libiris_dynamics.so -o /home/bini/versioned/uav_ros/devel/lib/libiris_dynamics.so CMakeFiles/iris_dynamics.dir/src/dynamics/iris_simulator.cpp.o 

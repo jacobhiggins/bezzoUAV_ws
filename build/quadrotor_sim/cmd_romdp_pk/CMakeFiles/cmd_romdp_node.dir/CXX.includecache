@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/cmd_romdp_pk/src/cmd_romdp.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/cmd_romdp_pk/src/cmd_romdp.h
 ros/ros.h
 -
 ros/package.h
@@ -28,9 +28,9 @@ visualization_msgs/MarkerArray.h
 visualization_msgs/Marker.h
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/cmd_romdp_pk/src/cmd_romdp_main.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/cmd_romdp_pk/src/cmd_romdp_main.cpp
 cmd_romdp.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/cmd_romdp_pk/src/cmd_romdp.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/cmd_romdp_pk/src/cmd_romdp.h
 ros/package.h
 -
 string
@@ -42,7 +42,7 @@ iostream
 fstream
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
 string
 -
 vector

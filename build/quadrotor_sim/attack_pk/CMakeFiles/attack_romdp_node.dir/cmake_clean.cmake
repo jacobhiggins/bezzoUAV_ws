@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/attack_romdp_node.dir/src/attackRomdpNode.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/attack_pk/attack_romdp_node.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/attack_pk/attack_romdp_node"
+  "/home/bini/versioned/uav_ros/devel/lib/attack_pk/attack_romdp_node.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/attack_pk/attack_romdp_node"
 )
 
 # Per-language clean rules from dependency scanning.

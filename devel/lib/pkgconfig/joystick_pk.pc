@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/devel
+prefix=/home/bini/versioned/uav_ros/devel
 
 Name: joystick_pk
 Description: Description of joystick_pk

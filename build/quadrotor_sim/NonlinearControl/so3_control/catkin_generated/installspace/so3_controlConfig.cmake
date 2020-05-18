@@ -67,14 +67,14 @@ set(so3_control_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(so3_control_SOURCE_PREFIX /home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/so3_control)
-  set(so3_control_DEVEL_PREFIX /home/bezzo/bezzoUAV_ws/devel)
+  set(so3_control_SOURCE_PREFIX /home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/so3_control)
+  set(so3_control_DEVEL_PREFIX /home/bini/versioned/uav_ros/devel)
   set(so3_control_INSTALL_PREFIX "")
   set(so3_control_PREFIX ${so3_control_DEVEL_PREFIX})
 else()
   set(so3_control_SOURCE_PREFIX "")
   set(so3_control_DEVEL_PREFIX "")
-  set(so3_control_INSTALL_PREFIX /home/bezzo/bezzoUAV_ws/install)
+  set(so3_control_INSTALL_PREFIX /home/bini/versioned/uav_ros/install)
   set(so3_control_PREFIX ${so3_control_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/bezzo/bezzoUAV_ws/install/lib;/home/bezzo/bezzoUAV_ws/devel/lib;/home/bezzo/fg_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/bini/versioned/uav_ros/install/lib;/home/bini/versioned/uav_ros/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

@@ -1,8 +1,8 @@
-# Install script for directory: /home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs
+# Install script for directory: /home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/bezzo/bezzoUAV_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/bini/versioned/uav_ros/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,62 +39,62 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs/msg" TYPE FILE FILES
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/LinearCommand.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/AuxCommand.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/Corrections.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/OutputData.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/PositionCommand.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/Serial.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/SO3Command.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/StatusData.msg"
-    "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/msg/TRPYCommand.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/LinearCommand.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/AuxCommand.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/Corrections.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/OutputData.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/PositionCommand.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/Serial.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/SO3Command.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/StatusData.msg"
+    "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/msg/TRPYCommand.msg"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs/cmake" TYPE FILE FILES "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgs-msg-paths.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs/cmake" TYPE FILE FILES "/home/bini/versioned/uav_ros/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgs-msg-paths.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/bezzo/bezzoUAV_ws/devel/include/quadrotor_msgs")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/bini/versioned/uav_ros/devel/include/quadrotor_msgs")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/bezzo/bezzoUAV_ws/devel/share/roseus/ros/quadrotor_msgs")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/bini/versioned/uav_ros/devel/share/roseus/ros/quadrotor_msgs")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros" TYPE DIRECTORY FILES "/home/bezzo/bezzoUAV_ws/devel/share/common-lisp/ros/quadrotor_msgs")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros" TYPE DIRECTORY FILES "/home/bini/versioned/uav_ros/devel/share/common-lisp/ros/quadrotor_msgs")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gennodejs/ros" TYPE DIRECTORY FILES "/home/bezzo/bezzoUAV_ws/devel/share/gennodejs/ros/quadrotor_msgs")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gennodejs/ros" TYPE DIRECTORY FILES "/home/bini/versioned/uav_ros/devel/share/gennodejs/ros/quadrotor_msgs")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  execute_process(COMMAND "/usr/bin/python" -m compileall "/home/bezzo/bezzoUAV_ws/devel/lib/python2.7/dist-packages/quadrotor_msgs")
+  execute_process(COMMAND "/usr/bin/python2" -m compileall "/home/bini/versioned/uav_ros/devel/lib/python2.7/dist-packages/quadrotor_msgs")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages" TYPE DIRECTORY FILES "/home/bezzo/bezzoUAV_ws/devel/lib/python2.7/dist-packages/quadrotor_msgs")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages" TYPE DIRECTORY FILES "/home/bini/versioned/uav_ros/devel/lib/python2.7/dist-packages/quadrotor_msgs")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgs.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/bini/versioned/uav_ros/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgs.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs/cmake" TYPE FILE FILES "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgs-msg-extras.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs/cmake" TYPE FILE FILES "/home/bini/versioned/uav_ros/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgs-msg-extras.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs/cmake" TYPE FILE FILES
-    "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgsConfig.cmake"
-    "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgsConfig-version.cmake"
+    "/home/bini/versioned/uav_ros/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgsConfig.cmake"
+    "/home/bini/versioned/uav_ros/build/quadrotor_sim/quadrotor_msgs/catkin_generated/installspace/quadrotor_msgsConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs" TYPE FILE FILES "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/quadrotor_msgs" TYPE FILE FILES "/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/package.xml")
 endif()
 

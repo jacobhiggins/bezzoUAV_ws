@@ -6,27 +6,27 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/pos_cmd.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/pos_cmd.cpp
 pos_cmd.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/pos_cmd.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/pos_cmd.h
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/pos_cmd.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/pos_cmd.h
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/ros/ros.h
 std_msgs/String.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/std_msgs/String.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/std_msgs/String.h
 quadrotor_msgs/PositionCommand.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/quadrotor_msgs/PositionCommand.h
 geometry_msgs/Twist.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/geometry_msgs/Twist.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/geometry_msgs/Twist.h
 nav_msgs/Odometry.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/nav_msgs/Odometry.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/nav_msgs/Odometry.h
 std_msgs/Empty.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/std_msgs/Empty.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/NonlinearControl/pos_cmd_pk/src/std_msgs/Empty.h
 string
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
 string
 -
 vector

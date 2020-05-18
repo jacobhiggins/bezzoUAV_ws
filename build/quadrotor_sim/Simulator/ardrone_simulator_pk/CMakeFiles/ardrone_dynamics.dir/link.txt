@@ -1,1 +1,1 @@
-/usr/bin/c++ -fPIC   -shared -Wl,-soname,libardrone_dynamics.so -o /home/bezzo/bezzoUAV_ws/devel/lib/libardrone_dynamics.so CMakeFiles/ardrone_dynamics.dir/src/dynamics/ardrone_simulator.cpp.o 
+/usr/bin/c++ -fPIC   -shared -Wl,-soname,libardrone_dynamics.so -o /home/bini/versioned/uav_ros/devel/lib/libardrone_dynamics.so CMakeFiles/ardrone_dynamics.dir/src/dynamics/ardrone_simulator.cpp.o 

@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/bezzo/bezzoUAV_ws/install/setup.sh
+    local-name: /home/bini/versioned/uav_ros/install/setup.sh

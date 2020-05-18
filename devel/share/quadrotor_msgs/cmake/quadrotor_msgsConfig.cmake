@@ -67,14 +67,14 @@ set(quadrotor_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(quadrotor_msgs_SOURCE_PREFIX /home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs)
-  set(quadrotor_msgs_DEVEL_PREFIX /home/bezzo/bezzoUAV_ws/devel)
+  set(quadrotor_msgs_SOURCE_PREFIX /home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs)
+  set(quadrotor_msgs_DEVEL_PREFIX /home/bini/versioned/uav_ros/devel)
   set(quadrotor_msgs_INSTALL_PREFIX "")
   set(quadrotor_msgs_PREFIX ${quadrotor_msgs_DEVEL_PREFIX})
 else()
   set(quadrotor_msgs_SOURCE_PREFIX "")
   set(quadrotor_msgs_DEVEL_PREFIX "")
-  set(quadrotor_msgs_INSTALL_PREFIX /home/bezzo/bezzoUAV_ws/install)
+  set(quadrotor_msgs_INSTALL_PREFIX /home/bini/versioned/uav_ros/install)
   set(quadrotor_msgs_PREFIX ${quadrotor_msgs_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(quadrotor_msgs_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/home/bezzo/bezzoUAV_ws/devel/include;/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include " STREQUAL " ")
+if(NOT "/home/bini/versioned/uav_ros/devel/include;/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include " STREQUAL " ")
   set(quadrotor_msgs_INCLUDE_DIRS "")
-  set(_include_dirs "/home/bezzo/bezzoUAV_ws/devel/include;/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include")
+  set(_include_dirs "/home/bini/versioned/uav_ros/devel/include;/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -110,7 +110,7 @@ if(NOT "/home/bezzo/bezzoUAV_ws/devel/include;/home/bezzo/bezzoUAV_ws/src/quadro
         message(FATAL_ERROR "Project 'quadrotor_msgs' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  ${_report}")
       endif()
     else()
-      message(FATAL_ERROR "Project 'quadrotor_msgs' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/${idir}'.  ${_report}")
+      message(FATAL_ERROR "Project 'quadrotor_msgs' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/${idir}'.  ${_report}")
     endif()
     _list_append_unique(quadrotor_msgs_INCLUDE_DIRS ${include})
   endforeach()
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/bezzo/bezzoUAV_ws/devel/lib;/home/bezzo/bezzoUAV_ws/devel/lib;/home/bezzo/fg_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/bini/versioned/uav_ros/devel/lib;/home/bini/versioned/uav_ros/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

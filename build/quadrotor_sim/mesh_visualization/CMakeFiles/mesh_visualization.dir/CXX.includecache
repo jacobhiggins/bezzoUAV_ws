@@ -6,17 +6,31 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/mesh_visualization/src/mesh_vis.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/mesh_vis.cpp
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/mesh_visualization/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/ros/ros.h
 nav_msgs/Odometry.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/mesh_visualization/src/nav_msgs/Odometry.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/nav_msgs/Odometry.h
 visualization_msgs/Marker.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/mesh_visualization/src/visualization_msgs/Marker.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/visualization_msgs/Marker.h
 geometry_msgs/Point.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/mesh_visualization/src/geometry_msgs/Point.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/geometry_msgs/Point.h
+quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/quadrotor_msgs/PositionCommand.h
+mesh_vis.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/mesh_vis.h
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/mesh_visualization/src/mesh_vis_main.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/mesh_vis.h
+ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/ros/ros.h
+nav_msgs/Odometry.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/nav_msgs/Odometry.h
+visualization_msgs/Marker.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/visualization_msgs/Marker.h
+geometry_msgs/Point.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/geometry_msgs/Point.h
+
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/mesh_vis_main.cpp
 ros/ros.h
 -
 nav_msgs/Odometry.h
@@ -34,9 +48,9 @@ geometry_msgs/Point.h
 quadrotor_msgs/PositionCommand.h
 -
 mesh_vis.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/mesh_visualization/src/mesh_vis.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/mesh_visualization/src/mesh_vis.h
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
 string
 -
 vector
@@ -1049,6 +1063,8 @@ Vector3.h
 /opt/ros/melodic/include/tf/LinearMath/Vector3.h
 Quaternion.h
 /opt/ros/melodic/include/tf/LinearMath/Quaternion.h
+ros/macros.h
+-
 
 /opt/ros/melodic/include/tf/LinearMath/MinMax.h
 
@@ -1065,6 +1081,8 @@ Vector3.h
 /opt/ros/melodic/include/tf/LinearMath/Vector3.h
 QuadWord.h
 /opt/ros/melodic/include/tf/LinearMath/QuadWord.h
+ros/macros.h
+-
 
 /opt/ros/melodic/include/tf/LinearMath/Scalar.h
 math.h
@@ -1130,6 +1148,8 @@ boost/signals2.hpp
 geometry_msgs/TwistStamped.h
 /opt/ros/melodic/include/tf/geometry_msgs/TwistStamped.h
 tf2_ros/buffer.h
+-
+ros/macros.h
 -
 
 /opt/ros/melodic/include/tf/tfMessage.h

@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/install
+prefix=/home/bini/versioned/uav_ros/install
 
 Name: path_cmd_pk
 Description: Description of path_cmd_pk

@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc_pk/include/enrico_mpc_pk/MPCControl.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/enrico_mpc_pk/include/enrico_mpc_pk/MPCControl.h
 Eigen/Geometry
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc_pk/src/MPCControl.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/enrico_mpc_pk/src/MPCControl.cpp
 enrico_mpc_pk/MPCControl.h
 -
 iostream

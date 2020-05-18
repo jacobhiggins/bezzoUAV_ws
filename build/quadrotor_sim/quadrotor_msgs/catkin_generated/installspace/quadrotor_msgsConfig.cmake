@@ -67,14 +67,14 @@ set(quadrotor_msgs_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(quadrotor_msgs_SOURCE_PREFIX /home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs)
-  set(quadrotor_msgs_DEVEL_PREFIX /home/bezzo/bezzoUAV_ws/devel)
+  set(quadrotor_msgs_SOURCE_PREFIX /home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs)
+  set(quadrotor_msgs_DEVEL_PREFIX /home/bini/versioned/uav_ros/devel)
   set(quadrotor_msgs_INSTALL_PREFIX "")
   set(quadrotor_msgs_PREFIX ${quadrotor_msgs_DEVEL_PREFIX})
 else()
   set(quadrotor_msgs_SOURCE_PREFIX "")
   set(quadrotor_msgs_DEVEL_PREFIX "")
-  set(quadrotor_msgs_INSTALL_PREFIX /home/bezzo/bezzoUAV_ws/install)
+  set(quadrotor_msgs_INSTALL_PREFIX /home/bini/versioned/uav_ros/install)
   set(quadrotor_msgs_PREFIX ${quadrotor_msgs_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/bezzo/bezzoUAV_ws/install/lib;/home/bezzo/bezzoUAV_ws/devel/lib;/home/bezzo/fg_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/bini/versioned/uav_ros/install/lib;/home/bini/versioned/uav_ros/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

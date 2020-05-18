@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /home/bezzo/bezzoUAV_ws/src
-# Build directory: /home/bezzo/bezzoUAV_ws/build
+# Source directory: /home/bini/versioned/uav_ros/src
+# Build directory: /home/bini/versioned/uav_ros/build
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.

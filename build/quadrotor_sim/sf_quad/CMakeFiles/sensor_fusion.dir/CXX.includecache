@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/sensor_fusion.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/sensor_fusion.cpp
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/ros/ros.h
 std_msgs/String.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/std_msgs/String.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/std_msgs/String.h
 geometry_msgs/Twist.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/geometry_msgs/Twist.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/geometry_msgs/Twist.h
 nav_msgs/Odometry.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/nav_msgs/Odometry.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/nav_msgs/Odometry.h
 visualization_msgs/Marker.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/src/visualization_msgs/Marker.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/src/visualization_msgs/Marker.h
 math.h
 -
 

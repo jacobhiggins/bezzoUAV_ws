@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/install
+prefix=/home/bini/versioned/uav_ros/install
 
 Name: sf_quad
 Description: Description of sf_quad

@@ -1,8 +1,8 @@
-# Install script for directory: /home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad
+# Install script for directory: /home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/bezzo/bezzoUAV_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/bini/versioned/uav_ros/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/sf_quad/catkin_generated/installspace/sf_quad.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/bini/versioned/uav_ros/build/quadrotor_sim/sf_quad/catkin_generated/installspace/sf_quad.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sf_quad/cmake" TYPE FILE FILES
-    "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/sf_quad/catkin_generated/installspace/sf_quadConfig.cmake"
-    "/home/bezzo/bezzoUAV_ws/build/quadrotor_sim/sf_quad/catkin_generated/installspace/sf_quadConfig-version.cmake"
+    "/home/bini/versioned/uav_ros/build/quadrotor_sim/sf_quad/catkin_generated/installspace/sf_quadConfig.cmake"
+    "/home/bini/versioned/uav_ros/build/quadrotor_sim/sf_quad/catkin_generated/installspace/sf_quadConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sf_quad" TYPE FILE FILES "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/sf_quad/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sf_quad" TYPE FILE FILES "/home/bini/versioned/uav_ros/src/quadrotor_sim/sf_quad/package.xml")
 endif()
 

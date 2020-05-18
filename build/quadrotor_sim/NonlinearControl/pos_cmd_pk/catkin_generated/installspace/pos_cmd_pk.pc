@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/install
+prefix=/home/bini/versioned/uav_ros/install
 
 Name: pos_cmd_pk
 Description: Description of pos_cmd_pk

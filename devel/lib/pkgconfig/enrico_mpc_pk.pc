@@ -1,8 +1,8 @@
-prefix=/home/bezzo/bezzoUAV_ws/devel
+prefix=/home/bini/versioned/uav_ros/devel
 
 Name: enrico_mpc_pk
 Description: Description of enrico_mpc_pk
 Version: 0.0.0
-Cflags: -I/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc_pk/include
+Cflags: -I/home/bini/versioned/uav_ros/src/quadrotor_sim/enrico_mpc_pk/include
 Libs: -L${prefix}/lib -lenrico_mpc_pk
 Requires: roscpp rospy std_msgs

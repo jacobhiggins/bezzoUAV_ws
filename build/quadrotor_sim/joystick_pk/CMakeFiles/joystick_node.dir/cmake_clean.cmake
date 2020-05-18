@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/joystick_node.dir/src/joystick_main.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/joystick_pk/joystick_node.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/joystick_pk/joystick_node"
+  "/home/bini/versioned/uav_ros/devel/lib/joystick_pk/joystick_node.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/joystick_pk/joystick_node"
 )
 
 # Per-language clean rules from dependency scanning.

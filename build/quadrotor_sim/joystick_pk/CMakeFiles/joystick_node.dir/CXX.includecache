@@ -6,21 +6,21 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/joystick_pk/src/joystick_main.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/joystick_pk/src/joystick_main.cpp
 ros/ros.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/joystick_pk/src/ros/ros.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/joystick_pk/src/ros/ros.h
 std_msgs/Empty.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/joystick_pk/src/std_msgs/Empty.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/joystick_pk/src/std_msgs/Empty.h
 std_msgs/String.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/joystick_pk/src/std_msgs/String.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/joystick_pk/src/std_msgs/String.h
 geometry_msgs/Twist.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/joystick_pk/src/geometry_msgs/Twist.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/joystick_pk/src/geometry_msgs/Twist.h
 sensor_msgs/Joy.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/joystick_pk/src/sensor_msgs/Joy.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/joystick_pk/src/sensor_msgs/Joy.h
 quadrotor_msgs/PositionCommand.h
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/joystick_pk/src/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/joystick_pk/src/quadrotor_msgs/PositionCommand.h
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
 string
 -
 vector

@@ -7,4 +7,6 @@
 # new environment variables
 
 # modified environment variables
-export PWD="/home/bezzo/bezzoUAV_ws/build"
+export PWD="/home/bini/versioned/uav_ros/build"
+export PYTHONPATH="/home/bini/versioned/uav_ros/devel/lib/python2.7/dist-packages:$PYTHONPATH"
+export ROS_PACKAGE_PATH="/home/bezzo/bezzoUAV_ws/src:$ROS_PACKAGE_PATH"

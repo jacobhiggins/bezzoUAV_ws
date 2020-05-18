@@ -6,9 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/bezzo/ExplicitMPC/glpk-uav/common.h
-
-/home/bezzo/bezzoUAV_ws/devel/include/quadrotor_msgs/SO3Command.h
+/home/bini/versioned/uav_ros/devel/include/quadrotor_msgs/SO3Command.h
 string
 -
 vector
@@ -34,7 +32,9 @@ geometry_msgs/Vector3.h
 quadrotor_msgs/AuxCommand.h
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc2_pk/src/mpc_control.cpp
+/home/bini/versioned/uav_ros/src/quadrotor_sim/enrico_mpc2_pk/src/common.h
+
+/home/bini/versioned/uav_ros/src/quadrotor_sim/enrico_mpc2_pk/src/mpc_control.cpp
 ros/ros.h
 -
 nav_msgs/Odometry.h
@@ -67,10 +67,10 @@ error.h
 -
 iostream
 -
-/home/bezzo/ExplicitMPC/glpk-uav/common.h
--
+common.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/enrico_mpc2_pk/src/common.h
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/AuxCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/AuxCommand.h
 string
 -
 vector
@@ -86,7 +86,7 @@ ros/builtin_message_traits.h
 ros/message_operations.h
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/Corrections.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/Corrections.h
 string
 -
 vector
@@ -102,7 +102,7 @@ ros/builtin_message_traits.h
 ros/message_operations.h
 -
 
-/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
+/home/bini/versioned/uav_ros/src/quadrotor_sim/quadrotor_msgs/include/quadrotor_msgs/PositionCommand.h
 string
 -
 vector
@@ -1095,6 +1095,8 @@ Vector3.h
 /opt/ros/melodic/include/tf/LinearMath/Vector3.h
 Quaternion.h
 /opt/ros/melodic/include/tf/LinearMath/Quaternion.h
+ros/macros.h
+-
 
 /opt/ros/melodic/include/tf/LinearMath/MinMax.h
 
@@ -1111,6 +1113,8 @@ Vector3.h
 /opt/ros/melodic/include/tf/LinearMath/Vector3.h
 QuadWord.h
 /opt/ros/melodic/include/tf/LinearMath/QuadWord.h
+ros/macros.h
+-
 
 /opt/ros/melodic/include/tf/LinearMath/Scalar.h
 math.h
@@ -1176,6 +1180,8 @@ boost/signals2.hpp
 geometry_msgs/TwistStamped.h
 /opt/ros/melodic/include/tf/geometry_msgs/TwistStamped.h
 tf2_ros/buffer.h
+-
+ros/macros.h
 -
 
 /opt/ros/melodic/include/tf/time_cache.h

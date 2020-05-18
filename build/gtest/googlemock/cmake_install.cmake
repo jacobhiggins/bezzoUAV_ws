@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/bezzo/bezzoUAV_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/bini/versioned/uav_ros/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/bezzo/bezzoUAV_ws/build/gtest/googlemock/gtest/cmake_install.cmake")
+  include("/home/bini/versioned/uav_ros/build/gtest/googlemock/gtest/cmake_install.cmake")
 
 endif()
 

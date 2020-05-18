@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/enrico_mpc_pk.dir/src/MPCControl.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/libenrico_mpc_pk.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/libenrico_mpc_pk.so"
+  "/home/bini/versioned/uav_ros/devel/lib/libenrico_mpc_pk.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/libenrico_mpc_pk.so"
 )
 
 # Per-language clean rules from dependency scanning.

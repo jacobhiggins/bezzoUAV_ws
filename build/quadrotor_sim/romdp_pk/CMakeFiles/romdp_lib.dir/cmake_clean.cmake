@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/romdp_lib.dir/MDPlib/model.cpp.o"
   "CMakeFiles/romdp_lib.dir/MDPlib/PolicyIteration.cpp.o"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/libromdp_lib.pdb"
-  "/home/bezzo/bezzoUAV_ws/devel/lib/libromdp_lib.so"
+  "/home/bini/versioned/uav_ros/devel/lib/libromdp_lib.pdb"
+  "/home/bini/versioned/uav_ros/devel/lib/libromdp_lib.so"
 )
 
 # Per-language clean rules from dependency scanning.

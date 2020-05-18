@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/devel
+prefix=/home/bini/versioned/uav_ros/devel
 
 Name: mesh_visualization
 Description: Description of mesh_visualization

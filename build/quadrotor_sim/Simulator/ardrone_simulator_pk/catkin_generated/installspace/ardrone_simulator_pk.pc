@@ -1,4 +1,4 @@
-prefix=/home/bezzo/bezzoUAV_ws/install
+prefix=/home/bini/versioned/uav_ros/install
 
 Name: ardrone_simulator_pk
 Description: Description of ardrone_simulator_pk

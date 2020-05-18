@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/quadrotor_msgs_generate_messages_cpp"
-  "/home/bezzo/bezzoUAV_ws/devel/include/quadrotor_msgs/SO3Command.h"
+  "/home/bini/versioned/uav_ros/devel/include/quadrotor_msgs/SO3Command.h"
 )
 
 # Per-language clean rules from dependency scanning.
