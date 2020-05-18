@@ -1,8 +1,0 @@
-prefix=/home/bini/versioned/uav_ros/install
-
-Name: ardrone_simulator_pk
-Description: Description of ardrone_simulator_pk
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: roscpp rospy std_msgs

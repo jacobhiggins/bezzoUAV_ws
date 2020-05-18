@@ -1,8 +1,0 @@
-prefix=/home/bini/versioned/uav_ros/install
-
-Name: cmd_romdp_pk
-Description: Description of cmd_romdp_pk
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

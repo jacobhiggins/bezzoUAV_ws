@@ -1,8 +1,0 @@
-prefix=/home/bini/versioned/uav_ros/install
-
-Name: galois_kf_pk
-Description: Description of galois_kf_pk
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: geometry_msgs nav_msgs roscpp rospy sensor_msgs std_msgs

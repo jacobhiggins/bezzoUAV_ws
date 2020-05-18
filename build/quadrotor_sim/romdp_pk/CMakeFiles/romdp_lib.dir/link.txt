@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC   -shared -Wl,-soname,libromdp_lib.so -o /home/bini/versioned/uav_ros/devel/lib/libromdp_lib.so CMakeFiles/romdp_lib.dir/MDPlib/model.cpp.o CMakeFiles/romdp_lib.dir/MDPlib/PolicyIteration.cpp.o 

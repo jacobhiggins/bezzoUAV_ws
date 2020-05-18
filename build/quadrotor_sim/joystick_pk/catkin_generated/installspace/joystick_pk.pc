@@ -1,8 +1,0 @@
-prefix=/home/bini/versioned/uav_ros/install
-
-Name: joystick_pk
-Description: Description of joystick_pk
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
