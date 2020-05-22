@@ -19,6 +19,8 @@
 
 // #define MPC_CTRL "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define MPC_CTRL "/home/bezzo/ExplicitMPC/glpk-uav/mpc_ctrl"
+// #define MPC_CTRL "./mpc_ctrl"
+// #define MPC_CTRL "/src/quadrotor_sim/enrico_mpc2_pk/src"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 
 //static MPCControl controller;
@@ -64,6 +66,21 @@ static void position_cmd_cb(const quadrotor_msgs::PositionCommand::ConstPtr &cmd
     // ROS_INFO("Inside position_cmd callback");
     // ROS_INFO("Commanded Position: (%f,%f,%f)",x,y,z);
     // std::cout << "X position: " << x;
+}
+
+static void position_Matlab_cmd_cb(const geometry_msgs::Twist::ConstPtr &cmd){
+    ref[0] = cmd->linear.x;
+    ref[1] = cmd->linear.y;
+    ref[2] = cmd->linear.z;
+    ref[3] = 0;
+    ref[4] = 0;
+    ref[5] = 0;
+    ref[6] = 0;
+    ref[7] = 0;
+    ref[8] = 0;
+    ref[9] = 0;
+    ref[10] = 0;
+    ref[11] = 0;
 }
 
 static void odom_cb(const nav_msgs::Odometry::ConstPtr &odom)
@@ -125,6 +142,7 @@ int main(int argc, char **argv){
 	char fd_wr[5];
 	/* Parameters to be passed to MPC_CTRL */
 	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "/home/bezzo/ExplicitMPC/glpk-uav/json/uav12_iris.json", NULL};
+    // char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/json", NULL};
     pid_t pid;
 
 
@@ -154,6 +172,8 @@ int main(int argc, char **argv){
     ros::Rate rate(10);
 
     ros::Subscriber position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
+                                                 ros::TransportHints().tcpNoDelay());
+    ros::Subscriber position_cmd_Matlab_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
                                                  ros::TransportHints().tcpNoDelay());
     ros::Subscriber odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
                                          ros::TransportHints().tcpNoDelay());
