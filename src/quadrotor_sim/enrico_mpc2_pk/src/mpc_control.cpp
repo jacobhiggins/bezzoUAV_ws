@@ -19,8 +19,8 @@
 
 // #define MPC_CTRL "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 // #define MPC_CTRL "/home/bezzo/ExplicitMPC/glpk-uav/mpc_ctrl"
-// #define MPC_CTRL "./mpc_ctrl"
-#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
+#define MPC_CTRL "./mpc_ctrl"
+//#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 
 //static MPCControl controller;
@@ -131,22 +131,22 @@ static void odom_cb(const nav_msgs::Odometry::ConstPtr &odom)
 }
 
 int main(int argc, char **argv){
-
-    // ********** Setup MPC **********
-    // Setting up pipe to enrico solver
-    pipe(to_mpc);
-    pipe(from_mpc);
-
-    /* Strings of read/write file descriptors */
+	
+	// ********** Setup MPC **********
+	// Setting up pipe to enrico solver
+	pipe(to_mpc);
+	pipe(from_mpc);
+	
+	/* Strings of read/write file descriptors */
 	char fd_rd[5];
 	char fd_wr[5];
 	/* Parameters to be passed to MPC_CTRL */
-	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/json/uav12_iris.json", NULL};
-    // char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/json", NULL};
-    pid_t pid;
-
-
-    if ( !(pid = fork()) ) {
+	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "uav12_iris.json", NULL};
+	// char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/json", NULL};
+	pid_t pid;
+	
+	
+	if ( !(pid = fork()) ) {
 		/* CHILD CODE ONLY */
 		sprintf(fd_rd, "%i", to_mpc[0]);   /* storing read end */
 		close(to_mpc[1]);                  /* closing write end */
@@ -154,7 +154,7 @@ int main(int argc, char **argv){
 		close(from_mpc[0]);                /* closing read end */
 
 		/* Now jumping to the child code */
-        /* remeber to specify the pat of the executable. TODO get absolute path*/
+		/* remember to specify the path of the executable. TODO get absolute path*/
 		execve(MPC_CTRL, args, NULL);
 		PRINT_ERROR("Error in execve\n");
 	}
