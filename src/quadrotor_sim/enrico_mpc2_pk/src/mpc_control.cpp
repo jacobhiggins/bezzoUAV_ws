@@ -18,9 +18,9 @@
 #include "common.h"
 
 // #define MPC_CTRL "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
-#define MPC_CTRL "/home/bezzo/ExplicitMPC/glpk-uav/mpc_ctrl"
+// #define MPC_CTRL "/home/bezzo/ExplicitMPC/glpk-uav/mpc_ctrl"
 // #define MPC_CTRL "./mpc_ctrl"
-// #define MPC_CTRL "/src/quadrotor_sim/enrico_mpc2_pk/src"
+#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 
 //static MPCControl controller;
@@ -141,7 +141,7 @@ int main(int argc, char **argv){
 	char fd_rd[5];
 	char fd_wr[5];
 	/* Parameters to be passed to MPC_CTRL */
-	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "/home/bezzo/ExplicitMPC/glpk-uav/json/uav12_iris.json", NULL};
+	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/json/uav12_iris.json", NULL};
     // char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/json", NULL};
     pid_t pid;
 
