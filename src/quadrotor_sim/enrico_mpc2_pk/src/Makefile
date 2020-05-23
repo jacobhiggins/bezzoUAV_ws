@@ -6,14 +6,13 @@ LDFLAGS = -lm -ljson-c -lrt -lgsl -lgslcblas -lglpk
 default: mpc_ctrl
 
 mpc_get_lib:
-	git clone https://github.com/ebni/MPC.git; \
+	git clone https://github.com/ebni/MPC.git
 	cd MPC; \
 	make mpc.o; \
 	make dyn.o; \
 	mv *.o ..; \
-	mv mpc.h ..; \
-	mv dyn.h ..; \
-	cd ..; \
+	mv *.h ..; \
+	cd ..
 	rm -rf MPC
 
 #mpc.h: mpc_get_lib
@@ -34,4 +33,4 @@ mpc_ctrl: mpc_ctrl.o mpc.o
 	gcc mpc_ctrl.o mpc.o dyn.o $(LDFLAGS) -o mpc_ctrl
 
 clean:
-	rm mpc_ctrl *.o dyn.h mpc.h
+	rm -rf mpc_ctrl *.o dyn.h mpc.h MPC
