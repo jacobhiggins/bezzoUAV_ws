@@ -1,0 +1,2 @@
+addpath("../../bezzoUAV_ws");
+a = load("debug.csv");

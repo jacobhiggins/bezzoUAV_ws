@@ -1,0 +1,186 @@
+diff -ubr glpk-4.65/configure glpk-4.65_eb/configure
+--- glpk-4.65/configure	2018-02-16 08:00:00.000000000 +0100
++++ glpk-4.65_eb/configure	2020-01-14 17:32:59.114354872 +0100
+@@ -3479,13 +3479,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-g -O0"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-O0"
+   else
+     CFLAGS=
+   fi
+diff -ubr glpk-4.65/src/api/prob1.c glpk-4.65_eb/src/api/prob1.c
+--- glpk-4.65/src/api/prob1.c	2018-02-16 08:00:00.000000000 +0100
++++ glpk-4.65_eb/src/api/prob1.c	2020-01-14 17:52:16.860012020 +0100
+@@ -1507,6 +1507,150 @@
+ /***********************************************************************
+ *  NAME
+ *
++*  glp_print_prob - print problem object content
++*
++*  SYNOPSIS
++*
++*  void glp_print_prob(glp_prob *prob);
++*
++*  DESCRIPTION
++*
++*  FIXMEThe routine glp_copy_prob copies the content of the problem object
++*  prob to the problem object dest.
++*
++*  The parameter names is a flag. If it is non-zero, the routine also
++*  copies all symbolic names; otherwise, if it is zero, symbolic names
++*  are not copied. */
++
++void glp_print_prob(glp_prob *prob)
++{
++  /*      glp_bfcp bfcp; */
++      int i, j, len, *ind;
++      double *val;
++
++      if (prob->name != NULL)
++	      printf("Problem name:\n\t%s\n", prob->name);
++      if (prob->obj != NULL)
++	      printf("Object name:\n\t%s\n", prob->obj);
++      printf("Optim direction:\n\t%d\n", prob->dir);
++      printf("Constant (shift):\n\t%f\n", prob->c0);
++      printf("Number of rows:\n\t%d (m_max=%d)\n", prob->m, prob->m_max);
++      printf("Number of cols:\n\t%d (n_max=%d)\n", prob->n, prob->n_max);
++      printf("Basis factorization control parameters (bfcp)\n\tTODO\n");
++      /*  glp_get_bfcp(prob, &bfcp); */
++      printf("Primal basic solution status:\n\t");
++      switch (prob->pbs_stat) {
++      case GLP_UNDEF: printf("primal solution is undefined\n"); break;
++      case GLP_FEAS: printf("primal solution is feasible\n"); break;
++      case GLP_INFEAS: printf("primal solution is infeasible\n"); break;
++      case GLP_NOFEAS: printf("no primal feasible solution exists\n"); break;
++      default: printf("%d (TODO)\n", prob->pbs_stat);
++      }
++      printf("Dual basic solution status:\n\t");
++      switch (prob->dbs_stat) {
++      case GLP_UNDEF: printf("dual solution is undefined\n"); break;
++      case GLP_FEAS: printf("dual solution is feasible\n"); break;
++      case GLP_INFEAS: printf("dual solution is infeasible\n"); break;
++      case GLP_NOFEAS: printf("no dual feasible solution exists\n"); break;
++      default: printf("%d (TODO)\n", prob->dbs_stat);
++      }
++      printf("Objective function value:\n\t%f\n", prob->obj_val);
++      printf("\"some\" (no idea):\n\t%d\n", prob->some);
++      printf("Interior-point method\n");
++      printf("\tSolution status:\n\t\t");
++      switch (prob->ipt_stat) {
++      case GLP_UNDEF: printf("interior solution is undefined\n"); break;
++      case GLP_OPT: printf("interior solution is optimal\n"); break;
++      case GLP_INFEAS: printf("interior solution is infeasible\n"); break;
++      case GLP_NOFEAS: printf("no feasible solution exists\n"); break;
++      default: printf("%d (TODO)\n", prob->ipt_stat);
++      }
++      printf("\tObject function value:\n\t\t%f\n", prob->ipt_obj);
++      printf("Mixed-Integer Programming (MIP)");
++      printf("\tSolution status:\n\t\t");
++      switch (prob->mip_stat) {
++      case GLP_UNDEF: printf("integer solution is undefined\n"); break;
++      case GLP_OPT: printf("integer solution is optimal\n"); break;
++      case GLP_FEAS: printf("integer solution is feasible\n"); break;
++      case GLP_NOFEAS: printf("no integer solution exists\n"); break;
++      default: printf("%d (TODO)\n", prob->mip_stat);
++      }
++      printf("\tObject function value:\n\t\t%f\n", prob->mip_obj);
++      printf("Number of non-zero constraint coefficients:\n\t%d\n", prob->nnz);
++      printf("Information on rows\n");
++      for (i = 1; i <= prob->m; i++) {
++	      /* 
++	       * OTHER FIELDS NOT PRINTED
++	       *
++	       * int level;
++	       * unsigned char origin;
++	       * unsigned char klass;
++	      */
++	      printf("\ti=%d\t", prob->row[i]->i);
++	      printf("name=%s\t", prob->row[i]->name);
++	      switch (prob->row[i]->type) {
++	      case GLP_FR: printf("free variable\t"); break;
++	      case GLP_LO: printf("variable with lower bound\t"); break;
++	      case GLP_UP: printf("variable with upper bound\t"); break;
++	      case GLP_DB: printf("double-bounded variable\t"); break;
++	      case GLP_FX: printf("fixed variable\t"); break;
++	      default: printf("%d (TODO)\n", prob->row[i]->type);
++	      }
++	      printf("lb=%f\t", prob->row[i]->lb);
++	      printf("ub=%f\t", prob->row[i]->ub);
++ 	      printf("rii=%f\t",prob->row[i]->rii);
++	      switch (prob->row[i]->stat) {
++	      case GLP_BS: printf("basic variable\t"); break;
++	      case GLP_NL: printf("non-basic variable on lower bound\t"); break;
++	      case GLP_NU: printf("non-basic variable on upper bound\t"); break;
++	      case GLP_NF: printf("non-basic free variable\t"); break;
++	      case GLP_NS: printf("non-basic fixed variable\t"); break;	
++	      default: printf("%d (TODO)\n", prob->row[i]->stat);
++	      }
++	      printf("bind=%d\t", prob->row[i]->bind);
++	      printf("prim=%f\t", prob->row[i]->prim);
++	      printf("dual=%f\t", prob->row[i]->dual);;
++	      printf("pval=%f\t", prob->row[i]->pval);
++	      printf("dval=%f\t", prob->row[i]->dval);
++	      printf("mipx=%f\n", prob->row[i]->mipx);
++      }
++      printf("Information on columns\n");
++      for (j = 1; j <= prob->n; j++) {
++	      printf("\tj=%d\t", prob->col[j]->j);
++	      printf("name=%s\t", prob->col[j]->name);
++	      switch (prob->col[j]->kind) {
++	      case GLP_CV: printf("continuous variable\t"); break;
++	      case GLP_IV: printf("integer or binary variable\t"); break;
++	      default: printf("%d (TODO)\t", prob->col[j]->kind);
++	      }
++	      switch (prob->col[j]->type) {
++	      case GLP_FR: printf("free variable\t"); break;
++	      case GLP_LO: printf("variable with lower bound\t"); break;
++	      case GLP_UP: printf("variable with upper bound\t"); break;
++	      case GLP_DB: printf("double-bounded variable\t"); break;
++	      case GLP_FX: printf("fixed variable\t"); break;
++	      default: printf("%d (TODO)\t", prob->col[j]->type);
++	      }
++	      printf("lb=%f\t", prob->col[j]->lb);
++	      printf("ub=%f\t", prob->col[j]->ub);
++	      printf("obj_coef=%f\t", prob->col[j]->coef);
++ 	      printf("sjj=%f\t", prob->col[j]->sjj);
++	      /*
++		to->stat = prob->col[j]->stat;
++		to->prim = prob->col[j]->prim;
++		to->dual = prob->col[j]->dual;
++		to->pval = prob->col[j]->pval;
++		to->dval = prob->col[j]->dval;
++		to->mipx = prob->col[j]->mipx;
++	      */
++	      printf("\n");
++      }
++      return;
++}
++
++/***********************************************************************
++*  NAME
++*
+ *  glp_erase_prob - erase problem object content
+ *
+ *  SYNOPSIS
+diff -ubr glpk-4.65/src/glpk.h glpk-4.65_eb/src/glpk.h
+--- glpk-4.65/src/glpk.h	2018-02-16 08:00:00.000000000 +0100
++++ glpk-4.65_eb/src/glpk.h	2020-01-14 17:32:59.114354872 +0100
+@@ -366,6 +366,9 @@
+ void glp_copy_prob(glp_prob *dest, glp_prob *prob, int names);
+ /* copy problem object content */
+ 
++void glp_print_prob(glp_prob *prob);
++/* print problem object content */
++
+ void glp_erase_prob(glp_prob *P);
+ /* erase problem object content */
+ 

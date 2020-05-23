@@ -1,0 +1,24 @@
+{
+    "state_num": 3,
+    "input_num": 2,
+    "state_Ad": [-1, 1, 0,
+		 1, 1, 0,
+		 0, 1, 2],
+    "input_Bd": [1, 0,
+		 0, 1,
+		 0, 0],
+    "len_horizon": 5,
+    "len_ctrl": 4,
+    "input_bounds": [["-inf", "inf"],
+		     ["-inf", "inf"]],
+    "state_bounds": [["-inf", "4"],
+		     ["-4", "inf"],
+		     ["-inf", "inf"]],
+    "input_rate_max": ["inf", "inf"], 
+    "state_weight": [1,1,1],
+    "cost_model": {
+	"type": "min_steps_to_zero",
+	"coef": 10
+    },
+    "state_init": [1,1,1],
+}
