@@ -4,7 +4,9 @@ To run the code:
 
 1. From the workspace parent directory, run:
 
+```bash
 catkin_make
+```
 
 This compiles the code that ros can run.
 
