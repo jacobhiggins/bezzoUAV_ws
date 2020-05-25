@@ -52,13 +52,6 @@ int model_mpc_startup(mpc_glpk * mpc, struct json_object * in);
 
 
 int main(int argc, char * argv[]) {
-	mpc_status * mpc_st;
-	int fd_rd, fd_wr;
-	mpc_glpk uav_mpc;
-#ifdef USE_SERVER
-	struct sockaddr_in servaddr;
-#endif
-
 	int model_fd;
 	char * buffer;
 	ssize_t size, num_bytes;
@@ -70,7 +63,12 @@ int main(int argc, char * argv[]) {
 	/* Messages sent/received */
 	struct msg_to_mpc   msg_recv;
 	struct msg_from_mpc msg_sent;
+
+	mpc_status * mpc_st;
+	int fd_rd, fd_wr;
+	mpc_glpk uav_mpc;
 #ifdef USE_SERVER
+	struct sockaddr_in servaddr;
 	int steps_serv;
 	double time_serv;
 #endif
@@ -78,6 +76,7 @@ int main(int argc, char * argv[]) {
 	char s_sol[100] = SOL_FILENAME;
 	char tmp[100];
 #endif
+
 
 #ifdef USE_SERVER
 	if (argc <= 4) {
@@ -95,9 +94,6 @@ int main(int argc, char * argv[]) {
 	fd_rd = atoi(argv[1]);
 	fd_wr = atoi(argv[2]);
 
-	/* FIXME: need a check on number of input arguments, argc,
-	   etc. (copy code from mpc_client) */
-	
 	/* Reading the JSON file with the problem model */
 	if ((model_fd = open(argv[3], O_RDONLY)) == -1) {
 		PRINT_ERROR("Missing/wrong file");
@@ -134,12 +130,14 @@ int main(int argc, char * argv[]) {
 	/* Allocating struct of solver status after problem defined */
 	mpc_st = mpc_status_alloc(&uav_mpc);
 	  
+#ifdef PRINT_PROBLEM
 	/* Save initial status */
 	mpc_status_save(&uav_mpc, mpc_st);
 	fprintf(stdout, "Initial status\n");
 	mpc_status_fprintf(stdout, &uav_mpc, mpc_st);
  	glp_write_lp(uav_mpc.op, NULL, "initial_mpc.txt");
 	glp_print_sol(uav_mpc.op, "initial_sol.txt");
+#endif
 
 #ifdef USE_SERVER
 	/* Setting up the client: server to connect to */
@@ -153,7 +151,8 @@ int main(int argc, char * argv[]) {
 	if(connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
 		PRINT_ERROR("client: error in connect");
 #endif
-	
+
+	/* Cycling forever to get the state from ROS */
 	while ((num_bytes = read(fd_rd, &msg_recv, sizeof(msg_recv)))) {
 		/* Printing received message */
 		printf("Got message from %i, job %i\n",
@@ -206,10 +205,9 @@ int main(int argc, char * argv[]) {
 		sprintf(tmp, "%02luC", k);
 		strcat(tmp, s_sol);
 		glp_print_sol(uav_mpc.op, tmp);
-#endif	
-		
 		mpc_status_save(&uav_mpc, mpc_st);
 		mpc_status_fprintf(stdout, &uav_mpc, mpc_st);
+#endif	
 
 		/*
 		 * There is  a more efficient way  to make the steps  below by
@@ -228,12 +226,10 @@ int main(int argc, char * argv[]) {
 		/* Adding also PID and timestamp */
 		msg_sent.sender = getpid();
 		clock_gettime(CLOCK_MONOTONIC, &(msg_sent.timestamp));
-		
-		
+
+		/* Sending the input to ROS */
 		write(fd_wr, &msg_sent, sizeof(msg_sent));
 	}
-	
-	
 }
 
 
