@@ -26,7 +26,9 @@
 static bool debug = true;
 static std::ofstream debugfile;
 static geometry_msgs::Twist trpy_cmd; // Control inputs (trpy) from MPC to simulator
+static nav_msgs::Odometry mpc_state; // State associated with control inputs
 static ros::Publisher trpy_cmd_pub; // Publisher for trpy_cmd
+static ros::Publisher mpc_state_pub; // Publisher for state with mpc
 static ros::Publisher state_pub; // Publisher of current state information, for debugging
 static Eigen::Vector3d des_pos, des_rpy, des_vel, des_pqr;
 static double current_yaw = 0;
@@ -45,7 +47,22 @@ static void publishTRPY(void)
     trpy_cmd.angular.x = msg_recv.input[1]; // roll
     trpy_cmd.angular.y = msg_recv.input[2]; // pitch
     trpy_cmd.angular.z = msg_recv.input[3]; // yaw
+
+    mpc_state.pose.pose.position.x = msg_sent[0]; // x
+    mpc_state.pose.pose.position.y = msg_sent[1]; // y
+    mpc_state.pose.pose.position.z = msg_sent[2]; // z
+    mpc_state.pose.pose.orientation.x = msg_sent[3]; // roll
+    mpc_state.pose.pose.orientation.y = msg_sent[4]; // pitch
+    mpc_state.pose.pose.orientation.z = msg_sent[5]; // yaw
+    mpc_state.twist.twist.linear.x = msg_sent[6]; // x dot
+    mpc_state.twist.twist.linear.y = msg_sent[7]; // y dot
+    mpc_state.twist.twist.linear.z = msg_sent[8]; // z dot
+    mpc_state.twist.twist.angular.x = msg_sent[9]; // roll dot
+    mpc_state.twist.twist.angular.y = msg_sent[10]; // pitch dot
+    mpc_state.twist.twist.angular.z = msg_sent[11]; // yaw dot
+
     trpy_cmd_pub.publish(trpy_cmd);
+    mpc_state_pub.publish(mpc_state);
 }
 
 static void position_cmd_cb(const quadrotor_msgs::PositionCommand::ConstPtr &cmd){
