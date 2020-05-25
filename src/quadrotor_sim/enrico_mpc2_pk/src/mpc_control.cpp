@@ -15,15 +15,16 @@
 #include <time.h>
 #include <error.h>
 #include <iostream>
+#include <fstream>
 #include "common.h"
 
-// #define MPC_CTRL "/home/bezzo/bezzoUAV_ws/src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
-// #define MPC_CTRL "/home/bezzo/ExplicitMPC/glpk-uav/mpc_ctrl"
-#define MPC_CTRL "./mpc_ctrl"
-//#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
+// #define MPC_CTRL "./mpc_ctrl"
+#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 
 //static MPCControl controller;
+static bool debug = true;
+static std::ofstream debugfile;
 static geometry_msgs::Twist trpy_cmd; // Control inputs (trpy) from MPC to simulator
 static ros::Publisher trpy_cmd_pub; // Publisher for trpy_cmd
 static ros::Publisher state_pub; // Publisher of current state information, for debugging
@@ -130,6 +131,33 @@ static void odom_cb(const nav_msgs::Odometry::ConstPtr &odom)
 
 }
 
+static void write_debug(ros::Duration t){
+    std::string time = std::to_string(t.toSec());
+    std::string state = std::to_string(msg_sent.state[0]) + ","
+        + std::to_string(msg_sent.state[1]) + ","
+        + std::to_string(msg_sent.state[2]) + ","
+        + std::to_string(msg_sent.state[3]) + ","
+        + std::to_string(msg_sent.state[4]) + ","
+        + std::to_string(msg_sent.state[5]) + ","
+        + std::to_string(msg_sent.state[6]) + ","
+        + std::to_string(msg_sent.state[7]) + ","
+        + std::to_string(msg_sent.state[8]) + ","
+        + std::to_string(msg_sent.state[9]) + ","
+        + std::to_string(msg_sent.state[10]) + ","
+        + std::to_string(msg_sent.state[11]);
+
+    std::string input = std::to_string(msg_recv.input[0]) + ","
+        + std::to_string(msg_recv.input[1]) + ","
+        + std::to_string(msg_recv.input[2]) + ","
+        + std::to_string(msg_recv.input[3]);
+
+
+    debugfile << time << ",";
+    debugfile << state << ",";
+    debugfile << input << "\n";
+    debugfile.flush();
+}
+
 int main(int argc, char **argv){
 	
 	// ********** Setup MPC **********
@@ -141,8 +169,8 @@ int main(int argc, char **argv){
 	char fd_rd[5];
 	char fd_wr[5];
 	/* Parameters to be passed to MPC_CTRL */
-	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "uav12_iris.json", NULL};
-	// char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/json", NULL};
+	// char * args[] = {MPC_CTRL, fd_rd, fd_wr, "uav12_iris.json", NULL};
+	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/uav12_iris.json", NULL};
 	pid_t pid;
 	
 	
@@ -159,6 +187,10 @@ int main(int argc, char **argv){
 		PRINT_ERROR("Error in execve\n");
 	}
 
+    // ********** Debug ********
+
+    if (debug)
+        debugfile.open("debug_file.csv");
 
     // ********** ROS **********
 
@@ -178,6 +210,8 @@ int main(int argc, char **argv){
     ros::Subscriber odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
                                          ros::TransportHints().tcpNoDelay());
 
+    ros::Time start = ros::Time::now();
+
     while(ros::ok()){
         
         ros::spinOnce();
@@ -195,7 +229,10 @@ int main(int argc, char **argv){
         }
         // printf("Got control action %f\n", msg_recv.input[0]);
         publishTRPY();
-
+        if (debug){
+            ros::Duration t = ros::Time::now() - start;
+            write_debug(t);
+        }
 
          rate.sleep();
     }
