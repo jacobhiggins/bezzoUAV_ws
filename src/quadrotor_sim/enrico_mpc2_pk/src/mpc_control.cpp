@@ -48,18 +48,18 @@ static void publishTRPY(void)
     trpy_cmd.angular.y = msg_recv.input[2]; // pitch
     trpy_cmd.angular.z = msg_recv.input[3]; // yaw
 
-    mpc_state.pose.pose.position.x = msg_sent[0]; // x
-    mpc_state.pose.pose.position.y = msg_sent[1]; // y
-    mpc_state.pose.pose.position.z = msg_sent[2]; // z
-    mpc_state.pose.pose.orientation.x = msg_sent[3]; // roll
-    mpc_state.pose.pose.orientation.y = msg_sent[4]; // pitch
-    mpc_state.pose.pose.orientation.z = msg_sent[5]; // yaw
-    mpc_state.twist.twist.linear.x = msg_sent[6]; // x dot
-    mpc_state.twist.twist.linear.y = msg_sent[7]; // y dot
-    mpc_state.twist.twist.linear.z = msg_sent[8]; // z dot
-    mpc_state.twist.twist.angular.x = msg_sent[9]; // roll dot
-    mpc_state.twist.twist.angular.y = msg_sent[10]; // pitch dot
-    mpc_state.twist.twist.angular.z = msg_sent[11]; // yaw dot
+    mpc_state.pose.pose.position.x = msg_sent.state[0]; // x
+    mpc_state.pose.pose.position.y = msg_sent.state[1]; // y
+    mpc_state.pose.pose.position.z = msg_sent.state[2]; // z
+    mpc_state.pose.pose.orientation.x = msg_sent.state[3]; // roll
+    mpc_state.pose.pose.orientation.y = msg_sent.state[4]; // pitch
+    mpc_state.pose.pose.orientation.z = msg_sent.state[5]; // yaw
+    mpc_state.twist.twist.linear.x = msg_sent.state[6]; // x dot
+    mpc_state.twist.twist.linear.y = msg_sent.state[7]; // y dot
+    mpc_state.twist.twist.linear.z = msg_sent.state[8]; // z dot
+    mpc_state.twist.twist.angular.x = msg_sent.state[9]; // roll dot
+    mpc_state.twist.twist.angular.y = msg_sent.state[10]; // pitch dot
+    mpc_state.twist.twist.angular.z = msg_sent.state[11]; // yaw dot
 
     trpy_cmd_pub.publish(trpy_cmd);
     mpc_state_pub.publish(mpc_state);
