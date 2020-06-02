@@ -27,7 +27,8 @@ for qn = 1:nquad
 end
 
 % Quadrotor model
-sysparams = nanoplus();
+% sysparams = nanoplus();
+sysparams = iris();
 mpcparams = simparams.mpcparams;
 global mass;
 global grav;
@@ -78,14 +79,20 @@ Ms = [0;0;0];
 states = [];
 global F;
 global M;
+global mpc_state;
 F = mass*grav;
 M = [0;0;0];
+mpc_state = zeros(12,1);
+state_diffs = [];
+states_mpc = [];
 
-subMPC = rossubscriber("/mpc_control/mpc_cmd","geometry_msgs/Twist",@mpcCMDcb);
+% subMPC = rossubscriber("/mpc_control/mpc_cmd","geometry_msgs/Twist",@mpcCMDcb);
+subSTATE = rossubscriber("/mpc_control/mpc_state","nav_msgs/Odometry",@mpcSTATEcb);
 pubPosCmd = rospublisher("/matlab_position_cmd","geometry_msgs/Twist");
 poscmdMSG = rosmessage(pubPosCmd);
-pubState = rospublisher("/iris_odom","nav_msgs/Odometry");
+pubState = rospublisher("/iris_matlab_odom","nav_msgs/Odometry");
 stateMSG = rosmessage(pubState);
+r = rosrate(100);
 
 %% ************************* RUN SIMULATION *************************
 global key;
@@ -123,24 +130,15 @@ while key ~= 'q'
         send(pubPosCmd,poscmdMSG);
         
         for i = 1:nstep
+            % Use rosrate 
+            
+            
+            
+            
+            
             % Use MPC to calculate control input
             current_state = x{qn};
             
-            % Publish current state to ROS topic for enrico MPC
-            stateMSG.Pose.Pose.Position.X = current_state(1);
-            stateMSG.Pose.Pose.Position.Y = current_state(2);
-            stateMSG.Pose.Pose.Position.Z = current_state(3);
-            stateMSG.Twist.Twist.Linear.X = current_state(4);
-            stateMSG.Twist.Twist.Linear.Y = current_state(5);
-            stateMSG.Twist.Twist.Linear.Z = current_state(6);
-            stateMSG.Pose.Pose.Orientation.W = current_state(7);
-            stateMSG.Pose.Pose.Orientation.X = current_state(8);
-            stateMSG.Pose.Pose.Orientation.Y = current_state(9);
-            stateMSG.Pose.Pose.Orientation.Z = current_state(10);
-            stateMSG.Twist.Twist.Angular.X = current_state(11);
-            stateMSG.Twist.Twist.Angular.Y = current_state(12);
-            stateMSG.Twist.Twist.Angular.Z = current_state(13);
-            send(pubState,stateMSG);
             
             % For MPC through Matlab
             % Convert quaternion to rpy angles, form correct state vector
@@ -162,6 +160,32 @@ while key ~= 'q'
                 current_state(11);... % p
                 current_state(12);... % q
                 current_state(13);]; % r
+            
+            
+            % Publish current state to ROS topic for enrico MPC
+            stateMSG.Pose.Pose.Position.X = current_state(1);
+            stateMSG.Pose.Pose.Position.Y = current_state(2);
+            stateMSG.Pose.Pose.Position.Z = current_state(3);
+            stateMSG.Twist.Twist.Linear.X = current_state(4);
+            stateMSG.Twist.Twist.Linear.Y = current_state(5);
+            stateMSG.Twist.Twist.Linear.Z = current_state(6);
+            %%% Quaternion
+%             stateMSG.Pose.Pose.Orientation.W = current_state(7);
+%             stateMSG.Pose.Pose.Orientation.X = current_state(8);
+%             stateMSG.Pose.Pose.Orientation.Y = current_state(9);
+%             stateMSG.Pose.Pose.Orientation.Z = current_state(10);
+            %%% RPY
+            stateMSG.Pose.Pose.Orientation.X = phi;
+            stateMSG.Pose.Pose.Orientation.Y = theta;
+            stateMSG.Pose.Pose.Orientation.Z = psi;
+            stateMSG.Twist.Twist.Angular.X = current_state(11);
+            stateMSG.Twist.Twist.Angular.Y = current_state(12);
+            stateMSG.Twist.Twist.Angular.Z = current_state(13);
+            send(pubState,stateMSG);
+            
+%             pause(0.1);
+            
+            
             dist = norm(state(1:3)-des_state(1:3),2);
             tic;
 %             [F, M] = controllerMPC(time,MPCobj,state,des_state,sysparams,mpcparams);
@@ -171,11 +195,15 @@ while key ~= 'q'
             Ms = [Ms M];
 %             disp(F/(sysparams.mass*sysparams.grav));
             ti = toc;
+            
+            state_diff = state - mpc_state; % Take difference betwee current state and state used by mpc, for debugging
+            states_mpc = [states_mpc mpc_state];
+            state_diffs = [state_diffs state_diff];
+            
             [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time,time+tstep], x{qn});
             x{qn}    = xsave(end, :)';
             t{qn} = tsave(end, :)';
             states = [states state];
-            pause(0.1);
             xtraj{qn}((iter-1)*nstep+i,:) = x{qn}';
             ttraj{qn}((iter-1)*nstep+i) = t{qn}';
             time = cstep*(iter-1) + tstep*i;
@@ -207,6 +235,7 @@ while key ~= 'q'
 %     if (t < cstep)
 %         pause(cstep - t);
 %     end
+    waitfor(r);
 end
 key = -1;
 %% ************************* POST PROCESSING *************************
@@ -248,7 +277,9 @@ plot(ts,Ms(2,:),"LineWidth",2,"DisplayName","Pitch Moment");
 plot(ts,Ms(3,:),"LineWidth",2,"DisplayName","Yaw Moment");
 legend;
 
+states_matlab = states;
 save("matlabInputs.mat",'Fs','Ms','ts','states');
+save("state_diffs.mat","state_diffs","states_matlab","states_mpc");
 
 assignin('base','Ms',Ms);
 assignin('base','t',QP{qn}.time_hist);

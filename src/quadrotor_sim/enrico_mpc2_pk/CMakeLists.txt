@@ -143,6 +143,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(mpc_control2 src/mpc_control.cpp)
+add_executable(mpc_control2_matlab src/mpc_control_matlab.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -156,6 +157,9 @@ add_executable(mpc_control2 src/mpc_control.cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(mpc_control2
+   ${catkin_LIBRARIES}
+)
+target_link_libraries(mpc_control2_matlab
    ${catkin_LIBRARIES}
 )
 

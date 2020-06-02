@@ -3,9 +3,10 @@ function desired_state = traj3(waypoints, dist)
     if isempty(i)
        i = 0; 
     end
-    if dist<0.25
+    if dist<0.05
        i =  mod(i,size(waypoints,1)) + 1;
     end
+%     i = 2;
     if i==0
        desired_state.pos = [0;0;0];
        desired_state.euler = [0;0;0];

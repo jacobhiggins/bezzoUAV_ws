@@ -48,9 +48,9 @@ static void publishTRPY(void)
     trpy_cmd.angular.y = msg_recv.input[2]; // pitch
     trpy_cmd.angular.z = msg_recv.input[3]; // yaw
 
-    mpc_state.pose.pose.position.x = msg_sent.state[0]; // x
-    mpc_state.pose.pose.position.y = msg_sent.state[1]; // y
-    mpc_state.pose.pose.position.z = msg_sent.state[2]; // z
+    mpc_state.pose.pose.position.x = msg_sent.state[0] + ref[0]; // x
+    mpc_state.pose.pose.position.y = msg_sent.state[1] + ref[1]; // y
+    mpc_state.pose.pose.position.z = msg_sent.state[2] + ref[2]; // z
     mpc_state.pose.pose.orientation.x = msg_sent.state[3]; // roll
     mpc_state.pose.pose.orientation.y = msg_sent.state[4]; // pitch
     mpc_state.pose.pose.orientation.z = msg_sent.state[5]; // yaw
@@ -60,6 +60,10 @@ static void publishTRPY(void)
     mpc_state.twist.twist.angular.x = msg_sent.state[9]; // roll dot
     mpc_state.twist.twist.angular.y = msg_sent.state[10]; // pitch dot
     mpc_state.twist.twist.angular.z = msg_sent.state[11]; // yaw dot
+    mpc_state.pose.covariance[0] = msg_recv.input[0];
+    mpc_state.pose.covariance[1] = msg_recv.input[1];
+    mpc_state.pose.covariance[2] = msg_recv.input[2];
+    mpc_state.pose.covariance[3] = msg_recv.input[3];
 
     trpy_cmd_pub.publish(trpy_cmd);
     mpc_state_pub.publish(mpc_state);
@@ -148,6 +152,48 @@ static void odom_cb(const nav_msgs::Odometry::ConstPtr &odom)
 
 }
 
+static void odom_matlab_cb(const nav_msgs::Odometry::ConstPtr &odom)
+{
+
+  const Eigen::Vector3d position(odom->pose.pose.position.x,
+                                 odom->pose.pose.position.y,
+                                 odom->pose.pose.position.z);
+  const Eigen::Vector3d velocity(odom->twist.twist.linear.x,
+                                 odom->twist.twist.linear.y,
+                                 odom->twist.twist.linear.z);
+  const Eigen::Vector3d pqr(odom->twist.twist.angular.x,
+                            odom->twist.twist.angular.y,
+                            odom->twist.twist.angular.z);
+  const Eigen::Vector3d rpy(odom->pose.pose.orientation.x,
+                        odom->pose.pose.orientation.y,
+                        odom->pose.pose.orientation.z);
+
+  msg_sent.state[0] = position[0] - ref[0];
+  msg_sent.state[1] = position[1] - ref[1];
+  msg_sent.state[2] = position[2] - ref[2];
+  msg_sent.state[3] = rpy[0] - ref[3];
+  msg_sent.state[4] = rpy[1] - ref[4];
+  msg_sent.state[5] = rpy[2] - ref[5];
+  msg_sent.state[6] = velocity[0] - ref[6];
+  msg_sent.state[7] = velocity[1] - ref[7];
+  msg_sent.state[8] = velocity[2] - ref[8];
+  msg_sent.state[9] = pqr[0] - ref[9];
+  msg_sent.state[10] = pqr[1] - ref[10];
+  msg_sent.state[11] = pqr[2] - ref[11];
+
+  geometry_msgs::Twist state_msg;
+  state_msg.linear.x = position[0] - ref[0];
+  state_msg.linear.y = position[1] - ref[1];
+  state_msg.linear.z = position[2] - ref[2];
+  state_msg.angular.x = rpy[0] - ref[3];
+  state_msg.angular.y = rpy[1] - ref[4];
+  state_msg.angular.z = rpy[2] - ref[5];
+
+//   ROS_INFO("RPY: (%f,%f,%f)",r,p,y);
+  state_pub.publish(state_msg);
+
+}
+
 static void write_debug(ros::Duration t){
     std::string time = std::to_string(t.toSec());
     std::string state = std::to_string(msg_sent.state[0]) + ","
@@ -216,25 +262,33 @@ int main(int argc, char **argv){
     ros::NodeHandle n("~");
 
     trpy_cmd_pub = n.advertise<geometry_msgs::Twist>("mpc_cmd",10);
+    mpc_state_pub = n.advertise<nav_msgs::Odometry>("mpc_state",10);
     state_pub = n.advertise<geometry_msgs::Twist>("state",10);
 
-    ros::Rate rate(10);
+    ros::Rate rate(100);
 
     ros::Subscriber position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
                                                  ros::TransportHints().tcpNoDelay());
-    ros::Subscriber position_cmd_Matlab_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
-                                                 ros::TransportHints().tcpNoDelay());
+    // ros::Subscriber position_cmd_Matlab_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
+    //                                              ros::TransportHints().tcpNoDelay());
     ros::Subscriber odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
                                          ros::TransportHints().tcpNoDelay());
+    // ros::Subscriber odom_matlab_sub= n.subscribe("/iris_odom",10,&odom_matlab_cb,
+    //                                      ros::TransportHints().tcpNoDelay());
 
     ros::Time start = ros::Time::now();
+    ros::Duration dt;
 
     while(ros::ok()){
-        
+        ros::Time start_while = ros::Time::now();
         ros::spinOnce();
+        dt = ros::Time::now()-start_while;
+        ROS_INFO("After spin one, dt: %f",dt.toSec());
         /* Filling the message */
         msg_sent.sender = getpid();
         clock_gettime(CLOCK_MONOTONIC, &(msg_sent.timestamp));
+        dt = ros::Time::now()-start_while;
+        ROS_INFO("After clock_gettime, dt: %f",dt.toSec());
 
         if (write(to_mpc[1], &msg_sent, sizeof(msg_sent)) == -1)
             ROS_INFO("Issue in write");
@@ -244,14 +298,21 @@ int main(int argc, char **argv){
             PRINT_ERROR("Issue in write");
             //return;
         }
+        dt = ros::Time::now()-start_while;
+        ROS_INFO("After mpc read/write, dt: %f",dt.toSec());
+
         // printf("Got control action %f\n", msg_recv.input[0]);
         publishTRPY();
         if (debug){
             ros::Duration t = ros::Time::now() - start;
             write_debug(t);
         }
+        dt = ros::Time::now()-start_while;
+        ROS_INFO("After publish trpy/debug, dt: %f",dt.toSec());
 
-         rate.sleep();
+        rate.sleep();
+        dt = ros::Time::now()-start_while;
+        ROS_INFO("End of while loop, dt: %f",dt.toSec());
     }
 
     // std::string quadrotor_name;

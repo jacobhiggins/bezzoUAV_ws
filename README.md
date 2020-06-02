@@ -2,6 +2,14 @@
 
 To run the code:
 
+0. If this is the first time the directory is being compiled, first compile the quadrotor_msgs package:
+
+```bash
+catkin_make --pkg quadrotor_msgs
+```
+
+This is a dependency needed for other files.
+
 1. From the workspace parent directory, run:
 
 ```bash
