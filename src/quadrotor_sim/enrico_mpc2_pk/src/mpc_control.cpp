@@ -1,3 +1,6 @@
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
@@ -22,6 +25,9 @@
 #define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 
+/* GLOBAL VARIABLES */
+pid_t child_pid;
+
 //static MPCControl controller;
 static bool debug = true;
 static std::ofstream debugfile;
@@ -40,6 +46,9 @@ struct msg_from_mpc msg_recv;
 
 int from_mpc[2];
 int to_mpc[2];
+
+
+void term_handler(int signum);
 
 static void publishTRPY(void)
 {
@@ -234,10 +243,8 @@ int main(int argc, char **argv){
 	/* Parameters to be passed to MPC_CTRL */
 	// char * args[] = {MPC_CTRL, fd_rd, fd_wr, "uav12_iris.json", NULL};
 	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/uav12_iris.json", NULL};
-	pid_t pid;
-	
-	
-	if ( !(pid = fork()) ) {
+
+	if ( !(child_pid = fork()) ) {
 		/* CHILD CODE ONLY */
 		sprintf(fd_rd, "%i", to_mpc[0]);   /* storing read end */
 		close(to_mpc[1]);                  /* closing write end */
@@ -257,8 +264,18 @@ int main(int argc, char **argv){
 
     // ********** ROS **********
 
-    ros::init(argc, argv, "mpc_control");
+//    ros::init(argc, argv, "mpc_control");
+    ros::init(argc, argv, "mpc_control",ros::init_options::NoSigintHandler);
 
+	/* Setting up the signal handler for termination */
+	struct sigaction sa;
+	bzero(&sa, sizeof(sa));
+	sa.sa_handler = term_handler;
+	sigaction(SIGHUP, &sa, NULL);
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGPIPE, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+    
     ros::NodeHandle n("~");
 
     trpy_cmd_pub = n.advertise<geometry_msgs::Twist>("mpc_cmd",10);
@@ -318,4 +335,11 @@ int main(int argc, char **argv){
     // std::string quadrotor_name;
     // n.param("quadrotor_name", quadrotor_name, std::string("quadrotor"));
     // so3_command.header.frame_id = "/" + quadrotor_name;
+}
+
+void term_handler(int signum)
+{
+	ROS_INFO("Process %d: got signal %d", getpid(), signum);
+	kill(child_pid, SIGTERM);
+	exit(0);
 }
