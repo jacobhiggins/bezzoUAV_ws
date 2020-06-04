@@ -340,6 +340,7 @@ int main(int argc, char **argv){
 void term_handler(int signum)
 {
 	ROS_INFO("Process %d: got signal %d", getpid(), signum);
+	ROS_INFO("Killing also my child process %d", child_pid);
 	kill(child_pid, SIGTERM);
 	exit(0);
 }
