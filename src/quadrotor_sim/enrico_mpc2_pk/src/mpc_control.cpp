@@ -27,6 +27,7 @@
 
 /* GLOBAL VARIABLES */
 pid_t child_pid;
+double max_time = 0;
 
 //static MPCControl controller;
 static bool debug = true;
@@ -316,7 +317,11 @@ int main(int argc, char **argv){
             //return;
         }
         dt = ros::Time::now()-start_while;
-        ROS_INFO("After mpc read/write, dt: %f",dt.toSec());
+	double cur_time = dt.toSec();
+	if (cur_time > max_time) {
+		max_time = cur_time;
+	}
+        ROS_INFO("After mpc read/write, dt: %f",cur_time);
 
         // printf("Got control action %f\n", msg_recv.input[0]);
         publishTRPY();
@@ -340,6 +345,7 @@ int main(int argc, char **argv){
 void term_handler(int signum)
 {
 	ROS_INFO("Process %d: got signal %d", getpid(), signum);
+	ROS_INFO("Max time from send to recv: %f", max_time);
 	ROS_INFO("Killing also my child process %d", child_pid);
 	kill(child_pid, SIGTERM);
 	exit(0);
