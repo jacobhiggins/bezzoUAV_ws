@@ -29,9 +29,10 @@
 #define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 
+// Very important to keep!
 #define USE_PROCESS_PINNING
-#define CPU_ID_PARENT 1
-#define CPU_ID_CHILD  CPU_ID_PARENT
+#define CPU_ID_PARENT 1 // CPU where parent process lives
+#define CPU_ID_CHILD  CPU_ID_PARENT // CPU where child process lives = parent process lives
 
 
 
@@ -323,14 +324,14 @@ int main(int argc, char **argv){
 
     ros::Rate rate(100);
 
-    ros::Subscriber position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
-                                                 ros::TransportHints().tcpNoDelay());
-    // ros::Subscriber position_cmd_Matlab_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
+    // ros::Subscriber position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
     //                                              ros::TransportHints().tcpNoDelay());
-    ros::Subscriber odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
-                                         ros::TransportHints().tcpNoDelay());
-    // ros::Subscriber odom_matlab_sub= n.subscribe("/iris_odom",10,&odom_matlab_cb,
+    ros::Subscriber position_cmd_Matlab_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
+                                                 ros::TransportHints().tcpNoDelay());
+    // ros::Subscriber odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
     //                                      ros::TransportHints().tcpNoDelay());
+    ros::Subscriber odom_matlab_sub= n.subscribe("/iris_matlab_odom",10,&odom_matlab_cb,
+                                         ros::TransportHints().tcpNoDelay());
 
     ros::Time start = ros::Time::now();
     ros::Duration dt;

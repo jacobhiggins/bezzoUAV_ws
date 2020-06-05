@@ -32,4 +32,6 @@ SOLVER_IP and SOLVER_PORT should be the IP address and the port where the server
   ```
   from the project home directory.
 
+2. Now run rosrun enrico_mpc2_pk mpc_control2
+
 

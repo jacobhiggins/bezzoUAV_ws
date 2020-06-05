@@ -22,6 +22,12 @@
 #define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 
+// To see number of workers:
+// ps -Af | grep ros
+
+// To do: integrate mpc/sever code with matlab simulation (i.e. full offloading)
+// To do: add noise to simulation
+
 //static MPCControl controller;
 static bool debug = true;
 static std::ofstream debugfile;
@@ -267,8 +273,8 @@ int main(int argc, char **argv){
 
     ros::Rate rate(100);
 
-    ros::Subscriber position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
-                                                 ros::TransportHints().tcpNoDelay());
+    // ros::Subscriber position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
+    //                                              ros::TransportHints().tcpNoDelay());
     ros::Subscriber position_cmd_Matlab_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
                                                  ros::TransportHints().tcpNoDelay());
     // ros::Subscriber odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
