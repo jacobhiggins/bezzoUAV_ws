@@ -1,3 +1,7 @@
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#include <sched.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -24,6 +28,14 @@
 // #define MPC_CTRL "./mpc_ctrl"
 #define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
+
+#define USE_PROCESS_PINNING
+#define CPU_ID_PARENT 1
+#define CPU_ID_CHILD  CPU_ID_PARENT
+
+
+
+#define STRLEN_COMMAND 100
 
 /* GLOBAL VARIABLES */
 pid_t child_pid;
@@ -231,6 +243,14 @@ static void write_debug(ros::Duration t){
     debugfile.flush();
 }
 
+
+/*
+ * Set prio priority (high number => high priority) and pin the
+ * invoking process to CPU cpu_id
+ */
+void sched_set_prio_affinity(uint32_t prio, int cpu_id);
+
+
 int main(int argc, char **argv){
 	
 	// ********** Setup MPC **********
@@ -245,12 +265,29 @@ int main(int argc, char **argv){
 	// char * args[] = {MPC_CTRL, fd_rd, fd_wr, "uav12_iris.json", NULL};
 	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/uav12_iris.json", NULL};
 
+
+#ifdef USE_PROCESS_PINNING
+	sched_set_prio_affinity(
+		sched_get_priority_max(SCHED_FIFO)-1,
+		CPU_ID_PARENT);
+#endif
 	if ( !(child_pid = fork()) ) {
 		/* CHILD CODE ONLY */
 		sprintf(fd_rd, "%i", to_mpc[0]);   /* storing read end */
 		close(to_mpc[1]);                  /* closing write end */
 		sprintf(fd_wr, "%i", from_mpc[1]); /* storing write end */
 		close(from_mpc[0]);                /* closing read end */
+		
+#ifdef USE_PROCESS_PINNING
+		/* 
+		 * Having the child  process onto the same  CPU as the
+		 * parent process reduces the communication latency by
+		 * approx 95%!!
+		 */
+		sched_set_prio_affinity(
+			sched_get_priority_max(SCHED_FIFO),
+			CPU_ID_CHILD);
+#endif
 
 		/* Now jumping to the child code */
 		/* remember to specify the path of the executable. TODO get absolute path*/
@@ -348,5 +385,53 @@ void term_handler(int signum)
 	ROS_INFO("Max time from send to recv: %f", max_time);
 	ROS_INFO("Killing also my child process %d", child_pid);
 	kill(child_pid, SIGTERM);
-	exit(0);
+	//ros::shutdown();  // this is what the documentation seems to need
+	exit(0);          // this is a brute, working way
+}
+
+
+void sched_set_prio_affinity(uint32_t prio, int cpu_id)
+{
+	cpu_set_t  mask;
+
+	/* Set CPU affinity */
+	CPU_ZERO(&mask);
+	CPU_SET(cpu_id, &mask);
+	if (sched_setaffinity(0, sizeof(mask), &mask) != 0) {
+		PRINT_ERROR("sched_setaffinity");
+		exit(-1);
+	}
+
+	/* Set priority */
+#if SCHED_SETATTR_IN_SCHED_H
+	/* EB: TO BE TESTED */
+	struct sched_attr attr;
+	
+	bzero(&attr, sizeof(attr));
+	attr.size = sizeof(attr);
+	attr.sched_policy = SCHED_FIFO;
+	attr.sched_priority = prio;
+	if (sched_setattr(0, &attr, 0) != 0) {
+		PRINT_ERROR("sched_setattr");
+		exit(-1);
+	}
+#else
+	char launched[STRLEN_COMMAND];  /* String with launched command */
+
+	snprintf(launched, STRLEN_COMMAND,
+		 "sudo chrt -f -p %d %d", prio, getpid());
+	system(launched);
+
+	/* EB: next code fails because it needs sudo */
+	/*
+	struct sched_param param;
+	
+	bzero(&param, sizeof(param));
+	param.sched_priority = prio;
+	if (sched_setscheduler(0, SCHED_FIFO, &param) != 0) {
+		PRINT_ERROR("sched_setscheduler");
+		exit(-1);
+	}
+	*/
+#endif
 }
