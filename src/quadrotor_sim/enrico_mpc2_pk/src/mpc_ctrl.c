@@ -1,13 +1,11 @@
-#include <stdlib.h>
-#include <limits.h> 
-#include <stdio.h>
-#include <unistd.h>
-#include <time.h>
-#include <fcntl.h>
-#include <string.h>
-#include "common.h"
-#include "mpc.h"
+#define USE_SERVER
+#define PRINT_LOG
 
+#ifdef USE_SERVER
+#define SOLVER_IP "127.0.0.1"  /* must be IP address of the MPC server */
+#define SOLVER_PORT 6001     /* must be the same of the MPC server */
+#define CLIENT_SOLVER
+#endif /* USE_SERVER */
 /*
  * Below are some #define which trigger something:
  *
@@ -40,6 +38,21 @@
  * argv[3], filename of the JSON file of the model
  */
 
+#include <stdlib.h>
+#include <limits.h> 
+#include <stdio.h>
+#include <unistd.h>
+#include <time.h>
+#include <fcntl.h>
+#include <string.h>
+#ifdef USE_SERVER
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif /* USE_SERVER */
+#include "common.h"
+#include "mpc.h"
+
 /* Put this macro where debugging is needed */
 #define PRINT_ERROR(x) {fprintf(stderr, "%s:%d errno=%i, %s\n",	\
 				__FILE__, __LINE__, errno, (x));}
@@ -68,6 +81,7 @@ int main(int argc, char * argv[]) {
 	int fd_rd, fd_wr;
 	mpc_glpk uav_mpc;
 #ifdef USE_SERVER
+	int sockfd;
 	struct sockaddr_in servaddr;
 	int steps_serv;
 	double time_serv;
@@ -78,19 +92,12 @@ int main(int argc, char * argv[]) {
 #endif
 
 
-#ifdef USE_SERVER
-	if (argc <= 4) {
-		PRINT_ERROR("Too few arguments. 4 needed: <read fd> <write fd> <JSON model> <server IP>");
-		return -1;
-	}
-#else
 	if (argc <= 3) {
 		PRINT_ERROR("Too few arguments. 3 needed: <read fd> <write fd> <JSON model>");
 		return -1;
 	}
-#endif /* USE_SERVER */
 
-	/* Getting file descr of the pipe */
+	/* Getting file descr of the pipe connecting to ROS */
 	fd_rd = atoi(argv[1]);
 	fd_wr = atoi(argv[2]);
 
@@ -117,7 +124,10 @@ int main(int argc, char * argv[]) {
 	glp_print_sol(uav_mpc.op, "000glpk_sol.txt");
 #endif
 
-	/* Checking consistency between problem size and messages size */
+	/* 
+	 * Checking consistency between the  problem size got from the
+	 * JSON file and messages size defined in common.h
+	 */
 	if (STATE_NUM != uav_mpc.model->n) {
 		PRINT_ERROR("Size of state mismatch");
 		return -1;
@@ -142,8 +152,8 @@ int main(int argc, char * argv[]) {
 #ifdef USE_SERVER
 	/* Setting up the client: server to connect to */
 	bzero(&servaddr, sizeof(servaddr)); 
-	servaddr.sin_addr.s_addr = inet_addr(argv[3]);
-	servaddr.sin_port = htons(PORT_SOLVER);
+	servaddr.sin_addr.s_addr = inet_addr(SOLVER_IP);
+	servaddr.sin_port = htons(SOLVER_PORT);
 	servaddr.sin_family = AF_INET;
       
 	/* create and connect UPD socket */
@@ -154,18 +164,21 @@ int main(int argc, char * argv[]) {
 
 	/* Cycling forever to get the state from ROS */
 	while ((num_bytes = read(fd_rd, &msg_recv, sizeof(msg_recv)))) {
+#ifdef PRINT_LOG
 		/* Printing received message */
-		printf("Got message from %i, job %i\n",
+		printf("%s: [%f] Got message from %i, job %i\n",
+		       __FILE__,
+		       (double)msg_recv.timestamp.tv_sec
+		       +(double)msg_recv.timestamp.tv_sec*1e-9,
 		       msg_recv.sender, msg_recv.job_id);
-		printf("At %f\n", (double)msg_recv.timestamp.tv_sec
-		       +(double)msg_recv.timestamp.tv_sec*1e-9);
+#endif /* PRINT_LOG */
 		
 		/* Store the state received to the problem status */
 		mpc_status_save(&uav_mpc, mpc_st);
 		memcpy(mpc_st->state, msg_recv.state,
 		       sizeof(*msg_recv.state)*STATE_NUM);
 #ifdef USE_SERVER
-		*mpc_st->steps_bdg = 50;   /* number of max iterations */
+		*mpc_st->steps_bdg = 1000;   /* number of max iterations */
 		*mpc_st->time_bdg = 1000; /* max seconds (large value) */
 		*mpc_st->prim_stat = GLP_INFEAS;  /* changing x0 makes primal undef */
 		*mpc_st->dual_stat = GLP_FEAS;    /* should always be dual feasible */
@@ -177,17 +190,20 @@ int main(int argc, char * argv[]) {
 		/* Storing server used budgets */
 		steps_serv = *mpc_st->steps_bdg;
 		time_serv  = *mpc_st->time_bdg; 
-		gsl_vector_int_set(t->steps, k, steps_serv);
-		gsl_vector_set(t->time, k, time_serv);
 		
 #ifdef PRINT_PROBLEM
 		sprintf(tmp, "%02luA", k);
 		strcat(tmp, s_sol);
 		glp_print_sol(uav_mpc.op, tmp);
 #endif
+#ifdef PRINT_LOG
 		/* Printing the status after the local computations */
-		fprintf(stdout, "\nServer steps: %d\n", steps_serv);
-		fprintf(stdout, "Server time: %f\n", time_serv);
+		printf("%s: [%f] MPC server took: %d steps, %f secs\n",
+		       __FILE__,
+		       (double)msg_recv.timestamp.tv_sec
+		       +(double)msg_recv.timestamp.tv_sec*1e-9,
+		       steps_serv, time_serv);
+#endif /* PRINT_LOG */
 #endif /* USE SERVER */
 		/* giving ourself "infinite" time/iterations */
 		*mpc_st->steps_bdg = INT_MAX;
