@@ -293,6 +293,7 @@ int main(int argc, char **argv){
 		/* remember to specify the path of the executable. TODO get absolute path*/
 		execve(MPC_CTRL, args, NULL);
 		PRINT_ERROR("Error in execve\n");
+		exit(-1);
 	}
 
     // ********** Debug ********

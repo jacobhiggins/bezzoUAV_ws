@@ -1,0 +1,7 @@
+#!/bin/bash
+
+MPC_PATH=./src/quadrotor_sim/enrico_mpc2_pk/src/
+MPC_SERVER=mpc_server
+MPC_JSON_MODEL=uav12_iris.json
+
+$MPC_PATH$MPC_SERVER $MPC_PATH$MPC_JSON_MODEL
