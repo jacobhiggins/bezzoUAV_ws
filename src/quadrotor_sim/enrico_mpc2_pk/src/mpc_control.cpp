@@ -43,6 +43,7 @@ pid_t child_pid;
 double max_time = 0;
 
 //static MPCControl controller;
+std::string sim_type;
 static bool debug = true;
 static std::ofstream debugfile;
 static geometry_msgs::Twist trpy_cmd; // Control inputs (trpy) from MPC to simulator
@@ -50,6 +51,8 @@ static nav_msgs::Odometry mpc_state; // State associated with control inputs
 static ros::Publisher trpy_cmd_pub; // Publisher for trpy_cmd
 static ros::Publisher mpc_state_pub; // Publisher for state with mpc
 static ros::Publisher state_pub; // Publisher of current state information, for debugging
+static ros::Subscriber position_cmd_sub;
+static ros::Subscriber odom_sub;
 static Eigen::Vector3d des_pos, des_rpy, des_vel, des_pqr;
 static double current_yaw = 0;
 double state[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
@@ -318,20 +321,39 @@ int main(int argc, char **argv){
     
     ros::NodeHandle n("~");
 
-    trpy_cmd_pub = n.advertise<geometry_msgs::Twist>("mpc_cmd",10);
-    mpc_state_pub = n.advertise<nav_msgs::Odometry>("mpc_state",10);
-    state_pub = n.advertise<geometry_msgs::Twist>("state",10);
+    trpy_cmd_pub = n.advertise<geometry_msgs::Twist>("mpc_cmd",1);
+    mpc_state_pub = n.advertise<nav_msgs::Odometry>("mpc_state",1);
+    state_pub = n.advertise<geometry_msgs::Twist>("state",1);
 
     ros::Rate rate(100);
 
-    // ros::Subscriber position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
-    //                                              ros::TransportHints().tcpNoDelay());
-    ros::Subscriber position_cmd_Matlab_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
-                                                 ros::TransportHints().tcpNoDelay());
-    // ros::Subscriber odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
-    //                                      ros::TransportHints().tcpNoDelay());
-    ros::Subscriber odom_matlab_sub= n.subscribe("/iris_matlab_odom",10,&odom_matlab_cb,
+    n.getParam("param",sim_type);
+    ROS_INFO("sim type: %s",sim_type.c_str());
+
+    if(sim_type.compare("matlab")==0)
+    {
+        position_cmd_sub = n.subscribe("/matlab_position_cmd",10,&position_Matlab_cmd_cb,
                                          ros::TransportHints().tcpNoDelay());
+        odom_sub= n.subscribe("/iris_matlab_odom",10,&odom_matlab_cb,
+                                         ros::TransportHints().tcpNoDelay());
+    }else if(sim_type.compare("ros")==0)
+    {
+        position_cmd_sub = n.subscribe("/iris_position_cmd", 10, &position_cmd_cb,
+                                         ros::TransportHints().tcpNoDelay());
+        odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
+                                         ros::TransportHints().tcpNoDelay());
+    }else if(sim_type.compare("")==0)
+    {
+        std::string message;
+        message = std::string("No simulation type given. Please use rosrun with _param:=<sim_type>.\n");
+        message = message + std::string("Valid sim types are \"matlab\" or \"ros\".");
+        ROS_WARN("%s",message.c_str());
+        std::exit(1);
+    } else
+    {
+        ROS_WARN("Please use parameter \"matlab\" or \"ros\" to indicate simulation.");
+        std::exit(1);
+    }
 
     ros::Time start = ros::Time::now();
     ros::Duration dt;
