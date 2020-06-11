@@ -25,15 +25,25 @@
 #include <fstream>
 #include "common.h"
 
-// #define MPC_CTRL "./mpc_ctrl"
-#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
+//#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
+#define MPC_CTRL "./mpc/mpc_ctrl"
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
+
+/* Uncomment below if needed to trace it */
+#define TRACE_ME
 
 // Very important to keep!
 #define USE_PROCESS_PINNING
 #define CPU_ID_PARENT 1 // CPU where parent process lives
 #define CPU_ID_CHILD  CPU_ID_PARENT // CPU where child process lives = parent process lives
 
+
+#ifdef TRACE_ME
+#ifdef ROS_INFO
+#undef ROS_INFO
+#endif
+#define ROS_INFO(...)
+#endif /* TRACE_ME */
 
 
 #define STRLEN_COMMAND 100
@@ -267,7 +277,8 @@ int main(int argc, char **argv){
 	char fd_wr[5];
 	/* Parameters to be passed to MPC_CTRL */
 	// char * args[] = {MPC_CTRL, fd_rd, fd_wr, "uav12_iris.json", NULL};
-	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/uav12_iris.json", NULL};
+	//	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./src/quadrotor_sim/enrico_mpc2_pk/src/uav12_iris.json", NULL};
+	char * args[] = {MPC_CTRL, fd_rd, fd_wr, "./mpc/uav12_iris.json", NULL};
 
 
 #ifdef USE_PROCESS_PINNING
