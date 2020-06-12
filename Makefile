@@ -25,7 +25,8 @@ mpc_ctrl:
 
 trace_proc:
 	cd mpc; \
-	gcc trace_proc.c $(CFLAGS) $(LDFLAGS) -o trace_proc; \
+#	gcc trace_proc.c $(CFLAGS) $(LDFLAGS) -o trace_proc; \
+	gcc trace_proc.c  $(LDFLAGS) -o trace_proc; \
 	cd ..
 
 clean:

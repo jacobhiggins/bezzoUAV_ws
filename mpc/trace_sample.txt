@@ -1,0 +1,37 @@
+A [001] d...   172.472819: sched_switch: prev_comm=mpc_control2 XXX ==> XXX
+	mpc_control2 ROS node blocked (very likely waiting to read from the pipe)
+
+B [001] d...   172.472819: sched_switch: XXX ==> next_comm=mpc_ctrl XXX
+	mpc_ctrl controller being scheduled (very likely unblocked from reading from pipe). It may be the same row as the previous one
+
+C [001] d...   172.472900: sched_switch: prev_comm=mpc_ctrl XXX ==> XXX
+	mpc_ctrl controller sends UPD packet to MPC server, then blocks, waiting for a response
+
+D [000] d...   172.472925: sched_switch: XXX ==> next_comm=mpc_server XXX
+	mpc_server receives a packets and starts its computation
+
+E [000] d...   172.485021: sched_switch: prev_comm=mpc_server XXX ==> XXX
+	mpc_server has finished the computation, then it blocks waiting for another UDP packet
+
+F [001] d...   172.485044: sched_switch: XXX ==> next_comm=mpc_ctrl XXX
+	mpc_ctrl controller is scheduled upon the reception of the response from the server
+
+G [001] d...   172.508464: sched_switch: prev_comm=mpc_ctrl XXX ==> XXX
+	mpc_ctrl controller send data to the pipe, then blocks on reading the next state
+
+H [001] d...   172.508464: sched_switch: XXX ==> next_comm=mpc_control2 XXX
+	mpc_control2 ROS node is scheduled as it receives data from the pipe. It may be the same row as the previous one
+
+A [001] d...   172.508534: sched_switch: prev_comm=mpc_control2 XXX ==> XXX
+	mpc_control2 ROS node blocked (very likely waiting to read from the pipe)
+
+
+A-B: from mpc ROS node to local mpc controller (may be zero)
+B-C: local mpc controller (pre-computing)
+C-D: communication delay from local controller to server
+D-E: mpc server computation time
+E-F: communication delay from server to local controller
+F-G: local mpc controller (post-computing)
+G-H: from local mpc controller to mpc ROS node (may be zero)
+H-A: mpc ROS node doing something before blocking on the pipe
+

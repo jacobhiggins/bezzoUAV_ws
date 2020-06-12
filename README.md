@@ -81,7 +81,7 @@ roscore
 rosrun enrico_mpc2_pk mpc_control2
 ```
 
---------------------------------------
+# Instruction to run ROS+Matlab
 
 Once you know the code works, you can try running the matlab sim with the mpc
 
@@ -95,6 +95,25 @@ rosinit
 
 This is matlab's version of roscore. For some reason, we must use this and not roscore for our matlab ros node to talk with our C++ ros node.
 
+1. From a terminal (called term-server) and from the project home directory, lauch:
+
+```bash
+sudo ./launch_MPC_server
+```
+
+1. From a terminal (called term-mpc) and from the project home directory, lauch:
+
+```bash
+sudo su
+rosrun enrico_mpc2_pk mpc_control2 _param:=matlab
+```
+
 2. In matlab, run the /bezzoUAV_ws/matlab_sim/runsim.m script
 
 You should see the same simulator that I showed last Friday.
+
+3. After the simulation is finished, stop then both the server and the MPC controller by pressing Ctrl-C on both term-server and term-mpc terminals
+
+4. The root directory of the project should now contain a file trace, with all the scheduling events on the processes of interest
+
+

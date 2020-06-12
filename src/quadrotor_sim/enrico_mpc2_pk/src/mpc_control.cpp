@@ -5,6 +5,8 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
@@ -25,9 +27,12 @@
 #include <fstream>
 #include "common.h"
 
-//#define MPC_CTRL "./src/quadrotor_sim/enrico_mpc2_pk/src/mpc_ctrl"
+/* location of the MPC controller executable from root directory */
 #define MPC_CTRL "./mpc/mpc_ctrl"
+
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
+
+#define CMD_LEN 100 /* used to allocate command-line string */
 
 /* Uncomment below if needed to trace it */
 #define TRACE_ME
@@ -79,66 +84,67 @@ void term_handler(int signum);
 
 static void publishTRPY(void)
 {
-    trpy_cmd.linear.z = msg_recv.input[0]; // thrust
-    trpy_cmd.angular.x = msg_recv.input[1]; // roll
-    trpy_cmd.angular.y = msg_recv.input[2]; // pitch
-    trpy_cmd.angular.z = msg_recv.input[3]; // yaw
-
-    mpc_state.pose.pose.position.x = msg_sent.state[0] + ref[0]; // x
-    mpc_state.pose.pose.position.y = msg_sent.state[1] + ref[1]; // y
-    mpc_state.pose.pose.position.z = msg_sent.state[2] + ref[2]; // z
-    mpc_state.pose.pose.orientation.x = msg_sent.state[3]; // roll
-    mpc_state.pose.pose.orientation.y = msg_sent.state[4]; // pitch
-    mpc_state.pose.pose.orientation.z = msg_sent.state[5]; // yaw
-    mpc_state.twist.twist.linear.x = msg_sent.state[6]; // x dot
-    mpc_state.twist.twist.linear.y = msg_sent.state[7]; // y dot
-    mpc_state.twist.twist.linear.z = msg_sent.state[8]; // z dot
-    mpc_state.twist.twist.angular.x = msg_sent.state[9]; // roll dot
-    mpc_state.twist.twist.angular.y = msg_sent.state[10]; // pitch dot
-    mpc_state.twist.twist.angular.z = msg_sent.state[11]; // yaw dot
-    mpc_state.pose.covariance[0] = msg_recv.input[0];
-    mpc_state.pose.covariance[1] = msg_recv.input[1];
-    mpc_state.pose.covariance[2] = msg_recv.input[2];
-    mpc_state.pose.covariance[3] = msg_recv.input[3];
-
-    trpy_cmd_pub.publish(trpy_cmd);
-    mpc_state_pub.publish(mpc_state);
+	trpy_cmd.linear.z = msg_recv.input[0]; // thrust
+	trpy_cmd.angular.x = msg_recv.input[1]; // roll
+	trpy_cmd.angular.y = msg_recv.input[2]; // pitch
+	trpy_cmd.angular.z = msg_recv.input[3]; // yaw
+	
+	mpc_state.pose.pose.position.x = msg_sent.state[0] + ref[0]; // x
+	mpc_state.pose.pose.position.y = msg_sent.state[1] + ref[1]; // y
+	mpc_state.pose.pose.position.z = msg_sent.state[2] + ref[2]; // z
+	mpc_state.pose.pose.orientation.x = msg_sent.state[3]; // roll
+	mpc_state.pose.pose.orientation.y = msg_sent.state[4]; // pitch
+	mpc_state.pose.pose.orientation.z = msg_sent.state[5]; // yaw
+	mpc_state.twist.twist.linear.x = msg_sent.state[6]; // x dot
+	mpc_state.twist.twist.linear.y = msg_sent.state[7]; // y dot
+	mpc_state.twist.twist.linear.z = msg_sent.state[8]; // z dot
+	mpc_state.twist.twist.angular.x = msg_sent.state[9]; // roll dot
+	mpc_state.twist.twist.angular.y = msg_sent.state[10]; // pitch dot
+	mpc_state.twist.twist.angular.z = msg_sent.state[11]; // yaw dot
+	mpc_state.pose.covariance[0] = msg_recv.input[0];
+	mpc_state.pose.covariance[1] = msg_recv.input[1];
+	mpc_state.pose.covariance[2] = msg_recv.input[2];
+	mpc_state.pose.covariance[3] = msg_recv.input[3];
+	
+	trpy_cmd_pub.publish(trpy_cmd);
+	mpc_state_pub.publish(mpc_state);
 }
 
 static void position_cmd_cb(const quadrotor_msgs::PositionCommand::ConstPtr &cmd){
-    des_pos = Eigen::Vector3d(cmd->position.x, cmd->position.y, cmd->position.z);
-
-    ref[0] = des_pos[0];
-    ref[1] = des_pos[1];
-    ref[2] = des_pos[2];
-    ref[3] = 0;
-    ref[4] = 0;
-    ref[5] = 0;
-    ref[6] = 0;
-    ref[7] = 0;
-    ref[8] = 0;
-    ref[9] = 0;
-    ref[10] = 0;
-    ref[11] = 0;
-
-    // ROS_INFO("Inside position_cmd callback");
-    // ROS_INFO("Commanded Position: (%f,%f,%f)",x,y,z);
-    // std::cout << "X position: " << x;
+	des_pos = Eigen::Vector3d(cmd->position.x, cmd->position.y, cmd->position.z);
+	
+	ref[0] = des_pos[0];
+	ref[1] = des_pos[1];
+	ref[2] = des_pos[2];
+	ref[3] = 0;
+	ref[4] = 0;
+	ref[5] = 0;
+	ref[6] = 0;
+	ref[7] = 0;
+	ref[8] = 0;
+	ref[9] = 0;
+	ref[10] = 0;
+	ref[11] = 0;
+	
+	// ROS_INFO("Inside position_cmd callback");
+	// ROS_INFO("Commanded Position: (%f,%f,%f)",x,y,z);
+	// std::cout << "X position: " << x;
 }
 
-static void position_Matlab_cmd_cb(const geometry_msgs::Twist::ConstPtr &cmd){
-    ref[0] = cmd->linear.x;
-    ref[1] = cmd->linear.y;
-    ref[2] = cmd->linear.z;
-    ref[3] = 0;
-    ref[4] = 0;
-    ref[5] = 0;
-    ref[6] = 0;
-    ref[7] = 0;
-    ref[8] = 0;
-    ref[9] = 0;
-    ref[10] = 0;
-    ref[11] = 0;
+static void position_Matlab_cmd_cb(const geometry_msgs::Twist::ConstPtr &cmd)
+{
+	ref[0] = cmd->linear.x;
+	ref[1] = cmd->linear.y;
+	ref[2] = cmd->linear.z;
+	ref[3] = 0;
+	ref[4] = 0;
+	ref[5] = 0;
+	ref[6] = 0;
+	ref[7] = 0;
+	ref[8] = 0;
+	ref[9] = 0;
+	ref[10] = 0;
+	ref[11] = 0;
 }
 
 static void odom_cb(const nav_msgs::Odometry::ConstPtr &odom)
@@ -271,7 +277,11 @@ int main(int argc, char **argv){
 	// Setting up pipe to enrico solver
 	pipe(to_mpc);
 	pipe(from_mpc);
-	
+
+
+	char cmd_str[CMD_LEN], tmp[CMD_LEN];
+	int null_fd;
+
 	/* Strings of read/write file descriptors */
 	char fd_rd[5];
 	char fd_wr[5];
@@ -303,6 +313,24 @@ int main(int argc, char **argv){
 			sched_get_priority_max(SCHED_FIFO),
 			CPU_ID_CHILD);
 #endif
+
+#ifdef TRACE_ME
+		/* Redirect all output to /dev/null to reduce overhead */
+		if ((null_fd = open("/dev/null", O_WRONLY)) == -1)
+			PRINT_ERROR("issue in opening /dev/null");
+		if (dup2(null_fd, STDOUT_FILENO) == -1 )
+			PRINT_ERROR("issue in duplicating file descr");
+		close(null_fd);
+		
+		/* Add this PID to be traced */
+		strncpy(cmd_str, "echo", CMD_LEN);
+		snprintf(tmp, CMD_LEN, " %d", getpid());
+		strncat(cmd_str, tmp, CMD_LEN);
+		strncat(cmd_str, " >> /sys/kernel/tracing/set_event_pid",
+			CMD_LEN);
+		system(cmd_str);
+#endif /* TRACE_ME */
+
 
 		/* Now jumping to the child code */
 		/* remember to specify the path of the executable. TODO get absolute path*/
