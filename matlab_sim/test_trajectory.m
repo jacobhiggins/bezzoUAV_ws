@@ -130,12 +130,7 @@ while key ~= 'q'
         send(pubPosCmd,poscmdMSG);
         
         for i = 1:nstep
-            % Use rosrate 
-            
-            
-            
-            
-            
+
             % Use MPC to calculate control input
             current_state = x{qn};
             
@@ -163,6 +158,7 @@ while key ~= 'q'
             
             
             % Publish current state to ROS topic for enrico MPC
+            if(abs(mod(time,0.1) - tstep)<0.0001)
             stateMSG.Pose.Pose.Position.X = current_state(1);
             stateMSG.Pose.Pose.Position.Y = current_state(2);
             stateMSG.Pose.Pose.Position.Z = current_state(3);
@@ -182,7 +178,8 @@ while key ~= 'q'
             stateMSG.Twist.Twist.Angular.Y = current_state(12);
             stateMSG.Twist.Twist.Angular.Z = current_state(13);
             send(pubState,stateMSG);
-            
+            disp(current_state(3));
+            end
 %             pause(0.1);
             
             
@@ -222,7 +219,7 @@ while key ~= 'q'
 %         desired_state = trajhandle(time + cstep, qn, simparams);
         QP{qn}.UpdateQuadPlot(x{qn}, [desired_state.pos; desired_state.vel], time + cstep);
         
-        if video
+        if video && abs(mod(time,0.1) - tstep)<0.0001
             writeVideo(video_writer, getframe(h_fig));
         end
     end
@@ -266,20 +263,20 @@ if video
   close(video_writer);
 end
 
-figure(5);
-subplot(2,1,1);
-plot(ts,Fs,"LineWidth",2);
-title("Thrust");
-subplot(2,1,2);
-hold on;
-plot(ts,Ms(1,:),"LineWidth",2,"DisplayName","Roll Moment");
-plot(ts,Ms(2,:),"LineWidth",2,"DisplayName","Pitch Moment");
-plot(ts,Ms(3,:),"LineWidth",2,"DisplayName","Yaw Moment");
-legend;
+% figure(5);
+% subplot(2,1,1);
+% plot(ts,Fs,"LineWidth",2);
+% title("Thrust");
+% subplot(2,1,2);
+% hold on;
+% plot(ts,Ms(1,:),"LineWidth",2,"DisplayName","Roll Moment");
+% plot(ts,Ms(2,:),"LineWidth",2,"DisplayName","Pitch Moment");
+% plot(ts,Ms(3,:),"LineWidth",2,"DisplayName","Yaw Moment");
+% legend;
 
 states_matlab = states;
 save("matlabInputs.mat",'Fs','Ms','ts','states');
-save("state_diffs.mat","state_diffs","states_matlab","states_mpc");
+save("state_diffs.mat","state_diffs","states_matlab","states_mpc","tstep");
 
 assignin('base','Ms',Ms);
 assignin('base','t',QP{qn}.time_hist);
