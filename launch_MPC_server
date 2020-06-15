@@ -1,7 +1,10 @@
 #!/bin/bash
 
-MPC_PATH=./src/quadrotor_sim/enrico_mpc2_pk/src/
+MPC_PATH=./mpc/
 MPC_SERVER=mpc_server
 MPC_JSON_MODEL=uav12_iris.json
+TRACE_PROC=trace_proc
 
-$MPC_PATH$MPC_SERVER $MPC_PATH$MPC_JSON_MODEL
+#$MPC_PATH$MPC_SERVER $MPC_PATH$MPC_JSON_MODEL
+
+sudo $MPC_PATH$TRACE_PROC 1 0 $MPC_PATH$MPC_SERVER $MPC_PATH$MPC_JSON_MODEL

@@ -1,4 +1,46 @@
-# bezzoUAV_ws
+# Compilation of MPC controller
+
+0. Clean old compilation stuff by
+  ```
+  make clean
+  ```
+
+1. Get the latest MPC library by
+  ```
+  make mpc_get_lib
+  ```
+  Upon successful completion, you should have got the following files in this directory: `mpc.h`, `dyn.h`, `mpc.o`, `dyn.o`. They are needed to compile your MPC controller. This step is needed only the first time or when you need to update the MPC library
+
+## Local MPC execution
+
+1. Make sure that USE_SERVER *is not* defined in mpc_ctrl.c. Then
+  ```
+  make
+  ```
+
+## Total off-loading to MPC server
+
+1. Make sure that USE_SERVER *is* defined in mpc_ctrl.c. Also, the C macros
+SOLVER_IP and SOLVER_PORT should be the IP address and the port where the server is listening. Default values are
+  ```
+  #define SOLVER_IP "127.0.0.1"
+  #define SOLVER_PORT 6001
+  ```
+  Then
+  ```
+  make
+  ```
+
+1. Before launching the rosrun machinery, start-up the server by launching in a dedicated server terminal. If the server is launched at localhost, just launch
+  ```
+  ./launch_MPC_server
+  ```
+  from the project home directory.
+
+2. Now run rosrun enrico_mpc2_pk mpc_control2
+
+
+# Instructions to run ROS
 
 To run the code:
 
@@ -39,7 +81,7 @@ roscore
 rosrun enrico_mpc2_pk mpc_control2
 ```
 
---------------------------------------
+# Instruction to run ROS+Matlab
 
 Once you know the code works, you can try running the matlab sim with the mpc
 
@@ -53,6 +95,25 @@ rosinit
 
 This is matlab's version of roscore. For some reason, we must use this and not roscore for our matlab ros node to talk with our C++ ros node.
 
+1. From a terminal (called term-server) and from the project home directory, lauch:
+
+```bash
+sudo ./launch_MPC_server
+```
+
+1. From a terminal (called term-mpc) and from the project home directory, lauch:
+
+```bash
+sudo su
+rosrun enrico_mpc2_pk mpc_control2 _param:=matlab
+```
+
 2. In matlab, run the /bezzoUAV_ws/matlab_sim/runsim.m script
 
 You should see the same simulator that I showed last Friday.
+
+3. After the simulation is finished, stop then both the server and the MPC controller by pressing Ctrl-C on both term-server and term-mpc terminals
+
+4. The root directory of the project should now contain a file trace, with all the scheduling events on the processes of interest
+
+
