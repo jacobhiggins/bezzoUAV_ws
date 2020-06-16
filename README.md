@@ -18,6 +18,14 @@
   make
   ```
 
+## Compilation of a small tracing tool
+
+1. From the home directory of the project, launch
+  ```
+  make trace_proc
+  ```
+
+
 ## Total off-loading to MPC server
 
 1. Make sure that USE_SERVER *is* defined in mpc_ctrl.c. Also, the C macros
