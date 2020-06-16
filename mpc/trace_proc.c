@@ -63,11 +63,11 @@ int main(int argc, char * argv[])
 
 	/**** TRACING: start-up ****/
 	/* trace context switches */
-	system("echo sched:sched_switch > /sys/kernel/tracing/set_event");
+	system("echo sched:sched_switch > /sys/kernel/debug/tracing/set_event");
 	/* clean the PID list */
-	system("echo > /sys/kernel/tracing/set_event_pid");
+	system("echo > /sys/kernel/debug/tracing/set_event_pid");
 	/* clean past trace */
-	system("echo > /sys/kernel/tracing/trace");
+	system("echo > /sys/kernel/debug/tracing/trace");
 
 	if (!(child_pid = fork())) {
 		
@@ -86,12 +86,12 @@ int main(int argc, char * argv[])
 		strncpy(cmd_str, "echo", CMD_LEN);
 		snprintf(tmp, CMD_LEN, " %d", getpid());
 		strncat(cmd_str, tmp, CMD_LEN);
-		strncat(cmd_str, " >> /sys/kernel/tracing/set_event_pid",
+		strncat(cmd_str, " >> /sys/kernel/debug/tracing/set_event_pid",
 			CMD_LEN);
 		system(cmd_str);
 
 		/* enable tracing */
-		system("echo 1 > /sys/kernel/tracing/tracing_on");
+		system("echo 1 > /sys/kernel/debug/tracing/tracing_on");
 		execve(argv[3], argv+3, environ);
 		PRINT_ERROR("error in execve");
 		exit(EXIT_FAILURE);
@@ -108,14 +108,14 @@ void stop_tracing(void)
 
 	/**** TRACING: stop ****/
 	/* disable tracing */
-	system("echo 0 > /sys/kernel/tracing/tracing_on");
+	system("echo 0 > /sys/kernel/debug/tracing/tracing_on");
 	/* trace context switches */
-	system("echo > /sys/kernel/tracing/set_event");
+	system("echo > /sys/kernel/debug/tracing/set_event");
 	/* clean the PID list */
-	system("echo > /sys/kernel/tracing/set_event_pid");
+	system("echo > /sys/kernel/debug/tracing/set_event_pid");
 	/* clean past trace */
-	system("cp /sys/kernel/tracing/trace .");
-	system("echo > /sys/kernel/tracing/trace");
+	system("cp /sys/kernel/debug/tracing/trace .");
+	system("echo > /sys/kernel/debug/tracing/trace");
 	system("chmod ugo+rw trace");
 	return;
 }

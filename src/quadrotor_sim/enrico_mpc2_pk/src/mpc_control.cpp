@@ -326,7 +326,7 @@ int main(int argc, char **argv){
 		strncpy(cmd_str, "echo", CMD_LEN);
 		snprintf(tmp, CMD_LEN, " %d", getpid());
 		strncat(cmd_str, tmp, CMD_LEN);
-		strncat(cmd_str, " >> /sys/kernel/tracing/set_event_pid",
+		strncat(cmd_str, " >> /sys/kernel/debug/tracing/set_event_pid",
 			CMD_LEN);
 		system(cmd_str);
 #endif /* TRACE_ME */
