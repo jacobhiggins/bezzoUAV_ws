@@ -159,26 +159,26 @@ while key ~= 'q'
             
             % Publish current state to ROS topic for enrico MPC
             if(abs(mod(time,0.1) - tstep)<0.0001)
-            stateMSG.Pose.Pose.Position.X = current_state(1);
-            stateMSG.Pose.Pose.Position.Y = current_state(2);
-            stateMSG.Pose.Pose.Position.Z = current_state(3);
-            stateMSG.Twist.Twist.Linear.X = current_state(4);
-            stateMSG.Twist.Twist.Linear.Y = current_state(5);
-            stateMSG.Twist.Twist.Linear.Z = current_state(6);
-            %%% Quaternion
-%             stateMSG.Pose.Pose.Orientation.W = current_state(7);
-%             stateMSG.Pose.Pose.Orientation.X = current_state(8);
-%             stateMSG.Pose.Pose.Orientation.Y = current_state(9);
-%             stateMSG.Pose.Pose.Orientation.Z = current_state(10);
-            %%% RPY
-            stateMSG.Pose.Pose.Orientation.X = phi;
-            stateMSG.Pose.Pose.Orientation.Y = theta;
-            stateMSG.Pose.Pose.Orientation.Z = psi;
-            stateMSG.Twist.Twist.Angular.X = current_state(11);
-            stateMSG.Twist.Twist.Angular.Y = current_state(12);
-            stateMSG.Twist.Twist.Angular.Z = current_state(13);
-            send(pubState,stateMSG);
-            disp(current_state(3));
+                stateMSG.Pose.Pose.Position.X = current_state(1);
+                stateMSG.Pose.Pose.Position.Y = current_state(2);
+                stateMSG.Pose.Pose.Position.Z = current_state(3);
+                stateMSG.Twist.Twist.Linear.X = current_state(4);
+                stateMSG.Twist.Twist.Linear.Y = current_state(5);
+                stateMSG.Twist.Twist.Linear.Z = current_state(6);
+                %%% Quaternion
+    %             stateMSG.Pose.Pose.Orientation.W = current_state(7);
+    %             stateMSG.Pose.Pose.Orientation.X = current_state(8);
+    %             stateMSG.Pose.Pose.Orientation.Y = current_state(9);
+    %             stateMSG.Pose.Pose.Orientation.Z = current_state(10);
+                %%% RPY
+                stateMSG.Pose.Pose.Orientation.X = phi;
+                stateMSG.Pose.Pose.Orientation.Y = theta;
+                stateMSG.Pose.Pose.Orientation.Z = psi;
+                stateMSG.Twist.Twist.Angular.X = current_state(11);
+                stateMSG.Twist.Twist.Angular.Y = current_state(12);
+                stateMSG.Twist.Twist.Angular.Z = current_state(13);
+                send(pubState,stateMSG);
+                disp(current_state(3));
             end
 %             pause(0.1);
             

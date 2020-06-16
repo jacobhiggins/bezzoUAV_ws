@@ -78,7 +78,7 @@ roscore
 4. Finally, run this command for the mpc:
 
 ```bash
-rosrun enrico_mpc2_pk mpc_control2
+rosrun enrico_mpc2_pk mpc_control2 _param:=matlab
 ```
 
 # Instruction to run ROS+Matlab
