@@ -5,7 +5,7 @@ close all;
 clear all;
 clc;
 addpath('utils');
-sysparams = iris();
+sysparams = iris(); % physical characteristics of the system
 
 
 varargin = {"Ts",0.01,...

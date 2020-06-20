@@ -10,6 +10,7 @@
  */
 #include <sys/types.h>
 #include <sys/shm.h>
+#include <time.h>
 #include <string.h>
 #include <semaphore.h>
 #include <errno.h>
@@ -24,11 +25,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray *prhs[])
 {
 	size_t state_num, input_num, n, m;
-	double *state_rd, *input_wr;
+	double *state_rd, *input_wr, time;
 	int shm_id;
 	struct shared_data * data;
+	struct timespec tic, toc;
 	char error_string[1024];
-
 	
 	/* check for proper number of arguments */
 	if(nrhs!=1) {
@@ -41,7 +42,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	}
 	
 	/* Make sure the state argument is type double */
-	if( !mxIsDouble(prhs[0]) || mxIsComplex(prhs[0])) {
+	if(!mxIsDouble(prhs[0]) || mxIsComplex(prhs[0])) {
 		mexErrMsgIdAndTxt("MyToolbox:mpc_shm_ctrl_matlab_test:notDouble",
 				  "State must be type double.");
 	}
@@ -73,6 +74,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	 * Now we have all data. We can open the shared memory. 
 	 * Must be created earlier (by mpc_shm_ctrl.c)
 	 */
+	clock_gettime(CLOCK_MONOTONIC, &tic);
 	shm_id = shmget(MPC_SHM_KEY, 0, 0);
 	if (shm_id == -1) {
 		mexErrMsgIdAndTxt("MyToolbox:mpc_shm_ctrl_matlab_test:shmget",
@@ -106,4 +108,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	
 	/* Finally detaching shared memory */
 	shmdt(data);
+
+	clock_gettime(CLOCK_MONOTONIC, &toc);
+	if(nlhs >= 2) {
+		time =  (double)(toc.tv_sec-tic.tv_sec);
+		time += (double)(toc.tv_nsec-tic.tv_nsec)*1e-9;
+		plhs[1] = mxCreateDoubleScalar(time);
+	}
 }

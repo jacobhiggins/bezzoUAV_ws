@@ -87,7 +87,13 @@ state_diffs = [];
 states_mpc = [];
 
 % subMPC = rossubscriber("/mpc_control/mpc_cmd","geometry_msgs/Twist",@mpcCMDcb);
+
+% data from ROS mpc_control.cpp (which is then computed by mpc_ctrl) to the
+% Matlab simulation
 subSTATE = rossubscriber("/mpc_control/mpc_state","nav_msgs/Odometry",@mpcSTATEcb);
+
+% Matlab is publishing the system state, so that mpc_control.cpp can get it
+% via its subscriber
 pubPosCmd = rospublisher("/matlab_position_cmd","geometry_msgs/Twist");
 poscmdMSG = rosmessage(pubPosCmd);
 pubState = rospublisher("/iris_matlab_odom","nav_msgs/Odometry");
@@ -123,7 +129,8 @@ while key ~= 'q'
         
         des_state = [desired_state.pos;desired_state.euler;desired_state.vel;desired_state.pqr]; % For MPC controller
         
-        % Publish desired state (i.e. waypoint) to rostopic
+        % Publish desired state (i.e. waypoint) to rostopic so that
+        % mpc_control.cpp knows
         poscmdMSG.Linear.X = des_state(1);
         poscmdMSG.Linear.Y = des_state(2);
         poscmdMSG.Linear.Z = des_state(3);
