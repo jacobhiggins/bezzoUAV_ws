@@ -1,7 +1,7 @@
 # Suggested by GSL manual
 CFLAGS = -pedantic -Werror -Wall -W -Wmissing-prototypes -Wstrict-prototypes -Wconversion -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wnested-externs -Wno-unused-result -Wno-unused-parameter -fshort-enums -fno-common -Dinline= -O2
 
-LDFLAGS = -lm -ljson-c -lrt -lgsl -lgslcblas -lglpk
+LDFLAGS = -lm -ljson-c -lrt -lgsl -lgslcblas -lglpk -pthread
 
 default: mpc_ctrl
 
@@ -21,6 +21,12 @@ mpc_ctrl:
 	cd mpc; \
 	gcc -c mpc_ctrl.c $(CFLAGS) -o mpc_ctrl.o; \
 	gcc mpc_ctrl.o mpc.o dyn.o $(LDFLAGS) -o mpc_ctrl; \
+	cd ..
+
+mpc_shm_ctrl:
+	cd mpc; \
+	gcc -c mpc_shm_ctrl.c $(CFLAGS) -o mpc_shm_ctrl.o; \
+	gcc mpc_shm_ctrl.o mpc.o dyn.o $(LDFLAGS) -o mpc_shm_ctrl; \
 	cd ..
 
 trace_proc:

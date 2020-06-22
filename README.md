@@ -11,6 +11,11 @@
   ```
   Upon successful completion, you should have got the following files in this directory: `mpc.h`, `dyn.h`, `mpc.o`, `dyn.o`. They are needed to compile your MPC controller. This step is needed only the first time or when you need to update the MPC library
 
+2. Compile the MPC controller using the shared memory and used by Matlab, by:
+  ```
+  make mpc_shm_ctrl
+  ```
+
 ## Local MPC execution
 
 1. Make sure that USE_SERVER *is not* defined in mpc_ctrl.c. Then

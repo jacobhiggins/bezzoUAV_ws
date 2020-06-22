@@ -14,7 +14,7 @@
 #include <string.h>
 #include <semaphore.h>
 #include <errno.h>
-#include "common_test.h"
+#include "../mpc/common.h"
 #include "mex.h"
 
 #define STRING_ERROR(x) "%s:%d errno=%i, %s\n",	\

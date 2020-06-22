@@ -38,6 +38,12 @@
  * argv[3], filename of the JSON file of the model
  */
 
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <signal.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <limits.h> 
 #include <stdio.h>
@@ -75,7 +81,7 @@ void term_handler(int signum);
 int main(int argc, char * argv[]) {
 	int model_fd;
 	char * buffer;
-	ssize_t size, num_bytes;
+	ssize_t size;
 	size_t i;
 
 	struct json_object *model_json;
@@ -83,18 +89,11 @@ int main(int argc, char * argv[]) {
 
 	struct sigaction sa;
 
-	/* Messages sent/received */
-	struct msg_to_mpc   msg_recv;
-	struct msg_from_mpc msg_sent;
-	
 	mpc_status * mpc_st;
-	int fd_rd, fd_wr;
 	mpc_glpk uav_mpc;
 #ifdef USE_SERVER
 	int sockfd;
 	struct sockaddr_in servaddr;
-	int steps_serv;
-	double time_serv;
 #endif
 #ifdef PRINT_PROBLEM
 	char s_sol[100] = SOL_FILENAME;
@@ -160,11 +159,11 @@ int main(int argc, char * argv[]) {
 	 * Checking consistency between the  problem size got from the
 	 * JSON file and messages size defined in common.h
 	 */
-	if (STATE_NUM != uav_mpc.model->n) {
+	if (MPC_STATE_NUM != uav_mpc.model->n) {
 		PRINT_ERROR("Size of state mismatch");
 		return -1;
 	}
-	if (INPUT_NUM != uav_mpc.model->m) {
+	if (MPC_INPUT_NUM != uav_mpc.model->m) {
 		PRINT_ERROR("Size of input mismatch");
 		return -1;
 	}
@@ -209,7 +208,7 @@ int main(int argc, char * argv[]) {
 		/* Store the state received to the problem status */
 		mpc_status_save(&uav_mpc, mpc_st);
 		memcpy(mpc_st->state, data->state,
-		       sizeof(data->state[0])*STATE_NUM);
+		       sizeof(data->state[0])*MPC_STATE_NUM);
 #ifdef USE_SERVER
 		*mpc_st->steps_bdg = 1000;   /* number of max iterations */
 		*mpc_st->time_bdg = 1000; /* max seconds (large value) */
@@ -220,9 +219,6 @@ int main(int argc, char * argv[]) {
 		send(sockfd, mpc_st->block, mpc_st->size, 0);
 		recv(sockfd, mpc_st->block, mpc_st->size, 0);
 		
-		/* Storing server used budgets */
-		steps_serv = *mpc_st->steps_bdg;
-		time_serv  = *mpc_st->time_bdg; 
 		
 #ifdef PRINT_PROBLEM
 		sprintf(tmp, "%02luA", k);
@@ -231,11 +227,12 @@ int main(int argc, char * argv[]) {
 #endif
 #ifdef PRINT_LOG
 		/* Printing the status after the local computations */
-		printf("%s: [%f] MPC server took: %d steps, %f secs\n",
-		       __FILE__,
-		       (double)msg_recv.timestamp.tv_sec
-		       +(double)msg_recv.timestamp.tv_sec*1e-9,
-		       steps_serv, time_serv);
+		/* Used budgets, for logging/debugging purpose */
+
+		/*
+		 * steps_serv = *mpc_st->steps_bdg;
+		 * time_serv  = *mpc_st->time_bdg; 
+		 */
 #endif /* PRINT_LOG */
 #endif /* USE SERVER */
 		/* giving ourself "infinite" time/iterations */
@@ -266,7 +263,7 @@ int main(int argc, char * argv[]) {
 		 */
 	
 		/* Getting the solution */
-		for (i = 0; i < INPUT_NUM; i++) {
+		for (i = 0; i < MPC_INPUT_NUM; i++) {
 			data->input[i] =
 				glp_get_col_prim(uav_mpc.op,
 						 uav_mpc.v_U+(int)i);

@@ -4,7 +4,7 @@ The file `common.test` contains the data structure declarations.
 
 1. Compile the (fake) MPC controller by
   ```
-  make mpc_shm_ctrl_test
+  make mpc_shm_ctrl
   ```
 
 1. compile the MEX file by
