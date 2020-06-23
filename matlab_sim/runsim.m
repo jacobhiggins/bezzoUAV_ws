@@ -5,10 +5,11 @@ close all;
 clear all;
 clc;
 addpath('utils');
+addpath('../test_shm');
 sysparams = iris(); % physical characteristics of the system
 
 
-varargin = {"Ts",0.01,...
+varargin = {"Ts",0.1,...
     "PH",20,...
     "CH",2,...
     "Xref",1,...
@@ -42,4 +43,5 @@ infos = struct();
 infos.info = [];
 infos.F = [];
 infos.M = [];
-trajectory = test_trajectory(start, stop, map, path, MPCobj, noise_flag, simparams, waypts); % with visualization
+% trajectory = test_trajectory(start, stop, map, path, MPCobj, noise_flag, simparams, waypts); % with visualization
+trajectory = test_trajectory2(start, stop, map, path, MPCobj, noise_flag, simparams, waypts); % Exchange data with mpc via semaphore
