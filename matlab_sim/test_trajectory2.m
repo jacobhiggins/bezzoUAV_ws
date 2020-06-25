@@ -150,7 +150,11 @@ while key ~= 'q'
         
         [Fnew, Mnew, dt_mpc] = controller_semaphore(state,des_state); % Get trpy for quadrotor
         dts_mpc = [dts_mpc dt_mpc];
-        dt_mpc = tstep/10; % ******ENRICO******* this is where I re-write time delay, you can set to 0 for no delay
+		%% Setting the delay
+		% dt_mpc = 0;            % no delay
+		% dt_mpc = tstep*0.1;     % delay is equal to 1/10 of period
+		% do not re-assign any valueto dt_mpc to use the delay of the computation
+        dt_mpc = tstep*0.1;
         if dt_mpc>tstep
            disp("WARNING");
            disp("Time for mpc is longer than sampling time");

@@ -20,7 +20,7 @@
 				__FILE__, __LINE__, errno, (x));}
 
 
-#define CMD_LEN 100
+#define CMD_LEN 256
 extern char ** environ;
 
 /* GLOBAL VARIABLES */
@@ -65,9 +65,9 @@ int main(int argc, char * argv[])
 	/* trace context switches */
 	system("echo sched:sched_switch > /sys/kernel/debug/tracing/set_event");
 	/* clean the PID list */
-	system("echo > /sys/kernel/debug/tracing/set_event_pid");
+	/* system("echo > /sys/kernel/debug/tracing/set_event_pid"); */
 	/* clean past trace */
-	system("echo > /sys/kernel/debug/tracing/trace");
+	/*system("echo > /sys/kernel/debug/tracing/trace"); */
 
 	if (!(child_pid = fork())) {
 		
@@ -132,6 +132,7 @@ void term_handler(int signum)
 void sched_set_prio_affinity(int prio, int cpu_id)
 {
 	cpu_set_t  mask;
+	char launched[CMD_LEN];  /* String with launched command */
 
 	/* Set CPU affinity */
 	CPU_ZERO(&mask);
@@ -142,8 +143,12 @@ void sched_set_prio_affinity(int prio, int cpu_id)
 	}
 
 	/* Set priority */
+	snprintf(launched, CMD_LEN,
+		 "sudo chrt -f -p %d %d", prio, getpid());
+	system(launched);
+
+	/*
 #if SCHED_SETATTR_IN_SCHED_H
-	/* EB: TO BE TESTED */
 	struct sched_attr attr;
 	
 	bzero(&attr, sizeof(attr));
@@ -164,4 +169,5 @@ void sched_set_prio_affinity(int prio, int cpu_id)
 		exit(-1);
 	}
 #endif
+	*/
 }
