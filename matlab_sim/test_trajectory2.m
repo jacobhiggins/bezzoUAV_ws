@@ -151,10 +151,10 @@ while key ~= 'q'
         [Fnew, Mnew, dt_mpc] = controller_semaphore(state,des_state); % Get trpy for quadrotor
         dts_mpc = [dts_mpc dt_mpc];
 		%% Setting the delay
-		% dt_mpc = 0;            % no delay
+		dt_mpc = 0;            % no delay
 		% dt_mpc = tstep*0.1;     % delay is equal to 1/10 of period
 		% do not re-assign any valueto dt_mpc to use the delay of the computation
-        dt_mpc = tstep*0.1;
+%         dt_mpc = tstep*0.1;
         if dt_mpc>tstep
            disp("WARNING");
            disp("Time for mpc is longer than sampling time");
@@ -170,17 +170,23 @@ while key ~= 'q'
         states_mpc = [states_mpc mpc_state];
         state_diffs = [state_diffs state_diff];
         
+        
         dt1 = dt_mpc;
-        [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time,time+dt1], x{qn});
-        x{qn}    = xsave(end, :)';
-        t{qn} = tsave(end, :)';
-        states = [states state];
-%         xtraj{qn}(iter*nstep,:) = x{qn}';
-%         ttraj{qn}((iter-1)*nstep+i) = t{qn}';
+        if dt1>0.00001
+            % If dt1 isn't zero, integrate over dt1 (time that MPC takes to
+            % calculate inputs to system
+            [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time,time+dt1], x{qn});
+            x{qn}    = xsave(end, :)';
+            t{qn} = tsave(end, :)';
+            states = [states state];
+            %         xtraj{qn}(iter*nstep,:) = x{qn}';
+            %         ttraj{qn}((iter-1)*nstep+i) = t{qn}';
+        end
         
         F = Fnew;
         M = Mnew;
         
+        % Next, integrate from time+dt1 to time+tstep
         [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time+dt1,time+tstep], x{qn}); % Change integration time to dt2 when testing
         
         x{qn}    = xsave(end, :)';
