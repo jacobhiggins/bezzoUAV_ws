@@ -154,7 +154,7 @@ while key ~= 'q'
 		% dt_mpc = 0;            % no delay
 		% dt_mpc = tstep*0.1;     % delay is equal to 1/10 of period
 		% do not re-assign any valueto dt_mpc to use the delay of the computation
-        dt_mpc = tstep*0.1;
+        dt_mpc = 0;
         if dt_mpc>tstep
            disp("WARNING");
            disp("Time for mpc is longer than sampling time");
