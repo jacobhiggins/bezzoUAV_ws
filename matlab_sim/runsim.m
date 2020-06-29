@@ -16,7 +16,7 @@ noise_flag        = false;
 global ctrl_time;
 global MPC_lag;
 ctrl_time = 0.1; % Time between accessing the MPC controller
-MPC_lag = 0.02; % Fixed lag time for MPC computation, value -1 means use actual computation time
+MPC_lag = 0.0; % Fixed lag time for MPC computation, value -1 means use actual computation time
 
 %% Loading Waypts
 disp('Loading Waypts ...');

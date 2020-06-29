@@ -108,15 +108,21 @@ QP{qn}.UpdateQuadPlot(x{qn}, [desired_state.pos; desired_state.vel], time);
 h_title = title(sprintf('\niteration: %d, time: %4.2f\n\npress "q" to quit ', 1, time));
 
 global sim_timer;
+global err 
+err = false;
 sim_timer = timer;
 sim_timer.Period = tstep;
 sim_timer.TasksToExecute = int16(time_tol/tstep); % Max time = 100 seconds
 sim_timer.ExecutionMode = 'fixedRate'; % periodic execution
 sim_timer.TimerFcn = {@timed_sim}; % timer handler function
-
+sim_timer.ErrorFcn = {@errFunction}; % If error in TimerFcn, end code
 sim_timer.start(); % Start timed execuation of simulation
 
 wait(sim_timer); % This stops code until sim is done
+
+if err
+   return; 
+end
 
 key = -1;
 %% ************************* POST PROCESSING *************************
