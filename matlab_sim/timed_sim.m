@@ -5,13 +5,10 @@ function timed_sim(obj,event)
     global noise_flag;
     global time;
     global tstep;
-    global nstep;
-    cstep = nstep*tstep;
     global QP;
     global h_title;
     global h_fig;
     global x;
-    global x0;
     global xtraj;
     global ttraj;
     global F;
@@ -26,15 +23,14 @@ function timed_sim(obj,event)
     global video_writer;
     global iter;
     global waypoints;
-    persistent rpy;
-    if isempty(rpy)
-       rpy = zeros(3,1); 
-    end
+    global rpy;
+    global key;
+    global MPC_lag;
+    
     persistent dist;
     if isempty(dist)
        dist = 10; 
     end
-    
     
     iter = iter + 1;
     qn = 1;
@@ -70,12 +66,8 @@ function timed_sim(obj,event)
         current_state(13);]; % r
     
     
-    % Publish current state to ROS topic for enrico MPC
     
-    dist = norm(state(1:3)-des_state(1:3),2);
-    
-    %             [F, M] = controllerMPC(time,MPCobj,state,des_state,sysparams,mpcparams);
-    %             [F, M] = controller_ericoMPC(time,MPCobj,state,des_state,sysparams,mpcparams);
+    dist = norm(state(1:3)-des_state(1:3),2); % Distance from UAV to current waypoint
     
     [Fnew, Mnew, dt_mpc] = controller_semaphore(state,des_state); % Get trpy for quadrotor
     if dt_mpc>tstep
@@ -83,38 +75,37 @@ function timed_sim(obj,event)
         disp("Time for mpc is longer than sampling time");
     end
     
-    
+    % Record time + trpy for debugging purposes
     ts = [ts time+tstep];
     Fs = [Fs Fnew];
     Ms = [Ms Mnew];
-    %             disp(F/(sysparams.mass*sysparams.grav));
     
     state_diff = state - mpc_state; % Take difference betwee current state and state used by mpc, for debugging
     states_mpc = [states_mpc mpc_state];
     state_diffs = [state_diffs state_diff];
     
-    %         dt1 = dt_mpc;
-    %         dt2 = tstep - dt_mpc;
-    %         [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time,time+dt1], x{qn})
-    %         x{qn}    = xsave(end, :)';
-    %         t{qn} = tsave(end, :)';
-    %         states = [states state];
-    %         xtraj{qn}((iter-1)*nstep+i,:) = x{qn}';
-    %         ttraj{qn}((iter-1)*nstep+i) = t{qn}';
+    if MPC_lag < 0
+        dt1 = dt_mpc;
+    else
+        dt1 = MPC_lag;
+    end
+    if(dt1>0.0001)
+        [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time,time+dt1], x{qn});
+        x{qn}    = xsave(end, :)';
+        t{qn} = tsave(end, :)';
+        states = [states state];    
+    end
     
     F = Fnew;
     M = Mnew;
     
-    [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time,time+tstep], x{qn}); % Change integration time to dt2 when testing
+    [tsave, xsave] = ode45(@(t,s) quadEOM(t, s, F, M, sysparams), [time+dt1,time+tstep], x{qn}); % Change integration time to dt2 when testing
     
     x{qn}    = xsave(end, :)';
     t{qn} = tsave(end, :)';
     states = [states state];
-    xtraj{qn}(iter*nstep,:,:) = x{qn}';
-    ttraj{qn}(iter*nstep) = t{qn}';
-    
-    
-    
+    xtraj{qn}(iter,:,:) = x{qn}';
+    ttraj{qn}(iter) = t{qn}';
     
     time = iter*tstep;
     
@@ -123,24 +114,21 @@ function timed_sim(obj,event)
         x{qn} = add_noise(x{qn});
     end
     
-    % Save to traj
-    %         xtraj{qn}((iter-1)*nstep+1:iter*nstep,:) = xsave(1:end-1,:);
-    %         ttraj{qn}((iter-1)*nstep+1:iter*nstep) = tsave(1:end-1);
-    
     % Update quad plot
-    %         desired_state = trajhandle(time + cstep, qn, simparams);
-    QP{qn}.UpdateQuadPlot(x{qn}, [desired_state.pos; desired_state.vel], time + cstep);
+    QP{qn}.UpdateQuadPlot(x{qn}, [desired_state.pos; desired_state.vel], time + tstep);
     
-    if video && abs(mod(time,0.1) - tstep)<0.0001
+    if video
         writeVideo(video_writer, getframe(h_fig));
     end
-    [phi, theta, psi] = RotToRPY_ZXY(QP{qn}.rot');
-    rpy = [rpy,[phi;theta;psi]];
-    set(h_title, 'String', sprintf('\niteration: %d, time: %4.2f\n\npress "q" to quit ', iter, time + cstep))
-    %     time = time + cstep; % Update simulation time
     
-%     if(key=='q')
-%        sim_timer.stop(); 
-%     end
+    [phi, theta, psi] = RotToRPY_ZXY(QP{qn}.rot');
+    rpy = [rpy,[phi;theta;psi]]; % Record RPY to post-plotting
+    set(h_title, 'String', sprintf('\niteration: %d, time: %4.2f\n\npress "q" to quit ', iter, time + tstep))
+    
+    % If 'q' is pressed on the keyboard, simulation stops and post-plotting
+    % begins
+    if(key=='q')
+       sim_timer.stop(); 
+    end
 
 end
