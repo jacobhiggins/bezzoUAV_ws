@@ -8,40 +8,20 @@ addpath('utils');
 addpath('../test_shm');
 sysparams = iris(); % physical characteristics of the system
 
-
-varargin = {"Ts",0.1,...
-    "PH",20,...
-    "CH",2,...
-    "Xref",1,...
-    "Yref",1,...
-    "Zref",1};
-simparams = sim_params(varargin);
-
-% flag
+% Noise flag
+global noise_flag;
 noise_flag        = false;
+
+% Timing parameters
+global ctrl_time;
+global MPC_lag;
+ctrl_time = 0.1; % Time between accessing the MPC controller
+MPC_lag = 0.0; % Fixed lag time for MPC computation, value -1 means use actual computation time
 
 %% Loading Waypts
 disp('Loading Waypts ...');
-waypts = def_waypts();
+waypts = def_waypts(); % Define waypoints for the UAV to travel to cyclicly
+start = [0;0;0;0;0;0;0;0;0;0;0;0;0]; % Starting position of UAV
 
-map = {};
-start = {[0;0;0;0;0;0;0;0;0;0;0;0;0]};
-stop  = {waypts(end,:)};
-path{1} = waypts;
-
-%% Generate trajectory
-disp('Generating Trajectory ...');
-trajectory_generator([], [], map, path);
-
-%% Create MPC obj
-MPCobj = [];
-%MPCobj = makeMPCobj(sysparams,simparams);
-% warning('off','MPC:computation:HessianSingular'); % Turn off warning from mpcstate in controllerMPC
-% old_status = mpcverbosity('off'); % Turn off mpc controller verbosity
 %% Run trajectory
-infos = struct();
-infos.info = [];
-infos.F = [];
-infos.M = [];
-% trajectory = test_trajectory(start, stop, map, path, MPCobj, noise_flag, simparams, waypts); % with visualization
-trajectory = test_trajectory2(start, stop, map, path, MPCobj, noise_flag, simparams, waypts); % Exchange data with mpc via semaphore
+trajectory = test_trajectory_timed(start, waypts); % Use timer to execute sim loop at fixed frequency
