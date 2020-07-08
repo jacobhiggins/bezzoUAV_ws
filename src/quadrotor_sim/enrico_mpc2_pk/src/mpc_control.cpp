@@ -27,7 +27,7 @@
 #include <error.h>
 #include <iostream>
 #include <fstream>
-#include "../../../../mpc/common.h"
+#include "../../../../mpc/mpc_interface.h"
 
 #define PRINT_ERROR(x) fprintf(stderr, "%s:%i: %s , errno= %i \n", __FILE__, __LINE__, x,errno);
 

@@ -1,4 +1,4 @@
-#define USE_SERVER
+#include "mpc_interface.h"
 #define PRINT_LOG
 
 #ifdef USE_SERVER
@@ -56,7 +56,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #endif /* USE_SERVER */
-#include "common.h"
 #include "mpc.h"
 
 /* Put this macro where debugging is needed */

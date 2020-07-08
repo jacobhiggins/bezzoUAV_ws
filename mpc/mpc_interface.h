@@ -1,5 +1,5 @@
-#ifndef _COMMON_H_
-#define _COMMON_H_
+#ifndef _MPC_INTERFACE_H_
+#define _MPC_INTERFACE_H_
 
 #include <semaphore.h>
 
@@ -19,4 +19,4 @@ struct shared_data {
 	double input[MPC_INPUT_NUM]; /* MPC controller -> UAV */
 };
 
-#endif /* _COMMON_H_ */
+#endif /* _MPC_INTERFACE_H_ */

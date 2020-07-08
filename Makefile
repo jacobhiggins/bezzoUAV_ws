@@ -35,7 +35,7 @@ trace_proc:
 	gcc trace_proc.c  $(LDFLAGS) -o trace_proc; \
 	cd ..
 
-clean:
+mpc_clean:
 	cd mpc; \
 	rm -rf mpc_ctrl mpc_server *.o dyn.h mpc.h MPC ; \
 	cd ..
