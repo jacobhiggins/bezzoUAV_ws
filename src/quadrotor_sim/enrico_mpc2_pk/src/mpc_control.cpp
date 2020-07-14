@@ -330,7 +330,7 @@ int main(int argc, char **argv){
 		position_cmd_sub = n.subscribe("/iris_position_cmd",
 					       10, &position_cmd_cb,
 					       ros::TransportHints().tcpNoDelay());
-		odom_sub = n.subscribe("/iris_odom", 10, &odom_cb,
+		odom_sub = n.subscribe("/iris_odom", 1, &odom_cb,
 				       ros::TransportHints().tcpNoDelay());
 	} else if(sim_type.compare("")==0) {
 		std::string message;
@@ -347,11 +347,7 @@ int main(int argc, char **argv){
 	ros::Duration dt;
 	
 	while(ros::ok()){
-		ros::Time start_while = ros::Time::now();
 		ros::spinOnce();
-		dt = ros::Time::now()-start_while;
-		ROS_INFO("After spin one, dt: %f",dt.toSec());
-
 		/*
 		 * Now asking MPC to compute the optimal input for
 		 * us. The state was written in the shared memory
@@ -370,16 +366,11 @@ int main(int argc, char **argv){
 		
 		// printf("Got control action %f\n", msg->input[0]);
 		publishTRPY();
-		if (debug){
-			ros::Duration t = ros::Time::now() - start;
-			write_debug(t);
-		}
-		dt = ros::Time::now()-start_while;
-		ROS_INFO("After publish trpy/debug, dt: %f",dt.toSec());
+		// if (debug){
+		// 	write_debug(t);
+		// }
 		
 		rate.sleep();
-		dt = ros::Time::now()-start_while;
-		ROS_INFO("End of while loop, dt: %f",dt.toSec());
 	}
 	
 	// std::string quadrotor_name;
