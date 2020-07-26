@@ -22,7 +22,7 @@
     <remap from="~cmd" to="iris_so3_cmd"/>
   </node-->
 
-  <node pkg="so3_control"
+  <!-- <node pkg="so3_control"
     type="so3_control"
     name="iris_so3_control"
     required="true"
@@ -37,7 +37,7 @@
     <rosparam param="gains/ang">[0.1, 0.1, 0.1]</rosparam>
     <rosparam param="gains/pos">[3, 3, 6]</rosparam>
     <rosparam param="gains/vel">[3, 3, 5]</rosparam>
-  </node>
+  </node> -->
 
   <node pkg="mesh_visualization"
     type="mesh_visualization"

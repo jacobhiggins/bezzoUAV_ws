@@ -73,11 +73,11 @@ int main(int argc, char **argv)
   ros::Subscriber mpc_cmd_sub = n.subscribe("/mpc_control/mpc_cmd",100,&mpc_cmd_cb,ros::TransportHints().tcpNoDelay());
 
   double simulation_rate;
-  n.param("rate/simulation", simulation_rate, 1000.0);
+  n.param("rate/simulation", simulation_rate, 1000.0); // 1000
   ROS_ASSERT(simulation_rate > 0);
 
   double odom_rate;
-  n.param("rate/odom", odom_rate, 100.0);
+  n.param("rate/odom", odom_rate, 100.0); // 100
   const ros::Duration odom_pub_duration(1/odom_rate);
 
   std::string quad_name;
@@ -97,6 +97,7 @@ int main(int argc, char **argv)
   quad.setState(state);
   //std::cout<<state.x(1)<<std::endl;
 
+  // ros::Rate r(simulation_rate); ************ CHANGE BACK
   ros::Rate r(simulation_rate);
   const double simulation_dt = 1/simulation_rate;
 

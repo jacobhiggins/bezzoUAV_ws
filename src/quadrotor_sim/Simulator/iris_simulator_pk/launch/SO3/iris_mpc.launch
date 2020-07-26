@@ -13,7 +13,7 @@
     type="pos_cmd_node"
     name="pos_cmd_node"
     output="screen">
-    <remap from="odom" to="iris_odom"/>
+    <remap from="odom_raw" to="iris_odom_raw"/>
     <remap from="position_cmd" to="iris_position_cmd"/>
     <remap from="target" to="iris_target"/>
     <remap from="takeoff" to="takeoff"/>
@@ -40,7 +40,7 @@
     <remap from="position_cmd" to ="iris_position_cmd"/>
   </node -->
 
-  <node pkg="attack_pk"
+  <!-- <node pkg="attack_pk"
     type="attack_node"
     name="attack_node"
     output = "screen">
@@ -53,7 +53,7 @@
     <remap from="sensor1" to="iris_sensor1"/>
     <remap from="sensor2" to="iris_sensor2"/>
     <remap from="sensor3" to="iris_sensor3"/>
-  </node>
+  </node> -->
 
   <node pkg="joy"
     type="joy_node"

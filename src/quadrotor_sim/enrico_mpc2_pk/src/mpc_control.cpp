@@ -330,7 +330,7 @@ int main(int argc, char **argv){
 		position_cmd_sub = n.subscribe("/iris_position_cmd",
 					       10, &position_cmd_cb,
 					       ros::TransportHints().tcpNoDelay());
-		odom_sub = n.subscribe("/iris_odom", 1, &odom_cb,
+		odom_sub = n.subscribe("/iris_odom_raw", 10, &odom_cb,
 				       ros::TransportHints().tcpNoDelay());
 	} else if(sim_type.compare("")==0) {
 		std::string message;
