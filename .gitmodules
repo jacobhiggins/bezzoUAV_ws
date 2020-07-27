@@ -1,0 +1,3 @@
+[submodule "src/quadrotor_sim/mpc_offloading"]
+	path = src/quadrotor_sim/mpc_offloading
+	url = git@github.com:jacobhiggins/mpc_offloading.git
