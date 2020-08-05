@@ -9,6 +9,12 @@ The code of the MPC controller is contained in the directory `mpc`. The followin
 
 Below, more detail on each program.
 
+## Cloning the Repo
+
+Note: This repo contains submodules of other repos. In order to clone all necessary files, please use:
+
+git clone git@github.com:jacobhiggins/bezzoUAV_ws.git --recursive
+
 ## Preliminaries
 
 Before running the MPC controller, it is necessary to download and compile the MPC library. This step is necessary only the first time of the installation. It can be made by:

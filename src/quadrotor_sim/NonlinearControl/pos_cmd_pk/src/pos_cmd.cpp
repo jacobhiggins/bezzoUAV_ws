@@ -87,12 +87,12 @@ void posCb(const std_msgs::StringConstPtr &traj_msg)
   else
   {
     ROS_INFO("Flying Trajectory:  rectangle ");
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 31; i++)
     {
       for (int j = 0; j < 3; j ++)
-        waypts[i][j] = waypts_1[i][j];
+        waypts[i][j] = waypts_3[i][j];
     }
-    max_size = 3;
+    max_size = 31;
   }
   
   setNewTarget();
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "pos_cmd_node");
   ros::NodeHandle nh_;
 
-  ros::Subscriber odom_sub = nh_.subscribe("odom", 10, &odomCb);;
+  ros::Subscriber odom_sub = nh_.subscribe("odom_raw", 10, &odomCb);;
   ros::Subscriber takeoff_sub = nh_.subscribe("takeoff", 10, &takeoffCb);
   ros::Subscriber land_sub = nh_.subscribe("land", 10, &landCb);
   ros::Subscriber pos_sub = nh_.subscribe("pos", 10, &posCb);
@@ -160,6 +160,7 @@ void resetEverything()
 
 void setNewTarget()
 {
+  ROS_INFO("%d",count);
   if (count > max_size)
   {
     isGoalReached = true;

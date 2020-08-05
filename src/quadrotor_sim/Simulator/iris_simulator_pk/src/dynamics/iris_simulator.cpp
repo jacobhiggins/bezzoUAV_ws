@@ -21,8 +21,13 @@ Quadrotor::Quadrotor(void)
   double Iyx = 6.39935e-4,   Iyy = 5.14714e-3,     Iyz = 7.203e-6;
   double Izx = 2.5927e-5, Izy = 7.203e-6,     Izz = 1.3624726e-2;
 */
-  double Ixx = 8.7952e-3,      Ixy = 6.39935e-4,    Ixz = 0;
-  double Iyx = 6.39935e-4,     Iyy = 5.14714e-3,    Iyz = 0;
+  // double Ixx = 8.7952e-3,      Ixy = 6.39935e-4,    Ixz = 0;
+  // double Iyx = 6.39935e-4,     Iyy = 5.14714e-3,    Iyz = 0;
+  // double Izx = 0,              Izy = 0,             Izz = 1.3624726e-2;
+
+  // ****** Test Model *******
+  double Ixx = 8.7952e-3,      Ixy = 0,             Ixz = 0;
+  double Iyx = 0,              Iyy = 5.14714e-3,    Iyz = 0;
   double Izx = 0,              Izy = 0,             Izz = 1.3624726e-2;
 
 

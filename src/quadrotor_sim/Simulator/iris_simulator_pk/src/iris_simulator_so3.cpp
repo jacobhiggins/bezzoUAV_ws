@@ -4,6 +4,7 @@
 #include <sensor_msgs/Imu.h>
 #include <quadrotor_msgs/SO3Command.h>
 #include <iris_simulator_pk/iris_simulator.h>
+#include <fstream>
 
 typedef struct _ControlInput
 {
@@ -23,8 +24,12 @@ typedef struct _Command
 
 static Command command;
 static Eigen::Vector3d ext_force, ext_moment;
+double trpy [4] = {0.0,0.0,0.0,0.0};
+double pos_state [15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+std::ofstream f("/home/bezzo/bezzoUAV_ws/debug/sysid.csv");
 void stateToOdomMsg(const IRISSimulator::Quadrotor::State &state, nav_msgs::Odometry &odom);
 void quadToImuMsg(const IRISSimulator::Quadrotor &quad, sensor_msgs::Imu &imu);
+void write_sysid(std::ofstream& f, ros::Duration &tnow);
 
 
 static ControlInput getControl(const IRISSimulator::Quadrotor &quad, const Command &cmd)
@@ -101,6 +106,28 @@ static ControlInput getControl(const IRISSimulator::Quadrotor &quad, const Comma
   float M2 = -cmd.kR[1]*eR2 - cmd.kOm[1]*eOm2 + in2;
   float M3 = -cmd.kR[2]*eR3 - cmd.kOm[2]*eOm3 + in3;
 
+  if (/*force > 0.001*/ 1){
+    double g = quad.getGravity();
+    trpy[0] = force - quad.getGravity()*quad.getMass();
+    trpy[1] = M1;
+    trpy[2] = M2;
+    trpy[3] = M3;
+    pos_state[0] = state.x[0];
+    pos_state[1] = state.x[1];
+    pos_state[2] = state.x[2];
+    pos_state[3] = R11;
+    pos_state[4] = R12;
+    pos_state[5] = R13;
+    pos_state[6] = R21;
+    pos_state[7] = R22;
+    pos_state[8] = R23;
+    pos_state[9] = R31;
+    pos_state[10] = R32;
+    pos_state[11] = R33;
+    pos_state[12] = state.v[0];
+    pos_state[13] = state.v[1];
+    pos_state[14] = state.v[2];
+  }
 
   Eigen::Matrix<double, 4, 1> B_vec, w_sq_vec;
   B_vec << force/kf, M1/kf, M2/kf, M3/km;
@@ -193,6 +220,7 @@ int main(int argc, char **argv)
   odom_msg.child_frame_id = "/" + quad_name;
   imu_msg.header.frame_id = "/" + quad_name;
 
+  ros::Time tstart = ros::Time::now();
   ros::Time next_odom_pub_time = ros::Time::now();
   while(n.ok())
   {
@@ -217,6 +245,8 @@ int main(int argc, char **argv)
       imu_msg.header.stamp = tnow;
       odom_pub.publish(odom_msg);
       imu_pub.publish(imu_msg);
+      ros::Duration dur = tnow - tstart;
+      write_sysid(f,dur);
     }
 
     r.sleep();
@@ -277,4 +307,28 @@ void quadToImuMsg(const IRISSimulator::Quadrotor &quad, sensor_msgs::Imu &imu)
   imu.linear_acceleration.x = acc(0);
   imu.linear_acceleration.y = acc(1);
   imu.linear_acceleration.z = acc(2);
+}
+
+void write_sysid(std::ofstream &f, ros::Duration &dur){
+  std::string t = std::to_string(dur.toSec());
+  std::string xs = std::to_string(pos_state[0]) + "," + 
+                    std::to_string(pos_state[1]) + "," +
+                    std::to_string(pos_state[2]) + "," + 
+                    std::to_string(pos_state[3]) + "," +
+                    std::to_string(pos_state[4]) + "," +
+                    std::to_string(pos_state[5]) + "," +
+                    std::to_string(pos_state[6]) + "," +
+                    std::to_string(pos_state[7]) + "," +
+                    std::to_string(pos_state[8]) + "," +
+                    std::to_string(pos_state[9]) + "," +
+                    std::to_string(pos_state[10]) + "," +
+                    std::to_string(pos_state[11]) + "," +
+                    std::to_string(pos_state[12]) + "," +
+                    std::to_string(pos_state[13]) + "," +
+                    std::to_string(pos_state[14]);
+  std::string us = std::to_string(trpy[0]) + "," + 
+                    std::to_string(trpy[1]) + "," +
+                    std::to_string(trpy[2]) + "," + 
+                    std::to_string(trpy[3]);                  
+  f << t << "," << xs << "," << us << "\n";
 }

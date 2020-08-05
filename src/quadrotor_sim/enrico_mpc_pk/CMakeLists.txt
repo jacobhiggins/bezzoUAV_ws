@@ -107,7 +107,7 @@ find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 ## Declare a cpp executable
-add_executable(mpc_control src/mpc_control.cpp)
+add_executable(mpc_control_old src/mpc_control.cpp)
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
@@ -116,12 +116,12 @@ add_library(${PROJECT_NAME}
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(mpc_control mpc_control_generate_messages_cpp)
-#add_dependencies(mpc_control)
+# add_dependencies(mpc_control_old mpc_control_generate_messages_cpp)
+#add_dependencies(mpc_control_old)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
-  mpc_control
+  mpc_control_old
   ${catkin_LIBRARIES}
   #MPCControl
 )
