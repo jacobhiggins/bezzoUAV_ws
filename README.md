@@ -1,19 +1,12 @@
 # MPC controller for ROS
-The code of the MPC controller is contained in the directory `mpc`. The following files are available:
-
-  * `mpc/mpc_shm_ctrl.c` (soon to be renamed as `mpc_ctrl.c`) is the MPC controller in charge of reading the state from and writing the input to a shared memory area. This program may make all the computations or off-load part/all of it to a server
-  * `mpc/mpc_ctrl.c` (deprecated) is the old version of the MPC controller which uses a pipe to communicate with ROS
-  * `mpc/mpc_server.c` launches a server which listen for client wishing to solve an instance of an MPC problem
-  * `mpc/mpc_interface.h` is a C header file which includes the declarations needed to use the MPC controller (such as the shared memory)
-  * `mpc/trace_proc.c` is a used to trace the scheduling events of some processes. In the MPC context is used to monitor the schedule of MPC execution, although its usage is not strictly bound to MPC
-
-Below, more detail on each program.
+This repo contains the code for controlling a UAV by MPC.
 
 ## Cloning the Repo
 
 Note: This repo contains submodules of other repos. In order to clone all necessary files, please use:
-
-git clone git@github.com:jacobhiggins/bezzoUAV_ws.git --recursive
+```
+git clone git@github.com:jacobhiggins/bezzoUAV_ws.git --recurse-submodules
+```
 
 ## Preliminaries
 
