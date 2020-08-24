@@ -75,6 +75,12 @@
     <remap from="land" to="iris/land"/>
     <remap from="pos" to="iris/pos"/>
   </node>
+
+  <!--node type="rviz"
+    name="rviz"
+    pkg="rviz"
+    args="-d ./rviz_config/config.rviz"/-->
+
 <!--
   <node pkg="rviz"
     type="rviz"

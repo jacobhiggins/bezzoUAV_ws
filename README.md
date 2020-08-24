@@ -74,6 +74,8 @@ SOLVER_IP and SOLVER_PORT should be the IP address and the port where the server
 
 # Instructions to run ROS
 
+## Preliminaries
+
 To run the code:
 
 0. If this is the first time the directory is being compiled, first compile the quadrotor_msgs package:
@@ -97,55 +99,19 @@ This compiles the code that ros can run.
 ```bash
 source ./devel/setup.bash
 ```
-
-
 This step can usually be skipped by adding this line to the .bashrc file.
+## Running the simulation
 
-3. From any folder, this command runs roscore, the central node that is necessary for anything to run on ros:
-
-```bash
-roscore
-```
-
-4. Finally, run this command for the mpc:
+The simulation can be launched from the following bash command:
 
 ```bash
-rosrun enrico_mpc2_pk mpc_control2 _param:=matlab
+roslaunch iris_simulator_pk iris_mpc.launch
 ```
+This launches both the simulator and MPC controller.
 
-# Instruction to run ROS+Matlab
+Note that you do not need to visualize the simulation with rviz to simulation motion.
 
-Once you know the code works, you can try running the matlab sim with the mpc
-
-0. If you have roscore running from the terminal, shut it down
-
-1. From the matlab console, run:
-
-```bash
-rosinit
-```
-
-This is matlab's version of roscore. For some reason, we must use this and not roscore for our matlab ros node to talk with our C++ ros node.
-
-1. From a terminal (called term-server) and from the project home directory, lauch:
-
-```bash
-sudo ./launch_MPC_server
-```
-
-1. From a terminal (called term-mpc) and from the project home directory, lauch:
-
-```bash
-sudo su
-rosrun enrico_mpc2_pk mpc_control2 _param:=matlab
-```
-
-2. In matlab, run the /bezzoUAV_ws/matlab_sim/runsim.m script
-
-You should see the same simulator that I showed last Friday.
-
-3. After the simulation is finished, stop then both the server and the MPC controller by pressing Ctrl-C on both term-server and term-mpc terminals
-
-4. The root directory of the project should now contain a file trace, with all the scheduling events on the processes of interest
-
+Using the keyboard window, you can give the simulation the following commands:
+3 - Lift off ground
+1 - Waypoints in the shape of house
 
