@@ -6,16 +6,38 @@
   -->  
 
 
-  <include file="$(find iris_simulator_pk)/launch/iris_mpca.launch">
-  </include >
+  <!-- include file="$(find iris_simulator_pk)/launch/iris_mpca.launch">
+  </include -->
+
+  <node pkg="iris_simulator_pk"
+    type="iris_simulator_mpc"
+    name="iris_simulator_mpc"
+    output="screen">
+    <param name="rate/odom" value="100.0"/>
+    <remap from="~odom_raw" to="iris/odom"/>
+    <remap from="~imu" to="iris_imu"/>
+    <remap from="~mpc_cmd" to="iris/mpc_cmd"/>
+  </node>
+
+   <node pkg="mesh_visualization"
+    type="mesh_visualization"
+    name="iris_mesh_visualization"
+    output="screen">
+    <param name="mesh_resource" value="package://mesh_visualization/meshes/IRIS.STL"/>
+    <remap from="~odom_raw" to="iris/odom"/>
+    <remap from="~target" to="iris/target"/>
+    <remap from="~robot" to="iris_robot"/>
+    <remap from="Body" to="iris_body"/>
+  </node>
 
   <node pkg="pos_cmd_pk"
     type="pos_cmd_node"
     name="pos_cmd_node"
-    output="screen">
-    <remap from="odom_raw" to="iris_odom_raw"/>
-    <remap from="position_cmd" to="iris_position_cmd"/>
-    <remap from="target" to="iris_target"/>
+    output="screen"
+    ns="iris">
+    <remap from="odom_raw" to="odom"/>
+    <!-- remap from="position_cmd" to="iris_position_cmd"/ -->
+    <remap from="target" to="target"/>
     <remap from="takeoff" to="takeoff"/>
     <remap from="land" to="land"/>
     <remap from="pos" to="pos"/>
@@ -33,27 +55,12 @@
     output="screen">
   </node>
 
-  <!--node pkg="enrcio_mpc2_pk"
-    type="mpc_control2"
-    name="mpc_control2"
-    output="screen">
-    <remap from="position_cmd" to ="iris_position_cmd"/>
-  </node -->
-
-  <!-- <node pkg="attack_pk"
-    type="attack_node"
-    name="attack_node"
-    output = "screen">
-    <param name="~AttackFlag" value="false"/>
-    <param name="~NoiseFlag" value="false"/>
-    <param name="~AttackType" value="1"/>
-    <remap from="odom_raw" to="iris_odom_raw"/>
-    <remap from="odom" to="iris_odom"/>
-    <remap from="imu" to="iris_imu"/>
-    <remap from="sensor1" to="iris_sensor1"/>
-    <remap from="sensor2" to="iris_sensor2"/>
-    <remap from="sensor3" to="iris_sensor3"/>
-  </node> -->
+  <node pkg="mpc_pkg"
+    type="mpc_control"
+    name="mpc_control"
+    output="screen"
+    ns="iris">
+  </node>
 
   <node pkg="joy"
     type="joy_node"
@@ -64,9 +71,9 @@
     type="joystick_node"
     name="joystick_node"
     output="screen">
-    <remap from="takeoff" to="takeoff"/>
-    <remap from="land" to="land"/>
-    <remap from="pos" to="pos"/>
+    <remap from="takeoff" to="iris/takeoff"/>
+    <remap from="land" to="iris/land"/>
+    <remap from="pos" to="iris/pos"/>
   </node>
 <!--
   <node pkg="rviz"

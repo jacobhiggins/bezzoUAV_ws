@@ -113,7 +113,7 @@ int main(int argc, char **argv)
   ros::Subscriber land_sub = nh_.subscribe("land", 10, &landCb);
   ros::Subscriber pos_sub = nh_.subscribe("pos", 10, &posCb);
 
-  cmd_pub     = nh_.advertise<quadrotor_msgs::PositionCommand>("position_cmd", 10); 
+  cmd_pub     = nh_.advertise<quadrotor_msgs::PositionCommand>(ros::this_node::getNamespace()+"/position_cmd", 10); 
   tg_pub      = nh_.advertise<geometry_msgs::Point>("target", 10); 
 
 /*

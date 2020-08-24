@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
   ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom_raw", 100);
   ros::Publisher imu_pub = n.advertise<sensor_msgs::Imu>("imu", 100);
-  ros::Subscriber mpc_cmd_sub = n.subscribe("/mpc_control/mpc_cmd",100,&mpc_cmd_cb,ros::TransportHints().tcpNoDelay());
+  ros::Subscriber mpc_cmd_sub = n.subscribe("mpc_cmd",100,&mpc_cmd_cb,ros::TransportHints().tcpNoDelay());
 
   double simulation_rate;
   n.param("rate/simulation", simulation_rate, 1000.0); // 1000
