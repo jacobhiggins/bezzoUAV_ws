@@ -1,4 +1,4 @@
-# MPC controller for ROS
+# ROS simulation of MPC controller
 This repo contains the code for controlling a UAV by MPC.
 
 ## Cloning the Repo
@@ -8,73 +8,30 @@ Note: This repo contains submodules of other repos. In order to clone all necess
 git clone git@github.com:jacobhiggins/bezzoUAV_ws.git --recurse-submodules
 ```
 
-## Preliminaries
+## Launching the MPC controller
 
-Before running the MPC controller, it is necessary to download and compile the MPC library. This step is necessary only the first time of the installation. It can be made by:
+Before running the ROS simulator, it is necessary to compile the MPC library. To launch the MPC controller, follows the next steps:
 
-1. Clean old compilation stuff by launching the following command from the root project directory
-  ```
-  make mpc_clean
-  ```
-This may be necessary to update the MPC library
+1. Open a dedicated terminal
 
-2. Get the latest MPC library by
+1. Visit the directory of the MPC module, by
   ```
-  make mpc_get_lib
+cd src/quadrotor_sim/mpc_offloading/mpc_submodule/
   ```
 
-Upon successful completion, you should have got the following files in the `mpc` directory: `mpc.h`, `dyn.h`, `mpc.o`, `dyn.o`. They are needed to compile your MPC controller.
-
-## MPC controller (`mpc_shm_ctrl`)
-
-This is the executable running the local MPC controller. Such a controller interacts with the system to be controlled through a shared memory. The `struct shared_data` declared in `mpc/mpc_interface.h`
-
-
-2. Compile the MPC controller using the shared memory and used by Matlab, by:
+1. Compile the latest version of the controller by
   ```
-  make mpc_shm_ctrl
+make mpc_ctrl
   ```
+1. Have a json file describing the MPC problem ready
 
-## Local MPC execution
-
-1. Make sure that USE_SERVER *is not* defined in mpc_ctrl.c. Then
+1. Launch the MPC controller by
   ```
-  make
-  ```
-
-## Compilation of a small tracing tool
-
-1. From the home directory of the project, launch
-  ```
-  make trace_proc
+./mpc_ctrl <json-model-filename>
   ```
 
 
-## Total off-loading to MPC server
-
-1. Make sure that USE_SERVER *is* defined in mpc_ctrl.c. Also, the C macros
-SOLVER_IP and SOLVER_PORT should be the IP address and the port where the server is listening. Default values are
-  ```
-  #define SOLVER_IP "127.0.0.1"
-  #define SOLVER_PORT 6001
-  ```
-  Then
-  ```
-  make
-  ```
-
-1. Before launching the rosrun machinery, start-up the server by launching in a dedicated server terminal. If the server is launched at localhost, just launch
-  ```
-  ./launch_MPC_server
-  ```
-  from the project home directory.
-
-2. Now run rosrun enrico_mpc2_pk mpc_control2
-
-
-# Instructions to run ROS
-
-## Preliminaries
+## Compiling the ROS code
 
 To run the code:
 
@@ -100,7 +57,8 @@ This compiles the code that ros can run.
 source ./devel/setup.bash
 ```
 This step can usually be skipped by adding this line to the .bashrc file.
-## Running the simulation
+
+## Running the ROS simulation
 
 The simulation can be launched from the following bash command:
 
